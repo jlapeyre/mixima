@@ -1206,5 +1206,5 @@ states on Bloch sphere"
 	zprj[0]=dyap[ zket[0] ]
 	zprj[1]=dyap[ zket[1] ]
 
-(* needed to add blank line so Fateman parser would succeed *)
+(* needed to add blank line so that the parser would succeed *)
 

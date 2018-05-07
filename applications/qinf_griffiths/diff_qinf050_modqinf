@@ -2,7 +2,7 @@
  diff qinf050.ma modgriffith.ma  > diff_qinf050_modgriffith
 
 Griffith's original code is in qinf050.ma. I edited it to modgriffith.ma
-so that the modified Fateman parser would read it without failing. This
+so that the modified parser would read it without failing. This
 file is a diff between the two files.
 
 
@@ -95,5 +95,5 @@ file is a diff between the two files.
 > 
 1187a1206,1208
 > 
-> (* needed to add blank line so Fateman parser would succeed *)
+> (* needed to add blank line so that the parser would succeed *)
 > 
