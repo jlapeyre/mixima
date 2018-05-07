@@ -22,7 +22,7 @@ don't load the definition of Permanent in strongdeco.
 The following is a sequence of files and comments on what was done to go from the Mathematica text to working
 Mixima code for the main function.
 
-* (Strongdeco-tobias.txt) -- exported text from Mma nb. Not in a very useful form.
+* [Strongdeco-tobias.txt] -- exported text from Mma nb. Not in a very useful form.
 
 * (strong_deco.m)   --  copied functions mostly by hand into Mma 3.0 and did
   ? funcname and copied formatted  functions  back into this file. Added
