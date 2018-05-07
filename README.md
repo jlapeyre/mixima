@@ -55,7 +55,7 @@ calculations done in the papers I am interested in, and b) Uses a
 restricted subset of the Mathematica language. In particular, it does not
 use advanced pattern matching. This package, `Mixima`, is the result of this
 process. It successfully translates and runs Griffiths' quantum-information code,
-as well as existing code for studying many-body physics. These are both found
+as well as an existing package for studying many-body physics. These are both found
 in the [applications folder](./applications/).
 
 3. The translated application code [strong_deco](./applications/strong_deco/) runs correctly but
