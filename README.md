@@ -10,7 +10,8 @@ supported by, nor endorsed by *Wolfram Research*.
 ### NOTE
 
 This software was last tested with Maxima v5.30. It may
-not work with recent versions of Maxima.
+not work with recent versions of Maxima. If you have any difficulty,
+please [file an issue](https://github.com/jlapeyre/mixima/issues).
 
 ## Introduction
 
