@@ -1,11 +1,11 @@
-John Lapeyre: Compatibility functions, and translation code.
+John Lapeyre: Wrote the compatibility functions and translation code.
 
-The following authors have not taken part in this project, but
+The following people have not taken part in this project, but
 were the original authors of some code included here.
 
 Richard Fateman: Wrote the code that parses Mathematica
 code into lisp-like expressions. Code that translates
-Maxima to Mma.  Designed and wrote most
+Maxima to Mma. Designed and wrote most
 of the mockmma code that is also used by the translator.
 
 Tak Yan: parts of Mockmma
@@ -16,7 +16,7 @@ Hunter Monroe: Wrote some of the Mockmma code.
 Stavros Macrakis and Barton Willis contributed code to
 the compatibility functions.
 
-Robert Griffiths wrote the quantum information code whose
+Robert Griffiths wrote the quantum information code in Mathematica whose
 translation provides the first application of the translator.
  
 Leo Butler made suggestions such as implementing the "->" operator.
