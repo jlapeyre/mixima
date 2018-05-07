@@ -1,0 +1,6 @@
+Dot([a,b,c],[x,y,z]);
+Dot([[a,b],[c,d]],[x,y]);
+Dot([x,y],[[a,b],[c,d]]);
+Dot([x,y],[[a,b],[c,d]],[r,s]);
+Dot([[a,b],[c,d]],[[r,s],[t,u]]);
+

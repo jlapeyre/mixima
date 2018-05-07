@@ -1,0 +1,19 @@
+/* This was modified by hand , replacing d(.) with d[.]
+  everywhere
+*/
+
+DDecoLaug(na):=Module([nna => na],
+                (Lmin => nna*(nna-1),Lmax => nna*(nna-1),state => Laug(nna),
+                 base => Flatten(Table(Pots(nna,i),[i,Lmin,Lmax]),1),
+                 dim => inpart(Dimensions(base),1),
+                 factors => Flatten(Table(tip(nna,i),[i,Lmin,Lmax]),1),
+                 d[0] => state,
+                 prf => Table((for i while i < nna+1 do
+                                   (d[nna] => 0,
+                                    d[i] => D(d[i-1],[z(i),inpart(base,j,i)]),
+                                    d[i] => ReplaceAll(d[i],Rule(z(i),0)),
+                                    if d[i] = 0 then Break()),
+                               d[nna]*inpart(factors,j)^-1),[j,1,dim]),
+                 outp => prf*Sqrt(Dot(prf,prf))^-1));
+             
+             

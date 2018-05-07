@@ -1,0 +1,233 @@
+/* ex ok Table   */
+/* mma  Table[1] */
+Table(1);
+1 ; 
+/* endex */
+
+/* ex ok  Table  */
+/* cm test that variable in surrounding scope does not interfere with iteration var. */
+/* cm not an mma example. */
+/* mma  Module[{i},i=1,Table[i,{i,1,3}]]] */
+block([i],(i:1),Table(i,[i,1,3]));
+[1, 2, 3] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[i^2,{i,10}] */
+Table((i^2),[i,10]);
+[1, 4, 9, 16, 25, 36, 49, 64, 81, 100] ; 
+/* endex */
+
+
+/* ex ok  Table  */
+/* mma  Table[f[i],{i,0,20,2}] */
+Table(f(i),[i,0,20,2]);
+[f(0), f(2), f(4), f(6), f(8), f(10), f(12), f(14), f(16), f(18), f(20)] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[x,{10}] */
+Table(x,[10]);
+[x, x, x, x, x, x, x, x, x, x] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[10 i+j,{i,4},{j,3}] */
+Table((Times(10,i)+j),[i,4],[j,3]);
+[[11, 12, 13], [21, 22, 23], [31, 32, 33], [41, 42, 43]] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[f[i],{i,10,-5,-2}] */
+Table(f(i),[i,10,-5,-2]);
+[f(10), f(8), f(6), f(4), f(2), f(0), f(- 2), f(- 4)] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[10 i+j,{i,5},{j,i}] */
+Table((Times(10,i)+j),[i,5],[j,i]);
+[[11], [21, 22], [31, 32, 33], [41, 42, 43, 44], [51, 52, 53, 54, 55]] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[100 i+10 j+k,{i,3},{j,2},{k,4}] */
+Table((Times(100,i)+Times(10,j)+k),[i,3],[j,2],[k,4]);
+[[[111, 112, 113, 114], [121, 122, 123, 124]], 
+[[211, 212, 213, 214], [221, 222, 223, 224]], 
+[[311, 312, 313, 314], [321, 322, 323, 324]]] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[Sqrt[x],{x,{1,4,9,16}}] */
+Table(Sqrt(x),[x,[1,4,9,16]]);
+[1, 2, 3, 4] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[j^(1/i),{i,{1,2,4}},{j,{1,4,9}}] */
+Table((j^(i^-1)),[i,[1,2,4]],[j,[1,4,9]]);
+[[1, 4, 9], [1, 2, 3], [1, sqrt(2), sqrt(3)]] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[2^x+x,{x,a,a+5 n,n}] */
+Table(((2^x)+x),[x,a,(a+Times(5,n)),n]);
+[2^a+a,2^(n+a)+n+a,2^(2*n+a)+2*n+a,2^(3*n+a)+3*n+a,2^(4*n+a)+4*n+a,
+ 2^(5*n+a)+5*n+a] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[a[x]!,{a[x],6}] */
+Table(factorial(a(x)),[a(x),6]);
+[1,2,6,24,120,720] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[x[1]^2 +x[2]^2,{x[1],3},{x[2],3}] */
+Table(((x(1)^2)+(x(2)^2)),[x(1),3],[x(2),3]);
+[[2,5,10],[5,8,13],[10,13,18]] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[Print[i];i^i^i,{i,3}] */
+Table((Print(i),(i^(i^i))),[i,3]);
+[1,16,7625597484987] ; 
+/* endex */
+
+/* ex ok Array   */
+/* mma  Array[#1^#2 &,{3,4}] */
+Array(lambda( [[lambda_args]], (lambda_args[1]^lambda_args[2]) ),[3,4]);
+[[1,1,1,1],[2,4,8,16],[3,9,27,81]] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[x^y,{x,3},{y,4}] */
+Table((x^y),[x,3],[y,4]);
+[[1,1,1,1],[2,4,8,16],[3,9,27,81]] ; 
+/* endex */
+
+/* ex ok Table */
+apply( lambda([x,y], Table(i - j, [i, x], [j, y])), [4,5]);
+[[0,-1,-2,-3,-4],[1,0,-1,-2,-3],[2,1,0,-1,-2],[3,2,1,0,-1]];
+
+/* endex */
+
+/*
+
+  The example here was not good before. This does not work because ## does not work.
+  Table[i-j, ##]& @@ {{i,4},{j,5}}
+
+  This would give the same result but it is different construction and it
+  requires evaluating the iterators in a way that is not allowed.
+
+*/
+
+
+
+/* ex br  Table  */
+/* mma  Apply[Table[(i-j),#1,#2]&,{{i,4},{j,5}}] */
+/*
+Apply(lambda( [[lambda_args]], Table((i-j),lambda_args[1],lambda_args[2]) ),[[i,4],[j,5]]);
+[[0, - 1, - 2, - 3, - 4], [1, 0, - 1, - 2, - 3], [2, 1, 0, - 1, - 2], [3, 2, 1, 0, - 1]] ;
+*/
+/* cm This works if Table evaluates iter, but not otherwise. */
+/* cm In Mma, this example does work. Looks like Apply or the lambda form is evaluating the iterators. */
+/* cm before passing them to Table */
+
+
+/* ex ok    */
+/* mma  Table[{i[j],j+1},{j,3}] */
+Table([i(j),(j+1)],[j,3]);
+[[i(1),2],[i(2),3],[i(3),4]] ; 
+/* endex */
+
+
+/* ex ok  Table  */
+/* mma   Table[{i[j],j+1},{j,3}] */
+Table([i(j),(j+1)],[j,3]);
+[[i(1),2],[i(2),3],[i(3),4]] ;
+/* cm This works now because of => assignment operator. */
+/* endex */
+
+/* ex br Table */
+/*
+Apply[Table[x, ##] &, %];
+*/
+/* cm I believe that ## is not working under any circumstances. */
+/* endex */
+
+
+/* ex br Table */
+/*
+With[{s = {i, 5}}, Table[i^2, s]]
+*/
+/* endex */
+
+/* following causes test program to crash. We should trap it or something.
+  Acually Mma behavior is to complain and return the form unevaluated
+ */
+/* ex ok  Table  */
+/* mma  Module[{s={i,5}},Table[i^2,s]] */
+/*
+block([(s:[i,5])],Table((i^2),s));
+false$
+*/
+/* cm Using With instead of Module currently does not work. */
+/* cm Mma prints error message here saying s is not of the correct form of an iterator. */
+/* endex */
+
+
+/* ex ok  Table  */
+/* mma  Table[x,{x,0,10,3}] */
+Table(x,[x,0,10,3]);
+[0,3,6,9] ; 
+/* endex */
+
+/* ex br  Table  */
+/*
+block([(p:[x,5])],Table((x^2),p));
+[1,4,9,16,25] ;
+*/
+/* mma  Block[{p={x,5}},Table[x^2,p]]] */
+/* cm This is broken because it does return the list given. In mma, it fails because p is not evaluated. */
+/* endex */
+
+
+/* ex ok  Table  */
+/* mma  Table[x^i+y^j,{i,3},{j,2}] */
+Table(((x^i)+(y^j)),[i,3],[j,2]);
+[[y+x,y^2+x],[y+x^2,y^2+x^2],[y+x^3,y^2+x^3]] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[i+2 j,{i,3},{j,i}] */
+Table((i+Times(2,j)),[i,3],[j,i]);
+[[3], [4, 6], [5, 7, 9]] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[ij^2 k^3,{i,2},{j,2},{k,2}] */
+Table(Times(i,(j^2),(k^3)),[i,2],[j,2],[k,2]);
+[[[1, 8], [4, 32]], [[2, 16], [8, 64]]] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Table[Sum[i^k,{k,4}],{i,8}] */
+Table(Sum((i^k),[k,4]),[i,8]);
+[4, 30, 120, 340, 780, 1554, 2800, 4680] ; 
+/* endex */
+
+/* ex ok  Table  */
+/* mma  Array[(#1 +#2 #3)&,{2,3,2}]-Table[i1+i2 i3,{i1,2},{i2,3},{i3,2}] */
+(Array(lambda( [[lambda_args]], (lambda_args[1]+Times(lambda_args[2],lambda_args[3])) ),[2,3,2])-Table((i1+Times(i2,i3)),[i1,2],[i2,3],[i3,2]));
+[[[0, 0], [0, 0], [0, 0]], [[0, 0], [0, 0], [0, 0]]] ; 
+/* endex */
+
+
+/* ex ok Table */
+Table(Last(IntegerDigits(x, 2)), [x, [1,6,1,0,0,7,9,8]]);
+[1,0,1,0,0,1,1,0];
+
+/* ex ok Table */
+map(lambda([x],Last(IntegerDigits(x, 2))), [1,6,1,0,0,7,9,8]);
+[1,0,1,0,0,1,1,0];

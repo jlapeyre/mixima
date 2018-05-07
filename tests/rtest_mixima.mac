@@ -1,0 +1,2642 @@
+/* endex */
+/************************************************
+  Regression test for Mixima, Mathematica compatibility functions
+
+  VERSION VERSIONNUMBER
+
+  Copyright (C) 2008, John Lapeyre  All rights reserved.
+
+  This program is free software; you can redistribute it
+  and/or modify it only under the terms of the GNU General
+  Public License version 2 as published by the Free Software
+  Foundation.
+
+  Mathematica is a registered trademark of Wolfram Research,
+  Inc. (2008)
+
+  Run with batch("rtest_mixima.mac",test).
+  These are tests for functions that duplicate Mathematica
+  functionality. None of them are perfect. Included are
+  some tests that give different results. These are noted.
+  Also commented out are some tests that fail completely.
+
+  The examples are divided into two parts. In the first part,
+  all examples are from Mma documentation. In the second part
+  are additional examples.
+
+*************************************************/
+/* Initialization is wrapped in this block, so the test software only
+   looks at the return value: true
+*/   
+block(
+  display2d:false,
+/*  load("mixima.mac"), */
+/*  f(x) := 0, */
+  true);
+true;
+
+kill(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z);
+done$
+
+/******** Append ***********/
+
+/* endex */
+/* ex ok Append */
+Append([a, b, c, d], x);
+[a,b,c,d,x];
+
+/* ex ok Append */
+Append(f[a, b, c], x + y);
+f[a,b,c,y+x];
+
+/* ex ok Append */
+map(lambda([y], Append(y, x)) , [[a, b], [c, d]]);
+[[a,b,x],[c,d,x]];
+
+/* ex br Append  */
+/*
+Map(lambda([y], Append(y, x)) , [[a, b], [c, d]]);
+*/
+
+/* ex br Append  */
+/*
+NestList(lambda([y],Append(y,x)), [a], 5);
+*/
+
+/* ex ok Append */
+Append([a, b, c], [x, y]);
+[a,b,c,[x,y]];
+
+/* endex */
+/******** AppendTo ***********/
+
+/* ex ok AppendTo */
+block( [ ls : [a, b, c, d] ],
+  AppendTo(ls, x),
+  ls);
+[a,b,c,d,x];
+
+/* ex ok AppendTo */
+block( [ e : f[a, b, c]],
+  AppendTo(e, x+y),
+  e);
+f[a,b,c,y+x];
+
+/* endex */
+
+/*************************************
+ * Apply	
+ *************************************/
+
+/* ex ok Apply */
+Apply(f,[a,b,c,d]);
+f(a, b, c, d);
+
+/* ex ok Apply */
+Apply(Plus,[a,b,c,d]);
+d + c + b + a;
+
+/* ex ok Apply */
+Apply(Plus,g[x,y,z]);
+z+y+x;
+
+/* ex ok Apply */
+Apply(f,[[a, b], [c], d]);
+f([a,b],[c],d);
+
+/* ex ni Apply */
+/* mma Apply[f, {{a, b, c}, {d, e}}, {1}] */
+
+/* ex ni Apply */
+/* mma Apply[f, {{{{{a}}}}}, -1] */
+
+
+/* ex ni Apply */
+/* ex mma Apply[f, p[x][q[y]], {1}, Heads -> True] */
+
+/* endex */
+
+/*************************************
+ * end Apply	
+ *************************************/
+
+/*************************************
+ * Array
+ *************************************/
+
+/* ex ok Array */
+Array(f,10);
+[f(1), f(2), f(3), f(4), f(5), f(6), f(7), f(8), f(9), f(10)];
+
+/* ex ok Array */
+Array(lambda( [arg1], (1+(arg1^2)) ),10);
+[2, 5, 10, 17, 26, 37, 50, 65, 82, 101];
+
+/* ex ok Array */
+Array(f,[3,2]);
+[[f(1, 1), f(1, 2)], [f(2, 1), f(2, 2)], [f(3, 1), f(3, 2)]];
+
+/* ex ok Array */
+Array(lambda( [arg1,arg2], ((10*arg1)+arg2) ),[3,4]);
+[[11, 12, 13, 14], [21, 22, 23, 24], [31, 32, 33, 34]];
+
+/* ex ok Array */
+Array(f,10,0);
+[f(0), f(1), f(2), f(3), f(4), f(5), f(6), f(7), f(8), f(9)];
+
+/* ex ok Array */
+Array(f,[2,3],[0,4]);
+[[f(0, 4), f(0, 5), f(0, 6)], [f(1, 4), f(1, 5), f(1, 6)]];
+
+/* ex ok Array */
+Array(f,[2,3],4);
+[[f(4, 4), f(4, 5), f(4, 6)], [f(5, 4), f(5, 5), f(5, 6)]];
+
+/* ex ok Array */
+Array("^",[5,5]);
+[[1,1,1,1,1],[2,4,8,16,32],[3,9,27,81,243],[4,16,64,256,1024],
+        [5,25,125,625,3125]];
+
+
+/* ex br Array */
+/*
+Array(lambda( [], 0 ),[3,3]);
+*/
+
+/* ex br Array */
+/*
+Array(lambda( [], Signature([SLOTSEQUENCE(1)]) ),[3,3,3]);
+*/
+
+/* ex br Array */
+/*
+Boole(Array(MGREATERP,[5,5]));
+*/
+
+/* ex br Array */
+/*
+(m:Array(lambda( [], Subscript(a,SLOTSEQUENCE(1)) ),[3,4]));
+*/
+
+/* ex br Array */
+/*
+Array(lambda( [arg1], Array(lambda( [], x ),arg1) ),[6]);
+*/
+
+/* endex */
+/*************************************
+ * end Array
+ *************************************/
+
+/*************************************
+ * ArrayDepth
+ *************************************/
+
+/* ex ok ArrayDepth */
+ArrayDepth([[a,b],[c,d]]);
+2;
+
+/* ex ok ArrayDepth */
+ArrayDepth([[a,b],[c]]);
+1;
+
+/* ex ok ArrayDepth */
+ArrayDepth(f(f(a,b),f(c,d)));
+2;
+
+/* ex ok ArrayDepth */
+Dimensions(Array(a,[4,5,2]));
+[4, 5, 2];
+
+/* ex ok ArrayDepth */
+ArrayDepth(Array(a,[4,5,2]));
+3;
+
+/* endex */
+
+/*************************************
+ * end ArrayDepth
+ *************************************/
+
+/*************************************
+ * AtomQ
+ ********************************/
+/* differs from Maxima  atomp */
+
+/* ex ok AtomQ */
+block([e : x + 22/7],
+  AtomQ(e));
+false;
+
+/* ex ok AtomQ */
+AtomQ(22/7);
+true;
+
+/* ex ok AtomQ */
+AtomQ("this is an atom");
+true;
+
+/* ex ok AtomQ */
+AtomQ(ThisIsAnAtom);
+true;
+
+/* ex ok AtomQ */
+AtomQ(1.23);
+true;
+
+/* ex ok AtomQ */
+AtomQ(1 + 2*%i);
+true;
+
+/* ex ok AtomQ */
+AtomQ(x);
+true;
+
+/* ex ok AtomQ */
+AtomQ("string");
+true;
+
+/* ex ok AtomQ */
+AtomQ(123456);
+true;
+
+/* ex ok AtomQ */
+AtomQ(1/10);
+true;
+
+/* ex ok AtomQ */
+AtomQ(3+%i);
+true;
+
+/* endex */
+
+/*************************************
+ * end AtomQ
+ ********************************/
+
+/*************************************
+ * Coefficient
+ ********************************/
+
+/* ex ok Coefficient */
+Coefficient(((x+1)^3),x,2);
+3;
+
+/* ex ok Coefficient */
+Coefficient(((x+y)^4),(x*(y^3)));
+4;
+
+/* ex ok Coefficient */
+Coefficient(((a*x)+(b*y)+c),x);
+a;
+
+/* ex ok Coefficient */
+Coefficient(((a*(x^3))+(b*(x^2))+(c*x)+d),x,2);
+b;
+
+/* ex ok Coefficient */
+Coefficient((((x+2)^2)+((x+3)^3)),x,0);
+31;
+
+/* ex ok Coefficient */
+Coefficient(((x+y)*(x+(2*y))*((3*x)+(4*y)+5)),(x*(y^2)));
+18;
+
+/* ex ni Coefficient */
+/*
+Coefficient(((x+1)^3),x,2,Rule(Modulus,2));
+1;
+*/
+
+/* endex */
+/*************************************
+ * end Coefficient
+ ********************************/
+
+
+/*************************************
+ * Characters
+ ********************************/
+
+/* ex ok Characters */
+Characters("A string.");
+["A"," ","s","t","r","i","n","g","."];
+
+/* ex ok Characters */
+StringJoin(Characters("A string."));
+"A string.";
+
+/* ex ni Characters */
+/*
+Characters(["ABC", "DEF", "XYZ"]);
+*/
+
+/* ex ok Characters */
+Partition(Characters("this is a string"), 3, 1);
+[["t","h","i"],["h","i","s"],["i","s"," "],["s"," ","i"],
+         [" ","i","s"],["i","s"," "],["s"," ","a"],[" ","a"," "],
+         ["a"," ","s"],[" ","s","t"],["s","t","r"],["t","r","i"],
+         ["r","i","n"],["i","n","g"]];
+
+
+/* ex ok Characters */
+StringJoin(Partition(Characters("this is a string"), 3, 1));
+"thihisis s i isis s a a a s ststrtririning";
+
+/* ex ok Characters */
+Sort(Characters("this is a string"));
+[" "," "," ","a","g","h","i","i","i","n","r","s","s","s","t","t"];
+
+
+/* ex br Characters */
+/* cm Mma returns this unevaluated. This implementation returns errors */
+/*
+Characters(x + y);
+*/
+
+/* ex br Characters */
+/* cm Mma has spaces around the +; this works but with no spaces. */
+/*
+Characters(ToString(x + y));
+["y","+","x"];
+*/
+
+/* endex */
+/*************************************
+ * end Characters
+ ********************************/
+
+/****************************
+ * Chop
+ **************************/
+
+/* The following works. the intermediate result is ok too */
+
+/* ex ok Chop */
+Chop(exp(N(Range(4)* %pi  * %i)));
+[-1.0,1.0,-1.0,1.0];
+
+/* ex ok Chop */
+/* cm numbers that are not close to zero fall through. */
+Chop(1);
+1;
+
+/* endex */
+/* watch out. when the implementation was 
+  Chop(a) --> Chop(a), then
+  Chop(a);
+  Chop(a);
+  was appropriate. But when the impl. is Chop(a) --> a
+  then it still reports success
+  reported success because *both* simplified to 'a'
+*/
+/* ex ok Chop */
+/* cm symbol remains unsimplified */
+Chop(a);
+a;
+
+/* ex ok Chop */
+Chop( 1 + 1e-20* %i - 7*(a + 1e-30* b)*%i);
+1-7*%i*a;
+
+/* ex ok Chop */
+/* cm number smaller than chopEpsilon : 1e-10 in abs val  is set to zero */
+Chop(1e-17);
+0;
+
+/* ex ok Chop */
+Chop(-1);
+-1;
+
+/* ex ok Chop */
+Chop(-1e-17);
+0;
+
+/* ex ok Chop */
+/* cm maps over a list */
+Chop([1,1e-20]);
+[1,0];
+
+/* ex ok Chop */
+/* cm at mulitple levels */
+Chop([1,1e-20, [1.4, 1e-19] ]);
+[1,0,[1.4,0]];
+
+/* ex ok Chop */
+Chop([1e-6,1e-17,1e-8]);
+[9.9999999999999995E-7,0,1.0E-8];
+
+/* ex ok Chop */
+Chop([1e-6,1e-17,1e-8],1e-3);
+[0,0,0];
+
+/* ex ok Chop */
+Chop(1+%i);
+%i+1;
+
+/* ex ok Chop */
+Chop(1+ 1e-20 * %i);
+1;
+
+/* ex ok Chop */
+Chop(1e-20 + 3 * %i);
+3*%i;
+
+/* ex ok Chop */
+Chop(Chop(1e-6 + 3 * %i) - (3*%i + 1e-6));
+0;
+
+/* ex ok Chop */
+Chop(1e-6 + 3 * %i, 1e-5);
+3*%i;
+
+/* endex */
+
+/****************************
+ * end Chop
+ **************************/
+
+/****************************
+ * Clear
+ **************************/
+
+/* not really a test, but i dont know how else to do it */
+f(x) := x^2;
+f(x):= x^2;
+
+Clear(f);
+done;
+
+f(2);
+f(2);
+
+kill(f);
+done$
+
+/* fails
+  x : 2;
+  Clear(x);
+*/
+
+/****************************
+ * end Clear
+ **************************/
+
+/****************************
+ * Complement
+ **************************/
+
+/* ex ok Complement */
+Complement([a,b,c,d,e],[a,c],[d]);
+[b,e];
+
+/* ex ok  Complement  */
+/* mma  Complement[{0,0,6}] */
+Complement([0,0,6]);
+[0, 6] ; 
+/* endex */
+
+/* ex br Complement */
+/* cm returns [d]; expected f[d]; */
+/*
+Complement(f(a,b,c,d),f(c,a),f(b,b,a));
+*/
+
+/* endex */
+
+/****************************
+ * end Complement
+ **************************/
+
+
+/****************************
+ * Conjugate
+ **************************/
+
+/* ex ok Conjugate */
+Conjugate((1+%i));
+1-%i;
+
+/* ex ok Conjugate */
+Conjugate(Exp((%i*%pi*1/4)));
+1/sqrt(2)-%i/sqrt(2);
+
+
+/* ex ni Conjugate */
+/*
+Root(lambda( [arg1], (5+(3*(arg1^2))+(5*(arg1^6))) ),4);
+*/
+
+/* ex ok Conjugate */
+Conjugate((2-(1.6*%i)));
+1.6*%i+2;
+
+/* ex ok Conjugate */
+Conjugate([(-1-%i),0,(1+%i)]);
+[%i-1,0,1-%i];
+
+/* ex br Conjugate */
+/* cm This gives the right answer, but asks if 1 is 0. */
+/*
+Conjugate((%i*inf));
+*/
+
+
+
+/* ex br Conjugate */
+/*
+Conjugate(infinity);
+*/
+/* cm expected: infinity*/
+/* cm returns: conjugate(infinity).*/
+
+/* endex */
+
+/****************************
+ * ConjugateTranspose
+ **************************/
+
+/* ex ok ConjugateTranspose */
+ConjugateTranspose([[1,(2*%i),3],[(3+(4*%i)),5,%i]]);
+[[1,3-4*%i],[-2*%i,5],[3,-%i]];
+
+/* endex */
+/* not implmented.
+block([(j:0)],(t:Table((((j):(j)+1)+(%i*((j):(j)+1))),[2],[3],[4])));
+ConjugateTranspose(t);
+ConjugateTranspose(t,[3,2,1]);
+*/
+
+/****************************
+ * end ConjugateTranspose
+ **************************/
+
+
+/* ex ok  Count  */
+/* mma  Count[{a,a,a,b,b},a] */
+Count([a,a,a,b,b],a);
+3 ; 
+/* endex */
+
+/* ex ok  Count  */
+/* mma  Count[{a,a,a,b,b},b] */
+Count([a,a,a,b,b],b);
+2 ; 
+/* endex */
+
+/* ex ok  Count  */
+/* mma  Count[{a,a,a,b,b},c] */
+Count([a,a,a,b,b],c);
+0 ; 
+/* endex */
+
+
+/****************************
+ * D
+ **************************/
+
+/* ex ok D */
+D((x^n),x);
+n*x^(n-1);
+
+/* ex ok D */
+D((Sin(x)^10),[x,4]);
+280*sin(x)^10-4680*cos(x)^2*sin(x)^8+5040*cos(x)^4*sin(x)^6;
+
+/* ex ok D */
+D((Sin((x*y))*(((x^2)+(y^2))^-1)),x,y);
+-x*y*sin(x*y)/(y^2+x^2)+8*x*y*sin(x*y)/(y^2+x^2)^3+cos(x*y)/(y^2+x^2)
+                              -2*y^2*cos(x*y)/(y^2+x^2)^2
+                              -2*x^2*cos(x*y)/(y^2+x^2)^2;
+
+
+/* ex br D */
+/*
+D((x*f(x)*Derivative(1) f x),x);
+Incorrect syntax: F is not an infix operator;
+*/
+/* cm using primes does not translate correctly */
+
+
+/* ex ok D */
+D(x*f(x)*'diff(f(x),x),x);
+x*f(x)*'diff(f(x),x,2)+x*('diff(f(x),x,1))^2+f(x)*'diff(f(x),x,1);
+/* cm  but this does work... */
+
+/* ex ok D */
+D(((x^2)*Sin(y)),[[x,y]]);
+[2*x*sin(y),x^2*cos(y)];
+/* cm gradient works */
+
+/* ex br D */
+/*
+D([Sin(y),(Sin(x)+Cos(y))],[[x,y],2]);
+*/
+/* cm derivative tensors do not work */
+
+/* ex ok D */
+D(f(x,y),x,y);
+'diff(f(x,y),x,1,y,1);
+/* cm These work insofar as they return a correct Maxima expression */
+
+/* ex ok D */
+D(f(x,y),y,x);
+'diff(f(x,y),x,1,y,1);
+
+/* ex br D */
+/*
+D(f(x), f(x));
+*/
+/* cm formal variables does not work */
+/* endex */
+
+/****************************
+ * end D
+ **************************/
+
+/****************************
+ * Det
+ **************************/
+
+/* ex ok Det */
+Det([[1,2,3],[4,5,6],[7,8,9]]);
+0;
+
+/* ex ok Det */
+Det(matrix([1,2,3],[4,5,6],[7,8,9]));
+0;
+
+/* ex ok Det */
+Det(Array(a,[2,2]));
+a(1,1)*a(2,2)-a(1,2)*a(2,1);
+
+/* ex ok Det */
+Det(Array(a,[3,3]));
+a(1,1)*(a(2,2)*a(3,3)-a(2,3)*a(3,2))
+        -a(1,2)*(a(2,1)*a(3,3)-a(2,3)*a(3,1))
+        +a(1,3)*(a(2,1)*a(3,2)-a(2,2)*a(3,1));
+
+/* endex */
+
+/* many other fancy examples that cannot be tried */
+
+/****************************
+ * end Det
+ **************************/
+
+/****************************
+ * Dimensions
+ **************************/
+
+/* ex ok Dimensions */
+Dimensions([[a,b,c],[d,e,f]]);
+[2, 3];
+
+/* ex ok Dimensions */
+Dimensions([[a,b,c],[d,e],[f]]);
+[3];
+
+/* ex ok Dimensions */
+Dimensions([[[[a,b]]]]);
+[1, 1, 1, 2];
+
+/* ex ok Dimensions */
+Dimensions([[[[a,b]]]],2);
+[1, 1];
+
+/* ex ok Dimensions */
+Dimensions(f(f(x,y),f(a,b),f(s,t)));
+[3, 2];
+
+/* ex ok Dimensions */
+Dimensions(f(g(x,y),g(a,b),g(s,t)));
+[3];
+
+/* ex ok Dimensions */
+Dimensions(Array(a,[2,1,4,3]));
+[2, 1, 4, 3];
+
+/* ex ok Dimensions */
+Dimensions(a);
+[];
+/* cm Following are not Mma examples. */
+
+/* ex ok Dimensions */
+Dimensions([[],[]]);
+[2, 0];
+
+/* ex ok Dimensions */
+Dimensions([[],[a+b]]);
+[2];
+
+/* ex ok Dimensions */
+Dimensions([[0,1],1]);
+[2];
+
+/* endex */
+/****************************
+ * end Dimensions
+ **************************/
+
+/****************************
+ * Dot
+ **************************/
+
+/* ex ok Dot */
+Dot([a,b,c],[x,y,z]);
+c*z+b*y+a*x;
+
+/* ex ok Dot */
+Dot([[a,b],[c,d]],[x,y]);
+[b*y+a*x,d*y+c*x];
+
+/* ex ok Dot */
+Dot([x,y],[[a,b],[c,d]]);
+[c*y+a*x,d*y+b*x];
+
+/* ex ok Dot */
+Dot([x,y],[[a,b],[c,d]],[r,s]);
+s*(d*y+b*x)+r*(c*y+a*x);
+
+/* ex ok Dot */
+Dot([[a,b],[c,d]],[[r,s],[t,u]]);
+[[b*t+a*r,b*u+a*s],[d*t+c*r,d*u+c*s]];
+
+/* ex ok Dot */
+Dot(IdentityMatrix(3),IdentityMatrix(3),IdentityMatrix(3),IdentityMatrix(3));
+[[1,0,0],[0,1,0],[0,0,1]];
+/* cm Following are not mma examples */
+
+/* ex ok Dot */
+Dimensions(Dot(Array(a,[2,3,4]),Array(b,[4,2,2]),Array(c,[2,1])));
+[2,3,2,1];
+/* cm Tensors are implemented */
+
+/* endex */
+/****************************
+ * end Dot
+ **************************/
+
+/****************************
+ * Drop
+ **************************/
+
+/* ex ok Drop */
+Drop([a, b, c, d, e, f], 2);
+[c,d,e,f];
+
+/* ex ok Drop */
+Drop([a, b, c, d, e, f], -3);
+[a,b,c];
+
+/* ex ok Drop */
+Drop(a + b + c + d + e + f, 3);
+c+b+a;
+/* cm kind of works. different from Mma because of different default ordering. */
+/* cm many other features of Drop, eg with levels are not implemented. */
+
+/* endex */
+/****************************
+ * end Drop
+ **************************/
+
+/****************************
+ * Dt
+ **************************/
+
+/****************************
+ * end Dt
+ **************************/
+
+/****************************
+ * Fold
+ **************************/
+
+
+/* ex ok Fold */
+Fold(f,x,[a,b,c,d]);
+f(f(f(f(x,a),b),c),d);
+/* cm This is what Fold does generically */
+
+
+/* ex ok Fold */
+Fold( "[" ,x,[a,b,c,d]);
+[[[[x,a],b],c],d];
+/* cm apply the list operator to create binary tree*/
+
+/* ex ok Fold */
+Fold("*",1,[a,b,c,d]);
+a*b*c*d;
+
+/* ex ok Fold */
+Fold(lambda([x,y], x^y),x,[a,b,c,d]);
+(((x^a)^b)^c)^d;
+
+/* ex ok Fold */
+catch(Fold(lambda([x,y], if x > 1e6 then throw(x) else x^y),2, Range(6)));
+16777216;
+
+/* ex ok Fold */
+Fold(lambda([x,y], g(y,x)), x, [a,b,c,d]);
+g(d,g(c,g(b,g(a,x))));
+/* cm Fold to the right */
+
+
+/* ex ok Fold */
+Fold(f,x, p[a,b,c,d]);
+f(f(f(f(x,a),b),c),d);
+/* cm Head of last argument need not be a list. */
+
+/* ex ok Fold */
+Fold(lambda( [i,j] , x * i + j ), 0, [a, b, c, d, e]);
+x*(x*(x*(a*x+b)+c)+d)+e;
+
+/* ex ok Fold */
+Fold(lambda([x,y], 1/(y + x)), x, reverse([a, b, c, d]));
+1/(1/(1/(1/(x+d)+c)+b)+a);
+
+/* ex ok Fold */
+Fold(lambda([x,y], 10*x + y), 0, [4, 5, 1, 6, 7, 8]);
+451678;
+
+
+/* ex ok Fold */
+Fold(lambda([x,y],y - x), 0, reverse([a, b, c, d, e]));
+e-d+c-b+a;
+/* cm alternating sum. Maxima reorders terms.*/
+
+
+/* ex ok Fold */
+Fold( lambda([x,y], [y,x]), x, [a, b, c, d]);
+[d,[c,[b,[a,x]]]];
+/* cm left branching binary tree.*/
+
+/* ex ok Fold */
+Fold(lambda([x,y],apply(y,[x])), x, [a,b,c,d]);
+d(c(b(a(x))));
+/* cm function composition */
+
+
+/* ex ok Fold */
+Fold( lambda([x,y], part([f(x,x),g(x)],y)),e,[1,1,2,1,2]);
+g(f(g(f(f(e,e),f(e,e))),g(f(f(e,e),f(e,e)))));
+/* cm apply an indexed sequence of functions.*/
+
+/* ex ok Fold */
+Fold(lambda([x,y],f(x)) , x, Range(5));
+f(f(f(f(f(x)))));
+/* cm functions that ignore second argument give same result as Nest */
+
+
+/* ex ok Fold */
+Fold(lambda([x,y], Union(x, x + y)), [0], [1, 2, 2, 8]);
+[0,1,2,3,4,5,8,9,10,11,12,13];
+/* cm All possible sums formed from a list of numbers.*/
+
+
+/* ex br Fold */
+/* mma Fold[Function[{s, e}, Join[s, Append[#, e] & /@ s]], {{}}, {a, b, c}] */
+/* cm Find  all possible subsets of a list (ie find the power set). */
+/* cm  this only works on a list of   unique elements as written. */
+
+/* endex */
+/* join--Riffle reproduces the same result as the Mma doc
+  Join example. But append-Join puts the lists in a different
+  order due to Maxima reordering things more often
+ */
+
+/* ex ok Fold */
+Fold(lambda([s, e], join(s, map(lambda([x],Append(x,e)),s))), [[]], [a, b, c]);
+[[],[c],[b],[b,c],[a],[a,c],[a,b],[a,b,c]];
+
+/* ex ok Fold */
+Fold(lambda([s, e], Riffle(s, map(lambda([x],Append(x,e)),s))), [[]], [a, b, c]);
+[[],[c],[b],[b,c],[a],[a,c],[a,b],[a,b,c]];
+
+/* ex ok Fold */
+Fold(lambda([s, e], Join(s, map(lambda([x],Append(x,e)),s))), [[]], [a, b, c]);
+[[],[a],[b],[a,b],[c],[a,c],[b,c],[a,b,c]];
+
+/* ex ok Fold */
+Fold(f,x,[]);
+x;
+/* cm fold with empty list */
+
+
+/* endex */
+/****************************
+ * end Fold
+ **************************/
+
+/****************************
+ * FoldList
+ **************************/
+
+/* ex ok FoldList */
+FoldList(f,x,[a,b,c,d]);
+[x,f(x,a),f(f(x,a),b),f(f(f(x,a),b),c),f(f(f(f(x,a),b),c),d)];
+
+/* ex ok FoldList */
+FoldList("+",0,[a,b,c,d]);
+[0,a,b+a,c+b+a,d+c+b+a];
+
+/* ex ok FoldList */
+FoldList(lambda([x,y], x^y),x,[a,b,c,d]);
+[x,x^a,(x^a)^b,((x^a)^b)^c,(((x^a)^b)^c)^d];
+
+/* ex ok FoldList */
+FoldList(lambda([x,y], g(y,x)), x, [a,b,c,d]);
+[x,g(a,x),g(b,g(a,x)),g(c,g(b,g(a,x))),g(d,g(c,g(b,g(a,x))))];
+
+
+/* ex ok FoldList */
+FoldList("*",1,Range(10));
+[1,1,2,6,24,120,720,5040,40320,362880,3628800];
+/* cm successive factorials */
+
+/* ex ok FoldList */
+FoldList(lambda([x,y], 1/(y + x)), x, Reverse([a, b, c]));
+[x,1/(x+c),1/(1/(x+c)+b),1/(1/(1/(x+c)+b)+a)];
+/* cm continued fraction */
+
+/* endex */
+/****************************
+ * end FoldList
+ **************************/
+
+
+/****************************
+ * Head
+ **************************/
+
+/* Cannot find an exhaustive list of how Mma handles these.
+  So, add them as we find them */
+
+/* ex ok Head */
+Head(f(a,b));                                            
+f;
+
+/* ex ok Head */
+Head(a+b+c);
+"+";
+
+/* ex ok Head */
+Head([a,b,c]);
+"[";
+
+/* ex ok Head */
+Head(45);
+Integer;
+
+/* ex ok Head */
+Head(x);
+Symbol;
+
+/* ex ok Head */
+Head(f[x][y][z]);
+f[x][y];
+
+/* ex ok Head */
+Head(a/b);
+"/";
+/* cm Mma gives Times here */
+
+/* ex ok Head */
+Head(3/4);
+Rational;
+
+/* ex ok Head */
+Head(3.0);
+Real;
+
+/* ex ok Head */
+Head(N(%pi,100));
+Real;
+/* cm Mma does not appear to distinguish bigfloats in this way */
+
+/* ex ok Head */
+Head(%i);
+Complex;
+
+/* ex ok Head */
+Head(3+4*%i);
+Complex;
+
+/* ex ok Head */
+Head(3.0+4.1*%i);
+Complex;
+
+/* ex ok Head */
+Head("hi");
+String;
+
+/* endex */
+/****************************
+ * end Head
+ **************************/
+
+/****************************
+ * Integrate
+ **************************/
+
+/* ex ok Integrate */
+Integrate((((x^2)+4)^-1),x,x);
+(x*atan(x/2)-log(x^2/4+1))/2;
+/* cm note Multiple integrals */
+
+
+/* ex br Integrate */
+/*
+Integrate(Sin(x*y),x, y);
+(gamma_incomplete(0,%i*x*y)+gamma_incomplete(0,-%i*x*y))/2;
+*/
+/* cm fix this. needs assume x>0 */
+
+/* ex ok Integrate */
+Integrate((((x^3)+1)^-1),x);
+-log(x^2-x+1)/6+atan((2*x-1)/sqrt(3))/sqrt(3)+log(x+1)/3;
+
+/* ex ok Integrate */
+Integrate((((x^3)+1)^-1),[x,0,1]);
+(6*log(2)+sqrt(3)*%pi)/18+%pi/(2*3^(3/2));
+
+
+/* ex br Integrate */
+/*
+Integrate(Sin(x* y), [x, 0, 1], [y, 0, x]);
+-'limit(log(y)+gamma_incomplete(0,%i*y)/2+gamma_incomplete(0,-%i*y)/2,
+                y,0,plus)
+   +log(x)+gamma_incomplete(0,%i*x)/2+gamma_incomplete(0,-%i*x)/2;
+*/
+/* cm partial success. need assumption on x */
+
+/* ex ok Integrate */
+Integrate((((x^4)-1)^-1),x);
+-log(x+1)/4-atan(x)/2+log(x-1)/4;
+/* cm note Integrand is rational function */
+
+/* ex ok Integrate */
+Integrate((Sqrt(x)*Sqrt((1+x))),x);
+-log(sqrt(x+1)/sqrt(x)+1)/8+log(sqrt(x+1)/sqrt(x)-1)/8
+                           +((x+1)^(3/2)/x^(3/2)+sqrt(x+1)/sqrt(x))
+                            /(4*(x+1)^2/x^2-8*(x+1)/x+4);
+
+/* ex ok Integrate */
+Integrate(Exp((-1*(x^2))),x);
+sqrt(%pi)*erf(x)/2;
+
+/* ex ok Integrate */
+Integrate(((Log((1+x))^2)*(x^-1)),x);
+-2*(-log(-x)*log(x+1)^2/2-li[2](x+1)*log(x+1)+li[3](x+1));
+
+/* ex ok Integrate */
+Integrate(BesselJ(0,x),x);
+(bessel_j(0,x)*(2-%pi*struve_h(1,x))+%pi*struve_h(0,x)*bessel_j(1,x))*x/2;
+
+/* ex ok Integrate */
+Integrate(AiryAi(x),x);
+hypergeometric([1/3],[2/3,4/3],x^3/9)*x/(3^(2/3)*gamma(2/3))
+ -3^(1/6)*gamma(2/3)*hypergeometric([2/3],[4/3,5/3],x^3/9)*x^2/(4*%pi);
+
+
+/* ex ok Integrate */
+Simplify(D(Integrate((((x^2)+4)^-1),x,x),x,x));
+1/(x^2+4);
+/* cm note Mma has FullSimplify here */
+
+
+/* ex ok Integrate */
+Integrate(Log(Log(x)),x);
+x*log(log(x))+gamma_incomplete(0,-log(x));
+/* cm partial sucess */
+
+
+
+/* ex br Integrate */
+/*
+Integrate(Sqrt((x+Sqrt(x))),x);
+*/
+/* ex br Integrate */
+/*
+Integrate((Log(x)*Exp((-1*(x^2)))),x);
+*/
+/* ex br Integrate */
+/*
+Integrate((Log(x)*Exp((-1*(x^2)))),x);
+*/
+/* ex br Integrate */
+/*
+Integrate((Tan(x)^n),x);
+*/
+/* ex br Integrate */
+/*
+Integrate(SinhIntegral((2*((x+1)^-1))),x);
+*/
+/* ex br Integrate */
+/*
+Integrate(Erf(x),x);
+*/
+
+/* ex br Integrate */
+/*
+Integrate(Sin(Tan(x)),x);
+*/
+/* cm  error */
+
+/* endex */
+/****************************
+ * end Integrate
+ **************************/
+
+/****************************
+ * Limit
+ **************************/
+
+/* ex ok Limit */
+Limit((Sin(x)*(x^-1)),Rule(x,0));
+1;
+
+/* ex ok Limit */
+Limit(((1+(x*(n^-1)))^n),Rule(n,Infinity));
+%e^x;
+
+/* ex ok Limit */
+Limit((((x^2)-(2*x)-8)*((x-4)^-1)),Rule(x,4));
+6;
+
+/* ex ok Limit */
+Limit(((x-4)^-1),Rule(x,4));
+infinity;
+
+/* ex ok Limit */
+Limit((Sqrt((y-x))*(Sqrt((1+x))^-1)),Rule(x,Infinity));
+%i;
+
+/* ex ok Limit */
+Limit(((x-3)*((Sqrt(x)-3)^-1)),Rule(x,9));
+infinity;
+
+/* ex ok Limit */
+Limit((Sqrt((x-1))*(x^-1)),Rule(x,1));
+0;
+
+/* endex */
+/* not implemented
+Limit(Piecewise([[45,(x=2)]],((3*x)-1)),Rule(x,2))
+Limit((Floor((x^2))*x),Rule(x,4))
+*/
+
+/* ex ok Limit */
+Limit((Sin((2*x))*(Sin(x)^-1)),Rule(x,0));
+2;
+
+/* ex ok Limit */
+Limit((x*Log((x^2))),Rule(x,0));
+0;
+
+/* ex ok Limit */
+Limit((Exp(x)*(Exp(((x^-1)-Exp((-1*x))))-Exp((x^-1)))),Rule(x,Infinity));
+-1;
+
+/* ex ok Limit */
+Limit(((factorial(n)^(n^-1))*(n^-1)),Rule(n,Infinity));
+%e^(-1);
+
+
+/* ex br Limit */
+/*
+Limit((Gamma((x+1/2))*(Gamma(x)^-1)*(Sqrt(x)^-1)),Rule(x,Infinity));
+inf;
+*/
+/* cm Wrong! */
+/* ex br Limit */
+/*
+Limit((BesselI(1,(3*x))*((x*(BesselI(1,x)^3))^-1)),Rule(x,Infinity));
+*/
+
+/* ex ok Limit */
+Limit((x^-1),Rule(x,0),Rule(Direction,1));
+minf;
+
+/* ex ok Limit */
+Limit((x^-1),Rule(x,0),Rule(Direction,-1));
+inf;
+
+/* ex ok Limit */
+Limit(Tan(x),Rule(x,(Pi*1/2)),Rule(Direction,1));
+inf;
+
+/* ex ok Limit */
+Limit(Tan(x),Rule(x,(Pi*1/2)),Rule(Direction,-1));
+minf;
+
+/* endex */
+/* Need to protect this, put it in a block or something */
+/*
+limitf(x):=(((x^2)+3)*(((2*x)+1)^-1));
+Limit((limitf(x)*(x^-1)),Rule(x,Infinity));
+1/2;
+*/
+
+/* ex ok Limit */
+Limit((x*Sin((x^-1))),Rule(x,0));
+0;
+
+/* ex ok Limit */
+Limit(((x*y)*(((x^2)+(y^2))^-1)),Rule(x,0));
+0;
+
+/* ex ok Limit */
+Limit(((x*y)*(((x^2)+(y^2))^-1)),Rule(y,0));
+0;
+
+/* endex */
+/* not implemented
+Limit(REPLACEALL(((x*y)*(((x^2)+(y^2))^-1)),Rule(x,y)),Rule(y,0))
+*/
+
+/* ex ok Limit */
+Limit((1 + x/n)^n, Rule(n,Infinity));
+%e^x;
+
+/* endex */
+/****************************
+ * end Limit
+ **************************/
+
+/****************************
+ * Log
+ **************************/
+
+/****************************
+ * end Log
+ **************************/
+
+/*************************************
+ * N
+ ************************************/
+
+/* We must include more digits here than are actually printed
+   when typing N(1/7) at the command line. All the precision in
+   an ordinary float must be included int the comparison.
+ */
+
+/* ex ok N */
+N(1/7);
+0.14285714285714285714;
+/* cm We must include more digits here than are actually printed */
+/* cm  when typing N(1/7) at the command line. All the precision in */
+/* cm  an ordinary float must be included int the comparison. */
+
+/* ex ok N */
+floatnump(N(1/7));
+true;
+
+/* ex ok N */
+N(1/7,50);
+1.4285714285714285714285714285714285714285714285714b-1;
+
+/* ex ok N */
+bfloatp(N(1/7,50));
+true;
+
+/* ex ok N */
+N(gamma(3.3), 50);
+2.683437381955768;
+
+/* ex ok N */
+N(gamma(33/100), 50);
+2.7072062226151910490205221324559359517758917633167b0;
+
+/* ex ok N */
+N(170!);
+7.257415615307999E+306;
+
+/* ex ok N */
+N(171!);
+1.241018070217668b309;
+
+/* ex ok N */
+N(171!,10);
+1.241018070217668b309;
+
+/* ex ok N */
+N(170!,10);
+7.257415615307999E+306;
+
+/* ex ok N */
+N(170!,20);
+7.2574156153079989674b306;
+
+/* ex ok N */
+N(171!,10);
+1.241018070217668b309;
+
+/* endex */
+
+/*************************************
+ * end N
+ *************************************/
+
+/* ex ok PolynomialReduce */
+/* mma  PolynomialReduce[x^3 +y^3,{x^2 -y^2 -1,x+2 y-7},{x,y}] */
+PolynomialReduce(((x^3)+(y^3)),[((x^2)-(y^2)-1),(x+(Times(2,y)-7))],[x,y]);
+[[x,y^2+1],-y^3+7*y^2-2*y+7] ;
+/* endex */
+
+/****************************
+ * Product
+ **************************/
+
+/* endex */
+( tmp_simpproduct : simpproduct, simpproduct : true );
+true$
+
+/* ex ok Product */
+Product((i^2),[i,1,6]);
+518400;
+
+/* ex ok Product */
+Product((i),[i,1,n]);
+n!;
+
+/* endex */
+/* fails to compute symbolic sums
+Product((i^2),[i,1,n]);
+Product((1-((i^4)^-1)),[i,2,inf]);
+Product((2^(j+i)),[i,1,p],[j,1,i]);
+*/
+
+/* ex ok Product */
+Product(f(i),[i,1,4]);
+f(1)*f(2)*f(3)*f(4);
+
+/* ex ok Product */
+Product(f(i),[i,1,4,2]);
+f(1)*f(3);
+
+/* ex ok Product */
+Product(f(i),[i,[a,b,c]]);
+f(a)*f(b)*f(c);
+
+/* ex ok Product */
+Product(f(i,j),[i,1,3],[j,1,3]);
+f(1,1)*f(1,2)*f(1,3)*f(2,1)*f(2,2)*f(2,3)*f(3,1)*f(3,2)*f(3,3);
+
+/* ex ok Product */
+Product(f(i,j),[i,1,3,2],[j,1,3,1/2]);
+f(1,1)*f(1,3/2)*f(1,2)*f(1,5/2)*f(1,3)*f(3,1)*f(3,3/2)*f(3,2)*f(3,5/2)
+             *f(3,3);
+/* endex */
+
+
+/* ex ok Product */
+Product(f(i,j),[i,1,3],[j,1,i]);
+f(1,1)*f(2,1)*f(2,2)*f(3,1)*f(3,2)*f(3,3)$
+
+
+/* ex ok Product */
+Product(f(i,j),[i,[a,b,c]],[j,1,3]);
+f(a,1)*f(a,2)*f(a,3)*f(b,1)*f(b,2)*f(b,3)*f(c,1)*f(c,2)*f(c,3);
+
+/* endex */
+(simpproduct : tmp_simpproduct, kill(tmp_simpproduct));
+done$
+
+
+/* ex br Product */
+/*
+Product((1+((i^2)^-1)),[i,inf]);
+*/
+/* cm fails to compute symbolic sums */
+
+/* ex br Product */
+/*
+Product((1+(((i^2)+1)^-1)),[i,(-1*inf),inf]);
+*/
+
+/* endex */
+
+/****************************
+ * end Product
+ **************************/
+
+/****************************
+ * Simplify
+ **************************/
+
+
+
+/* ex ok Simplify */
+Simplify(Cos(x)^2+Sin(x)^2);
+1;
+
+/* ex ok Simplify */
+Simplify(D(Integrate(1/(x^3 + 1), x), x));
+1/(x^3+1);
+
+/* ex ok Simplify */
+Simplify((x - 1)* (x + 1) *(x^2 + 1) + 1);
+x^4;
+
+/* ex ok Simplify */
+Simplify(2* Tan(x)/(1 + Tan(x)^2));
+sin(2*x);
+
+/* ex ok Simplify */
+Simplify((E^x - E^-x)/Sinh(x));
+2;
+
+/* ex br Simplify */
+/*
+Simplify(((4*(Sin(x)^2)*(Cos(x)^2))+(4*Sin(x)*Cos(x))+1));
+-(cos(4*x)-4*sin(2*x)-3)/2
+*/
+/* cm This is not the answer that Mma gives. */
+/* cm Simplifying with equations and with other options and assumptions is not implemented */
+
+/* endex */
+
+/****************************
+ * end Simplify
+ **************************/
+
+/****************************
+ * Sum
+ **************************/
+
+/* ex ok Sum */
+Sum((i^2),[i,10]);
+385;
+
+/* ex ok Sum */
+Sum((i^2),[i,1,n]);
+(2*n^3+3*n^2+n)/6;
+/* cm Mma factors the follwing by default */
+
+/* ex ok Sum */
+Sum(((i^6)^-1),[i,1,inf]);
+%pi^6/945;
+
+/* ex ok Sum */
+Sum(i,[i,[1,2,3,4]]);
+10;
+
+
+/* ex br Sum */
+/*
+Sum((i^3),i);
+*/
+/* cm Not implemented Indefinite sums. */
+/* cm This causes a lisp error. */
+
+
+/* ex br Sum */
+/*
+Sum((((j^2)*((i+1)^2))^-1),[i,1,inf],[j,1,i]);
+('sum(1/(i^2+2*i+1),i,1,inf))*'sum(1/j^2,j,1,i);
+*/
+/* cm expected pi^4/120 */
+
+/* ex ok Sum */
+Sum(f(i),[i,1,4]);
+f(4)+f(3)+f(2)+f(1);
+
+/* ex ok Sum */
+Sum(f(i),[i,1,4,2]);
+f(3)+f(1);
+
+/* ex ok Sum */
+Sum(f(i),[i,[a,b,c]]);
+f(c)+f(b)+f(a);
+
+/* ex ok Sum */
+Sum(f(i,j),[i,1,3],[j,1,3]);
+f(3,3)+f(3,2)+f(3,1)+f(2,3)+f(2,2)+f(2,1)+f(1,3)+f(1,2)+f(1,1);
+
+/* ex ok Sum */
+Sum(f(i,j),[i,1,3,2],[j,1,3,1/2]);
+f(3,3)+f(3,5/2)+f(3,2)+f(3,3/2)+f(3,1)+f(1,3)+f(1,5/2)+f(1,2)+f(1,3/2)
+             +f(1,1);
+
+/* ex ok Sum */
+Sum(f(i,j),[i,1,3],[j,1,i]);
+f(3,3)+f(3,2)+f(3,1)+f(2,2)+f(2,1)+f(1,1);
+
+/* ex ok Sum */
+Sum(f(i,j),[i,[a,b]],[j,1,2]);
+f(b,2)+f(b,1)+f(a,2)+f(a,1);
+
+/* endex */
+/* fails
+(list:Table(Graphics([c,Disk()],RULE(ImageSize,20)),[c,[Red,Green]]));
+Sum(f(i,j),[i,list],[j,1,2]);
+*/
+
+/* ex ok Sum */
+Sum((a*(r^i)),[i,0,n]);
+a*(r^(n+1)-1)/(r-1);
+
+/* ex ok Sum */
+Sum(((x^i)*(factorial(i)^-1)),[i,0,Infinity]);
+%e^x;
+
+/* endex */
+/* This is broken or something. I don't understand
+Sum((((j^2)*((i+1)^2))^-1),[j,1,i], [i,1,Infinity]);
+(%pi^2/6-1)*gen_harmonic_number(2,i);
+*/
+
+/* ex ok Sum */
+Sum(((i^2)^-1),[i,inf]);
+%pi^2/6;
+
+/* ex ok Sum */
+Sum((((i^2)+1)^-1),[i,(-1*inf),inf]);
+-%i*(psi[0](%i+1)+%gamma)/2-%i*(psi[0](%i)+%gamma)/2
+                                   +%i*(psi[0](-%i)+%gamma)/2
+                                   +%i*(psi[0](1-%i)+%gamma)/2;
+/* cm different from Mma result. */
+
+/* ex ok Sum */
+Sum(1/(1 + i + j)^3, [i, Infinity], [j, Infinity]);
+'sum(zeta(3)-gen_harmonic_number(3,i+1),i,1,inf);
+/* cm possibly different from Mma result. */
+
+/* ex ok Sum */
+Sum(i,[i,n]);
+(n^2+n)/2;
+
+/* endex */
+/* This works, but the test routine says the output doe
+ not match the expected
+Sum(((1+i+j)^-1),[i,n],[j,m]);
+-(-m-2)*(harmonic_number(n+m+2)-harmonic_number(m+2))
++n*(harmonic_number(n+m)+1/(n+m+2)+1/(n+m+1))
+-2*(harmonic_number(n+2)-3/2)-n*(harmonic_number(n)+1/(n+2)+1/(n+1));
+*/
+
+/* ex br Sum */
+/*
+Sum((i*j),i,j);
+*/
+/* cm untrapped lisp error ! */
+
+/* ex br Sum */
+/*
+Sum((i*j),[i,0,n],i);
+*/
+/* cm untrapped lisp error ! */
+
+/* ex ok Sum */
+factor(Sum(((i^3)+((i+3)^5)),[i,1,n]));
+n*(n^5+21*n^4+184*n^3+843*n^2+2161*n+2940)/6;
+/* cm slightly different form than Mma */
+
+/* endex */
+/* fails. some of these may now be good 
+Sum(((i+j)*(3^(i-j))),[i,1,n],[j,1,m]);
+Sum(((i^2)*(a^i)),[i,inf]);
+Sum(((i^2)*Fibonacci(i)*((2^i)^-1)),[i,inf]);
+Sum(((i*(i+6))^-1),[i,n]);
+Sum((((i^2)+1)^-1),[i,inf]);
+Sum(((i*((2*i)+1))^-1),[i,inf]);
+Sum((((2^i)*(-1+i))*((i*(1+i))^-1)),[i,n]);
+Sum(((2^(-1*i))*((i*(i+1))^-1)),[i,inf]);
+Sum((Sin((i+b))*Cos(i)),[i,1,n]);
+Sum((i*Sin(i)),[i,n]);
+*/
+
+/* There are many more Sum features that are not implemented */
+
+/****************************
+ * end Sum
+ **************************/
+
+
+
+/****************************
+ * StringJoin
+ **************************/
+
+/* ex ok  StringJoin */
+StringJoin([["AB", "CD"], "XY"]);
+"ABCDXY";
+
+/* endex */
+/****************************
+ * end StringJoin
+ **************************/
+
+/****************************
+ * Take
+ **************************/
+
+/* ex ok Take */
+Take([a, b, c, d, e, f], 4);
+[a,b,c,d];
+/* cm Take first four elements */
+
+/* ex ok Take */
+Take([a, b, c, d, e, f], -3);
+[d,e,f];
+/* cm Take last three elements */
+
+/* ex ok Take */
+Take([a, b, c, d, e, f], [2, 4]);
+[b,c,d];
+/* cm Take second through fourth elements */
+
+/* ex ok Take */
+Take([a, b, c, d, e, f], [2, -2]);
+[b,c,d,e];
+/* cm Take second through second-to-last elements */
+
+/* ex ok Take */
+Take([[11, 12, 13], [21, 22, 23], [31, 32, 33]], 2);
+[[11,12,13],[21,22,23]];
+/* cm elements here are lists. Take is taking the first  two top-level lists. */
+
+/* endex */
+/* altered. the Mma example has All in place of 3
+   Might make sense to introduce allow a word like All.
+   This Takes the first three top level lists (ie all of
+   them. And Takes the first two elements of each of the
+   Taken top level lists
+*/
+/* ex ok Take */
+Take([[11, 12, 13], [21, 22, 23], [31, 32, 33]], 3, 2);
+[[11,12],[21,22],[31,32]];
+
+
+/* ex ok Take */
+Take([[11, 12, 13], [21, 22, 23], [31, 32, 33]], 2, -1);
+[[13],[23]];
+/* cm Take last element of the each of the first two lists. */
+
+/* endex */
+/* submatrix. here I generate the matrix that Mma ex
+  puts in by hand . also the matrix here is trivially different than the
+  original example
+
+ (%i5) Partition(Range(11,55),5);
+
+ (%o5) [[11,12,13,14,15],[16,17,18,19,20],[21,22,23,24,25],[26,27,28,29,30],
+       [31,32,33,34,35],[36,37,38,39,40],[41,42,43,44,45],[46,47,48,49,50],
+       [51,52,53,54,55]]
+
+ Takes second through fourth at the top level and third through fifth at
+ the next level.
+*/
+
+/* ex ok Take */
+Take(Partition(Range(11,55),5), [2,4], [3,5]);
+[[18,19,20],[23,24,25],[28,29,30]];
+/* cm  Takes second through fourth at the top level and third through fifth at  the next level. */
+
+/* ex ok Take */
+Take(Partition(Range(11,55),5), [1,-1,2], [1,-1,2]);
+[[11,13,15],[21,23,25],[31,33,35],[41,43,45],[51,53,55]];
+/* cm Take every other row and every other column.  */
+
+
+/* ex ok Take */  
+Take(a + b + c + d + e + f, 3);
+f+e+d;
+/* cm Mma does not reorder the list */
+
+
+/* ex ok Take */  
+Take( [a+b+c, t+u+v , x+y+z],2,2);
+[c+b,v+u];
+
+/* ex ok Take */  
+Take((a + b + c) * (t + u + v) * (x + y + z), 2, 2);
+(c+b)*(v+u);
+
+/* endex */
+/* reverse a list. but this is extremely inefficient 
+  at least for large arrays in the current implementation.
+  Orders of magnitude slower than reverse. One quick fix
+  would be to detect this and call reverse. Of course,
+  it is probably only a curiosity
+ */
+
+/* ex ok Take */  
+Take(Range(10),[-1,1,-1]);
+[10,9,8,7,6,5,4,3,2,1];
+/* cm reverse a list. but this is extremely inefficient */
+/* cm at least for large arrays in the current implementation. */
+
+/* endex */
+/****************************
+ * end Take
+ **************************/
+
+/****************************
+ * Tuples
+ **************************/
+
+/* ex ok Tuples */  
+Tuples([0,1],2);
+[[0,0],[0,1],[1,0],[1,1]];
+
+/* ex ok Tuples */  
+Tuples([1,0],2);
+[[1,1],[1,0],[0,1],[0,0]];
+
+/* ex ok Tuples */  
+Tuples([a,a,b],2);
+[[a,a],[a,a],[a,b],[a,a],[a,a],[a,b],[b,a],[b,a],[b,b]];
+
+/* ex ok Tuples */  
+Tuples([[a, b], [1, 2, 3, 4], [x]]);
+[[a,1,x],[a,2,x],[a,3,x],[a,4,x],[b,1,x],[b,2,x],[b,3,x],[b,4,x]];
+
+/* ex ok Tuples */  
+Tuples(f[a,b,c],2);
+[f[a,a],f[a,b],f[a,c],f[b,a],f[b,b],f[b,c],f[c,a],f[c,b],f[c,c]];
+
+/* ex ok Tuples */  
+Tuples([f[a,b,c],f[0,1]]);
+[f[a,0],f[a,1],f[b,0],f[b,1],f[c,0],f[c,1]];
+
+/* ex ok Tuples */  
+Map(StringJoin,Tuples(["A","B"],3));
+["AAA","AAB","ABA","ABB","BAA","BAB","BBA","BBB"];
+
+/* ex ok Tuples */
+Map(lambda([x],FromDigits(x,2)),Tuples([0,1],4));
+[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+
+/* ex ni Tuples */
+/*
+Tuples(list,[n1,n2,..])
+*/
+
+/* endex */
+/****************************
+ * end Tuples
+ **************************/
+
+/****************************
+ * Partition
+ **************************/
+
+/* ex ok Partition */
+Partition([a, b, c, d, e, f], 2);
+[[a,b],[c,d],[e,f]];
+/* cm partition a list into groups of two .*/
+
+
+/* ex ok Partition */
+Partition([a, b, c, d, e, f], 3, 1);
+[[a,b,c],[b,c,d],[c,d,e],[d,e,f]];
+/* cm partition into groups of two with an offset of 1.   ie, last element of first returned list is the same */
+/* cm   as the first element of the next list. */
+
+/* ex ni Partition */
+/*
+Partition([[11, 12, 13], [21, 22, 23], [31, 32, 33]], [2, 2], 1);
+*/
+/* cm padding and cycling to the beginning and other things are not done. */
+
+/* endex */
+/****************************
+ * end Partition
+ **************************/
+
+/*************************************
+ * Nest 
+ ********************************/
+
+/* ex ok Nest */
+Nest(f,x,3);
+f(f(f(x)));
+
+/* ex ok Nest */
+Nest(lambda([x],(1 + x)^2) , 1, 3);
+676;
+
+/* ex ok Nest */
+Nest(lambda([x],(1 + x)^2) , x, 5);
+(((((x+1)^2+1)^2+1)^2+1)^2+1)^2;
+
+/* ex ok Nest */
+Nest(sqrt,100.0,4);
+1.333521432163324;
+
+/* ex ok NestList */
+NestList(next_prime,1,10);
+[2,3,5,7,11,13,17,19,23,29];
+/* cm  first 10 primes */
+
+/* ex ok Nest */
+Chop(Nest( lambda([x], [(x[1] + x[2])/2, sqrt(x[1]*x[2])]), [0.5, 1.0], 10)
+  - [0.72839551552345,0.72839551552345] , 1e-14);
+[0,0];
+/* cm wrap this in Chop to deal with floating point imprecision */
+
+/* endex */
+/*************************************
+ * end Nest 
+ ********************************/
+
+/*************************************
+ * Join Union Prepend Append Riffle
+ ********************************/
+
+/* ex ok Join */
+Join([a,b,c],[x,y],[u,v,w]);
+[a,b,c,x,y,u,v,w];
+
+/* ex ok Join */
+Join([[a, b], [c, d]], [[1, 2], [3, 4]]);
+[[a,b],[c,d],[1,2],[3,4]];
+
+/* endex */
+/* Not implemented
+  Join([[a, b], [c, d]], [[1, 2], [3, 4]], 2);
+  [[a,b,1,2], [c,d,3,4]];
+*/
+
+/* ex ok Union */
+Union([1, 2, 1, 3, 6, 2, 2]);
+[1,2,3,6];
+
+/* ex ok Union */
+Union([a, b, a, c], [d, a, e, b], [c, a]);
+[a,b,c,d,e];
+
+/* ex ok Prepend */
+Prepend([a, b, c, d], x);
+[x,a,b,c,d];
+
+/* ex ok Prepend */
+block( [ ls : [a, b, c, d] ],
+  PrependTo(ls, x),
+  ls);
+[x,a,b,c,d];
+
+/* ex ok Riffle */
+Riffle([a,b,c],[x,y,z]);
+[a,x,b,y,c,z];
+
+/* endex */
+/* not implemented
+Riffle([a,b,c],[x,y]);
+Riffle([a,b,c],x);
+*/
+
+
+/*************************************
+ * end Join Union Prepend Append Riffle
+ ********************************/
+
+
+/*************************************
+ * Length
+ ********************************/
+
+/* ex ok Length */
+Length([a,b,c,d]);
+4;
+/* cm Length is different than length in some cases */
+
+/* ex ok Length */
+Length(a+b+c+d);
+4;
+
+/* ex ok Length */
+Length(f[g[x,y],z]);
+2;
+
+/* ex ok Length */
+Length(f(g(x,y),z));
+2;
+
+/* ex ok Length */
+Length(x);
+0;
+/* cm differs from Maxima */
+
+/* ex ok Length */
+Length("string");
+0;
+
+/* ex ok Length */
+Length(123456);
+0;
+
+/* ex ok Length */
+Length(1/10);
+0;
+
+/* ex ok Length */
+Length(3+%i);
+0;
+
+/* ex ok Length */
+Length([ [a,b,c],[d,e,f]]);
+2;
+
+/* ex ok Length */
+Length(IntegerDigits(1000!));
+2568;
+
+/* ex ok Length */
+Length(sqrt(2));
+1;
+/* cm Test succeeds but fails to agree with Mma, which  gives 2. */
+
+
+/* ex ok Length */
+Length(h[a,b](x,y,z));
+3;
+
+/* endex */
+/*************************************
+ * end Length
+ ********************************/
+
+/*************************************
+ * TableForm
+ ************************************/
+
+/* This is what it looks like, but I cant get rtest to
+ do anything reasonable with it
+
+TableForm(Array(f,[10,5]));
+
+f(1,1)   f(1,2)   f(1,3)   f(1,4)   f(1,5)
+f(2,1)   f(2,2)   f(2,3)   f(2,4)   f(2,5)
+f(3,1)   f(3,2)   f(3,3)   f(3,4)   f(3,5)
+f(4,1)   f(4,2)   f(4,3)   f(4,4)   f(4,5)
+f(5,1)   f(5,2)   f(5,3)   f(5,4)   f(5,5)
+f(6,1)   f(6,2)   f(6,3)   f(6,4)   f(6,5)
+f(7,1)   f(7,2)   f(7,3)   f(7,4)   f(7,5)
+f(8,1)   f(8,2)   f(8,3)   f(8,4)   f(8,5)
+f(9,1)   f(9,2)   f(9,3)   f(9,4)   f(9,5)
+f(10,1)  f(10,2)  f(10,3)  f(10,4)  f(10,5);
+*/
+
+
+/*************************************
+ * end TableForm
+ ************************************/
+
+
+
+/*************************************
+ * Map	
+ *************************************/
+
+/* TODO */
+
+/*************************************
+ * end Map	
+ *************************************/
+
+
+/*************************************
+ * Flatten
+ *************************************/
+
+/* ex ok Flatten */
+Flatten([[a,b],[c,[d],e],[f,[g,h]]]);
+[a, b, c, d, e, f, g, h];
+
+/* ex ok Flatten */
+Flatten([[a,be],[c,[d],e],[f,[g,h]]],1);
+[a, be, c, [d], e, f, [g, h]];
+
+/* ex ok Flatten */
+Flatten([0,[1],[[2,-2]],[[[3],[-3]]],[[[[4]]]]],0);
+[0, [1], [[2, - 2]], [[[3], [- 3]]], [[[[4]]]]];
+
+/* ex ok Flatten */
+Flatten([0,[1],[[2,-2]],[[[3],[-3]]],[[[[4]]]]],1);
+[0, 1, [2, - 2], [[3], [- 3]], [[[4]]]];
+
+/* ex ok Flatten */
+Flatten([0,[1],[[2,-2]],[[[3],[-3]]],[[[[4]]]]],2);
+[0, 1, 2, - 2, [3], [- 3], [[4]]];
+
+/* ex ok Flatten */
+Flatten([0,[1],[[2,-2]],[[[3],[-3]]],[[[[4]]]]],3);
+[0, 1, 2, - 2, 3, - 3, [4]];
+
+/* ex ok Flatten */
+Flatten([0,[1],[[2,-2]],[[[3],[-3]]],[[[[4]]]]],4);
+[0, 1, 2, - 2, 3, - 3, 4];
+
+/* ex ok Flatten */
+Flatten([0,[1],[[2,-2]],[[[3],[-3]]],[[[[4]]]]],inf);
+[0, 1, 2, - 2, 3, - 3, 4];
+
+/* ex ok Flatten */
+Flatten([0,[1],[[2,-2]],[[[3],[-3]]],[[[[4]]]]]);
+[0, 1, 2, - 2, 3, - 3, 4];
+
+/* ex ok Flatten */
+Flatten(f(f(x,y),z));
+f(x, y, z);
+/* cm  Choosing heads with Flat is not supported. Also, I am not sure */
+/* cm  if mma Flatten continues to descend even after hitting a level with */
+/* cm  no lists to flatten. This maxima Flatten does not. */
+/* endex */
+
+/* These two print error messages. Don't know how to check for that here.*/
+Flatten(a,b,c);
+Flatten(a,b,c)$
+
+Flatten(a,b,c,d);
+Flatten(a,b,c,d)$
+
+
+
+
+/*************************************
+ * end Flatten	
+ *************************************/
+
+/* TODO */
+
+/* 
+  A few Functions that are defined, but tests missing...
+   ToString, Print, ToExpression, Floor,
+  Return, Dot, KroneckerProduct, Outer, Clear
+*/
+
+
+/*************************************
+ * Range
+ ********************************/
+
+/* ex ok Range */
+Range(4);
+[1,2,3,4];
+
+/* ex ok Range */
+Range(1.2,2.2,.15);
+[1.2,1.35,1.5,1.65,1.8,1.95,2.1];
+
+/* ex ok Range */
+Range(x,x+4);
+[x,x+1,x+2,x+3,x+4];
+
+/* ex ok Range */
+block( [a,b], assume(b>a), Range(a,b,(b-a)/4));
+[a,(b-a)/4+a,(b-a)/2+a,3*(b-a)/4+a,b];
+/* cm We need to put in asssume. but Mma ex. does not, and   gives the same answer. */
+/* endex */
+
+/* remove properties for a and b */
+(forget(b>a),kill(a,b));
+done$
+
+/*************************************
+ * end Range
+ ********************************/
+
+/*************************************
+ * ReplacePart
+ ********************************/
+
+/* ex ok ReplacePart */
+ReplacePart([1,2,3,4,5],z,[3]);
+[1,2,z,4,5];
+/* cm This seems to be an undocumented usage that comes from user code */
+
+/* endex */
+/*************************************
+ * end ReplacePart
+ ********************************/
+
+
+/****************************
+ * IntegerDigits and FromDigits
+ **************************/
+
+/* ex ok IntegerDigits */
+IntegerDigits(58127);
+[5,8,1,2,7];
+
+/* ex ok IntegerDigits */
+IntegerDigits(58127,2);
+[1,1,1,0,0,0,1,1,0,0,0,0,1,1,1,1];
+/* cm base 2 */
+
+/* ex ok IntegerDigits */
+IntegerDigits(58127,16);
+[14,3,0,15];
+/* cm  Mma uses decimal digits as here. not letters */
+
+/* ex ok IntegerDigits */
+IntegerDigits([6,7,2],2);
+[[1,1,0],[1,1,1],[1,0]];
+/* cm thread over integers */
+
+/* ex ok IntegerDigits */
+IntegerDigits(7,[2,3,4]);
+[[1,1,1],[2,1],[1,3]];
+/* cm thread over bases */
+
+/* ex ok IntegerDigits */
+IntegerDigits(Range(0,7),2);
+[[0],[1],[1,0],[1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]];
+
+
+/* ex ok IntegerDigits */
+IntegerDigits(Range(0,7),2,3);
+[[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]];
+/* cm with padding */
+
+/* ex br IntegerDigits */
+/*
+IntegerDigits(6345354, 10, 4);
+*/
+/* cm fails to truncate */
+
+/* ex ok IntegerExponent */
+IntegerExponent(2^8,2);
+8;
+
+/* ex ok FromDigits */
+FromDigits([5, 1, 2, 8]);
+5128;
+
+/* ex ok FromDigits */
+FromDigits([1, 0, 1, 1, 0, 1, 1], 2);
+91;
+
+
+
+/* ex ok FromDigits */
+FromDigits([a, b, c, d, e], x);
+a*x^4+b*x^3+c*x^2+d*x+e;
+/* cm Mma wrapped this with expand, which we don't need */
+
+/* ex ok FromDigits */
+FromDigits([7, 11, 0, 0, 0, 122]);
+810122;
+/* cm digits larger than base are carried */
+
+/* ex ok IntegerDigits */
+map(first,(Table(IntegerDigits(n!), [n, 50])));
+[1,2,6,2,1,7,5,4,3,3,3,4,6,8,1,2,3,6,1,2,5,1,2,6,1,4,1,3,8,2,8,2,8,2,1,
+    3,1,5,2,8,3,1,6,2,1,5,2,1,6,3];
+/* cm First digits of factorials.    Changed somewhat from Mma example: */
+/* cm Table(first(IntegerDigits(n!)), [n, 50]), which does not work here. */
+
+/* endex */
+/****************************
+ * end IntegerDigits and FromDigits
+ **************************/
+/*
+   we will Chop this
+(%i71) exp(float(Range(4) * %i*%pi));
+
+(%o71) [1.2246063538223773E-16*%i-1.0,1.0-2.4492127076447545E-16*%i,
+        3.6738190614671318E-16*%i-1.0,1.0-4.898425415289509E-16*%i]
+*/
+
+/* ex ok Chop */
+Chop(exp(float(Range(4) * %i*%pi)));
+[-1.0,1.0,-1.0,1.0];
+
+
+
+/* endex */
+/****************************
+ * miscellaneous
+ **************************/
+
+Most(Range(10));
+[1,2,3,4,5,6,7,8,9];
+
+/*****************
+ * Sinc
+ ****************/
+/*  disable for now
+Sinc(%pi/2);
+2/%pi;
+*/
+
+/****************************
+ * Matrices and Linear Algebra
+ **************************/
+
+/* These examples are given twice. Once with Maxima style and
+   once with Mma style matrices. As usual lots of additional
+   functionality is not implemented. Functions that take a matrix
+   for input and output remember whether the input was Maxima or
+   Mma type of matrix and use the same type on output.
+
+   Most floating point examples will fail.
+   
+*/
+
+
+/* ex ok Transpose */
+Transpose(matrix([1,2,3],[4,5,6],[7,8,9]));
+matrix([1,4,7],[2,5,8],[3,6,9]);
+/* cm returns type matrix */
+
+/* ex ok Transpose */
+Transpose([ [1,2,3],[4,5,6],[7,8,9] ]);
+[[1,4,7],[2,5,8],[3,6,9]];
+/* cm returns ordinary list. */
+
+/* endex */
+/* The following test the generalized transpose. In the examples, with
+  a[1,1,1], etc. There are four levels in the list, if we include the
+  array elements a[1,1,1] (which I believe Mmma does as well). But since
+  we are only aksing to permute 3 indices, only the top 3 levels are transposed.
+*/
+/* we need to make sure that m is evaluated, since Transpose is in lisp and
+  this problem cropped up */
+
+block( [ m : [[[a[1, 1, 1], a[1, 1, 2]], [a[1, 2, 1], a[1, 2, 2]],
+     [a[1, 3, 1], a[1, 3, 2]]],
+    [[a[2, 1, 1], a[2, 1, 2]], [a[2, 2, 1], a[2, 2, 2]],
+     [a[2, 3, 1], a[2, 3, 2]]]]],
+     Transpose(m,[3,2,1]));
+[[[a[1,1,1],a[2,1,1]],[a[1,2,1],a[2,2,1]],[a[1,3,1],a[2,3,1]]],
+         [[a[1,1,2],a[2,1,2]],[a[1,2,2],a[2,2,2]],[a[1,3,2],a[2,3,2]]]];
+
+Transpose([[[a[1,1,1],a[1,1,2]],[a[1,2,1],a[1,2,2]],[a[1,3,1],a[1,3,2]]],
+         [[a[2,1,1],a[2,1,2]],[a[2,2,1],a[2,2,2]],[a[2,3,1],a[2,3,2]]]],
+	 [1,3,2]); 
+[[[a[1,1,1],a[1,2,1],a[1,3,1]],[a[1,1,2],a[1,2,2],a[1,3,2]]],
+         [[a[2,1,1],a[2,2,1],a[2,3,1]],[a[2,1,2],a[2,2,2],a[2,3,2]]]];
+
+Transpose([[[a[1,1,1],a[1,1,2]],[a[1,2,1],a[1,2,2]],[a[1,3,1],a[1,3,2]]],
+         [[a[2,1,1],a[2,1,2]],[a[2,2,1],a[2,2,2]],[a[2,3,1],a[2,3,2]]]],
+	 [2,1,3]); 
+[[[a[1,1,1],a[1,1,2]],[a[2,1,1],a[2,1,2]]],
+         [[a[1,2,1],a[1,2,2]],[a[2,2,1],a[2,2,2]]],
+         [[a[1,3,1],a[1,3,2]],[a[2,3,1],a[2,3,2]]]];
+
+Transpose([[[a111,a112],[a121,a122],[a131,a132]],
+         [[a211,a212],[a221,a222],[a231,a232]]],
+         [2,1,3]);
+[[[a111,a112],[a211,a212]],[[a121,a122],[a221,a222]],
+         [[a131,a132],[a231,a232]]];
+
+
+/* this found a bug */
+
+/* ex ok Transpose */
+Transpose(Array(a,[3,1,1],[3,1,2]));
+[[[a(3,1,2)],[a(4,1,2)],[a(5,1,2)]]];
+
+/* ex ok Transpose */
+Transpose(Array(a,[2,1,1]),[3,1,2]);
+[[[a(1,1,1),a(2,1,1)]]];
+
+/* ex ok Inverse */
+Inverse( [ [a,b],[c,d]]);
+[[d/(a*d-b*c),-b/(a*d-b*c)],[-c/(a*d-b*c),a/(a*d-b*c)]];
+
+/* ex ok Inverse */
+Inverse( matrix( [a,b],[c,d]));
+matrix([d/(a*d-b*c),-b/(a*d-b*c)],[-c/(a*d-b*c),a/(a*d-b*c)]);
+
+/* ex ok Tr */
+Tr([ [1,2,3],[4,5,6],[7,8,9] ]);
+15;
+
+/* ex ok Tr */
+Tr(matrix([1,2,3],[4,5,6],[7,8,9]));
+15;
+
+/* ex ok MatrixRank */
+MatrixRank(matrix([1,2,3],[4,5,6],[7,8,9]));
+2;
+
+/* ex ok MatrixRank */
+MatrixRank([[1,2,3],[4,5,6],[7,8,9]]);
+2;
+
+/* ex ok MatrixRank */
+MatrixRank([[a,b],[2*a,2*b]]);
+1;
+
+/* ex ok MatrixRank */
+MatrixRank(matrix([a,b],[2*a,2*b]));
+1;
+
+
+/* ex br MatrixRank */
+/*
+ MatrixRank(float([[1,2,3],[4,5,6],[7,8,9]]));
+*/
+
+/* ex ok MatrixRank */
+MatrixRank([[1,%i],[%i,-1]]);
+1;
+
+/* ex ok MatrixRank */
+MatrixRank(matrix([1,%i],[%i,-1]));
+1;
+/* cm Examples of MartrixRank with machine numbers , tolerance, etc.  are not implemented or fail */
+
+/* endex */
+/* the batch procedure somehow reorders the result */
+
+/* ex ok Eigenvalues */
+is( ratsimp(Eigenvalues([[a,b],[c,d]])) =
+ ratsimp([-(sqrt(d^2-2*a*d+4*b*c+a^2)-d-a)/2,(sqrt(d^2-2*a*d+4*b*c+a^2)+d+a)/2]));
+true;
+
+/* ex ok Eigenvalues */
+is( ratsimp(Eigenvalues(matrix([a,b],[c,d]))) =
+ ratsimp([-(sqrt(d^2-2*a*d+4*b*c+a^2)-d-a)/2,(sqrt(d^2-2*a*d+4*b*c+a^2)+d+a)/2]));
+true;
+
+/* endex */
+/* Not same as Mma I think. Not sure. */
+Eigenvalues(Table(1/(i + j + 1), [i, 3], [j, 3]));
+
+[(-sqrt(3)*%i/2-1/2)*(sqrt(102103)*%i/423360+5018267/500094000)^(1/3)
+         +73999*(sqrt(3)*%i/2-1/2)/(1587600
+                                   *(sqrt(102103)*%i/423360+5018267/500094000)
+                                    ^(1/3))+71/315,
+        (sqrt(3)*%i/2-1/2)*(sqrt(102103)*%i/423360+5018267/500094000)^(1/3)
+         +73999*(-sqrt(3)*%i/2-1/2)/(1587600
+                                    *(sqrt(102103)*%i/423360
+                                     +5018267/500094000)
+                                     ^(1/3))+71/315,
+        (sqrt(102103)*%i/423360+5018267/500094000)^(1/3)
+         +73999/(1587600*(sqrt(102103)*%i/423360+5018267/500094000)^(1/3))
+         +71/315];
+
+/* Maxima lists eigenvalues and multiplicities. Mma lists
+  degenerate eigenvalues repeatedly
+
+    eivals( matrix( [1,0,0], [0,1,0], [0,0,1]));
+    [[1],[3]];
+    
+*/
+/* ex ok Eigenvalues */
+Eigenvalues( [ [1,0,0], [0,1,0], [0,0,1]]);
+[1,1,1];
+
+/* ex ok Eigenvalues */
+Eigenvalues( matrix( [1,0,0], [0,1,0], [0,0,1]));
+[1,1,1];
+
+/* endex */
+
+/****************************
+ * end  Matrices and Linear Algebra
+ **************************/
+
+/* test Select */
+
+/* ex ok Select */
+Select([1,2,4,7,6,2],EvenQ);
+[2, 4, 6, 2];
+/* mma Select[{1, 2, 4, 7, 6, 2}, EvenQ] */
+
+/* ex ok Select */
+/* mma Select[{1, 2, 4, 7, 6, 2}, # > 2 &] */
+Select([1,2,4,7,6,2],lambda( [[lambda_args]], (lambda_args[1]>2) ));
+[4, 7, 6];
+
+/* ex ok Select */
+/* mma Select[{1, 2, 4, 7, 6, 2}, # > 2 &, 1] */
+Select([1,2,4,7,6,2],lambda( [[lambda_args]], (lambda_args[1]>2) ),1);
+[4];
+
+/* ex ok Select */
+/* mma Select[{1, 2, 4, 7, x}, # > 2 &] */
+Select([1,2,4,7,x],lambda( [[lambda_args]], (lambda_args[1]>2) ));
+[4, 7];
+
+/* ex ok Select */
+/* mma Select[f[1, a, 2, b, 3], IntegerQ] */
+Select(f(1,a,2,b,3),IntegerQ);
+f(1, 2, 3);
+
+/* ex ok Select */
+/* mma Select[Range[100], Mod[#, 3] == 1 && Mod[#, 5] == 1 &] */
+Select(Range(100),lambda( [[lambda_args]], ((Mod(lambda_args[1],3)=1) and (Mod(lambda_args[1],5)=1)) ));
+[1, 16, 31, 46, 61, 76, 91];
+
+/* ex ok Select */
+/* mma Select[Tuples[{a, b}, 4], # == Reverse[#] &] */
+Select(Tuples([a,b],4),lambda( [[lambda_args]], (lambda_args[1]=Reverse(lambda_args[1])) ));
+[[a, a, a, a], [a, b, b, a], [b, a, a, b], [b, b, b, b]];
+
+/* endex */
+
+/* mma Select[Tuples[{0, 1}, {3, 3}], Det[#] == 1 &, 4] */
+/* not imp Select(Tuples([0,1],[3,3]),lambda( [[lambda_args]], (Det(lambda_args[1])=1) ),4) */
+/* comment Tuples does not have this feature implemented */
+
+/* mma Select[Eigenvalues[RandomReal[1, {5, 5}]], Abs[#] < 1 &] */
+/* not imp Select(Eigenvalues(RandomReal(1,[5,5])),lambda( [[lambda_args]], (Abs(lambda_args[1])<1) )) */
+
+/* mma Select[Names["*"], StringLength[#] < 3 &] */
+/* not imp Select(Names("*"),lambda( [[lambda_args]], (StringLength(lambda_args[1])<3) ))*/
+
+/* mma Select[7 Pi^2 x^2 y^2, NumericQ] */
+/* not imp Select(Times(7,(Pi^2),(x^2),(y^2)),NumericQ) */
+/* commment NumericQ not implemented and probably won't have the same behavior in any case. */
+
+
+
+/*
+ =========================================================
+ ********************************************************
+ *********************************************************
+ *
+ *  Below are tests that are =not= Mma document examples
+ *
+ *********************************************************
+  ********************************************************
+ =========================================================
+*/
+
+/* test symbol operator, eg "[" as function.
+  must use apply for this to work.
+*/
+Nest("*",2,10);
+2;
+
+Table(f[i], [i, 10, -5, -2]);
+[f[10],f[8],f[6],f[4],f[2],f[0],f[-2],f[-4]];
+
+/* not part of Mma test */
+Dimensions(Table(100* i + 10* j + k, [i, 3], [j, 2], [k, 4]));
+[3,2,4];
+
+/* make list of lists from a list */
+Partition([1,2,3,4,5,6,7,8,9,10],2);
+[[1,2],[3,4],[5,6],[7,8],[9,10]];
+
+/* use an offset in taking elements from input */
+Partition([1,2,3,4,5,6,7,8,9,10],2,1);
+[[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10]];
+
+ArrayDepth([[a, b, c], [d, e, f]]);
+2;
+
+Range(10,3);
+[];
+
+Range(3,10,2);
+[3,5,7,9];
+
+Range(n,x+4);
+Range(n,x+4);
+
+Range(10,3,-1);
+[10,9,8,7,6,5,4,3];
+
+Range(x,x+4);
+[x,x+1,x+2,x+3,x+4];
+
+Range(x+4,x);
+[];
+
+Range(x+4,x,-1);
+[x+4,x+3,x+2,x+1,x];
+
+/* fixed implementation. Make sure this it stays this way */
+IntegerDigits(0);
+[0];
+
+/* head of type returned by Union is same as that of head of first arg */
+Union([a,b,c]);
+[a,b,c];
+
+/* batch test complains, unless I do it this way */
+is(Union({a,b,c}) =  {a,b,c});
+true;
+
+/* ex ok Union */
+Union([a,b,c],{c,d,e});
+[a,b,c,d,e];
+
+/* ex ok Union */
+is(Union({a,b,c},[c,d,e]) = {a,b,c,d,e});
+true;
+
+/* ex ok Union */
+is (Union({a,b,c},[c,d,e], {a,b,c,d,e,f,z}) = {a,b,c,d,e,f,z});
+true;
+
+/* ex ok Union */
+Union({a,b,c},[c,d,e], {a,b,c,d,e,f,z});
+set(a,b,c,d,e,f,z);
+
+/* ex ok Union */
+Union([]);
+[];
+
+/* ex ok Union */
+is(Union({}) = {});
+true;
+
+
+/* ex ok Union */
+Union(g[a,b,c],g[c,d,e]);
+g(a,b,c,d,e);
+/* cm  union works with other heads */
+
+
+/* ex ok Intersection */
+Intersection([a,b,c]);
+[a,b,c];
+/* cm head of type returned by Intersection is same as that of head of first arg */
+
+/* endex */
+/* batch test complains, unless I do it this way */
+/* ex ok Intersection */
+is(Intersection({a,b,c}) =  {a,b,c});
+true;
+
+/* ex ok Intersection */
+Intersection([a,b,c],{c,d,e});
+[c];
+
+/* ex ok Intersection */
+is(Intersection({a,b,c},[c,d,e]) = {c});
+true;
+
+/* ex ok Intersection */
+is (Intersection({a,b,c},[c,d,e,b], {a,b,c,d,e,f,z}) = {b,c});
+true;
+
+/* ex ok Intersection */
+Intersection([]);
+[];
+
+is(Intersection({}) = {});
+true;
+
+/* union works with other heads */
+Intersection(g[a,b,c],g[c,d,e]);
+g(c);
+
+Subsets([a,b,c,d]);
+[[],[a],[a,b],[a,b,c],[a,b,c,d],[a,b,d],[a,c],[a,c,d],[a,d],[b],[b,c],
+        [b,c,d],[b,d],[c],[c,d],[d]];
+        
+is (Subsets({a,b,c,d}) =
+{{},{a},{a,b},{a,b,c},{a,b,c,d},{a,b,d},{a,c},{a,c,d},{a,d},{b},{b,c},
+        {b,c,d},{b,d},{c},{c,d},{d}});
+true;      
+
+Subsets(f[a,b,c,d]);
+[f(),f(a),f(a,b),f(a,b,c),f(a,b,c,d),f(a,b,d),f(a,c),f(a,c,d),f(a,d),
+        f(b),f(b,c),f(b,c,d),f(b,d),f(c),f(c,d),f(d)];
+
+
+/* below test that global function f is not used instead
+  of dummy argument f in function definitions of Nest, etc. */
+
+block( [],
+  f(x):= 0,
+  expr : 1,
+  i:1,
+  list:[],
+  true);
+true;
+
+Nest(g,x,3);
+g(g(g(x)));
+
+NestList(g,x,3);
+[g(x),g(g(x)),g(g(g(x)))];
+
+Fold(g,x,[a,b,c]);
+g(g(g(x,a),b),c);
+
+FoldList(g,x,[a,b,c]);
+[x,g(x,a),g(g(x,a),b),g(g(g(x,a),b),c)];
+
+
+/*
+ No longer true This has been fixed!
+ note that Table evaluates its arguments so that the iterator
+  j is not local to the call. Eg, we cannot use i if it is a global
+
+ Table(g(j),[j,3]);
+ [g(1),g(2),g(3)];
+
+*/
+
+
+
+block( [],
+  kill(f,expr,i,list),
+  true);
+true;
+
+
+
+

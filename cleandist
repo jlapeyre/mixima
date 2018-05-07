@@ -1,0 +1,12 @@
+#
+
+rm tests/*~
+rm tests/*.txt
+
+rm compatibility/*~
+rm compatibility/*.o
+rm compatibility/*.LISP
+rm compatibility/*.UNLISP
+
+rm translator/*~
+

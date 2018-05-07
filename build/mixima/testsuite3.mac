@@ -1,0 +1,8 @@
+/* only test translator (and evaluation, etc.) */
+
+testsuite_files : [
+        "./tests/rtest_translator1.mac",
+        "./tests/rtest_translator2.mac"
+        ];
+
+run_testsuite();

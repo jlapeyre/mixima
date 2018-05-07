@@ -1,0 +1,159 @@
+/* ex ok  Part  */
+/* mma  Part[{a,b,c},1] */
+Part([a,b,c],1);
+a ; 
+/* endex */
+
+/* ex ok  Part  */
+/* mma  Part[{a,b,c},-1] */
+Part([a,b,c],-1);
+c ; 
+/* endex */
+
+/* ex ok  Part  */
+/* mma  Part[Array[#1+#2 &,{3,3}],1,2 ] */
+Part(Array(lambda( [[lambda_args]],  (lambda_args[1]+lambda_args[2]) ),[3,3]),1,2);
+3 ; 
+/* endex */
+
+/* ex ok  ReplaceAll  */
+/* mma  {x,x^2,y,z} ./ x->a */
+ReplaceAll([x,(x^2),y,z],Rule(x,a));
+[a,a^2,y,z] ; 
+/* endex */
+
+/* ex ok  ReplaceAll  */
+/* mma  {x,x^2,y,z}./.x>->{a,b} */
+ReplaceAll([x,(x^2),y,z],Rule(x,[a,b]));
+[[a,b],[a^2,b^2],y,z] ; 
+/* endex */
+
+/* ex ok  ReplaceAll  */
+/* mma  Sin[x]./.Sin>->Cos */
+ReplaceAll(sin(x),Rule(sin,cos));
+cos(x) ;
+/* cm Cos and Sin don't work because Sin will first evaluate to sin */
+/* endex */
+
+/* ex ok  ReplaceAll  */
+/* mma  x./.{x>->1,x>->3,x>->7} */
+ReplaceAll(x,[Rule(x,1),Rule(x,3),Rule(x,7)]);
+1 ; 
+/* endex */
+
+
+/* ex br  ReplaceAll  */
+/* mma  {a,b,c} /. a -> b /. b -> d */
+ReplaceAll( ReplaceAll([a,b,c], Rule(a,b) ),Rule(b,d));
+[d,d,c] ;
+/* cm This translation done by hand. The precedence or assoc is wrong */
+/* endex */
+
+/* ex br  ReplaceAll  */
+/* mma  {a,b,c}./.{a>->b,b>->d} */
+ReplaceAll([a,b,c],[Rule(a,b),Rule(b,d)]);
+[d,d,c] ;
+/* cm wrong answer. We are supposed to stop after first success. */
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[f,{a,b,c,d},2] */
+MapAt(f,[a,b,c,d],2);
+[a, f(b), c, d] ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[f,{a,b,c,d},{{1},{4}}] */
+MapAt(f,[a,b,c,d],[[1],[4]]);
+[f(a), b, c, f(d)] ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[f,{{a,b,c},{d,e}},{2,1}] */
+MapAt(f,[[a,b,c],[d,e]],[2,1]);
+[[a, b, c], [f(d), e]] ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[h,{{a,b,c},{d,e},f,g},2] */
+MapAt(h,[[a,b,c],[d,e],f,g],2);
+[[a, b, c], h([d, e]), f, g] ; 
+/* endex */
+
+
+/* mma  MapAt[h,{{a,b,c},{d,e},f,g},2] */
+MapAt(h,[[a,b,c],[d,e],f,g],2);
+[[a, b, c], h([d, e]), f, g] ; 
+/* endex */
+
+/* ex ni  MapAt  */
+/* mma MapAt[h, {{a, b, c}, {d, e}, f, g}, -3] */
+/* cm count from the end */
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[h,{{a,b,c},{d,e},f,g},{2,1}] */
+MapAt(h,[[a,b,c],[d,e],f,g],[2,1]);
+[[a, b, c], [h(d), e], f, g] ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[h,{{a,b,c},{d,e},f,g},{{2},{1}}] */
+MapAt(h,[[a,b,c],[d,e],f,g],[[2],[1]]);
+[h([a, b, c]), h([d, e]), f, g] ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[h,{{a,b,c},{d,e},f,g},{{1,1},{2,2},{3}}] */
+MapAt(h,[[a,b,c],[d,e],f,g],[[1,1],[2,2],[3]]);
+[[h(a), b, c], [d, h(e)], h(f), g] ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[f,a+b+c+d,2] */
+MapAt(f,(a+b+c+d),2);
+d + c + f(b) + a ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[f,x^2 +y^2,{{1,1},{2,1}}] */
+MapAt(f,((x^2)+(y^2)),[[1,1],[2,1]]);
+f(y)^2+f(x)^2 ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[f,{a,b,c},0] */
+MapAt(f,[a,b,c],0);
+f(a,b,c) ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[f,{a,{b,{d,e}},c},{2,2,0}] */
+MapAt(f,[a,[b,[d,e]],c],[2,2,0]);
+[a,[b,f(d,e)],c] ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[x&,{{a,b,c},{d,e,f}},{2,1}] */
+MapAt(lambda( [[lambda_args]],  x ),[[a,b,c],[d,e,f]],[2,1]);
+[[a,b,c],[x,e,f]] ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[-#&,{{a,b,c},{d,e,f}},{2,1}] */
+MapAt(lambda( [[lambda_args]],  (-1*lambda_args[1]) ),[[a,b,c],[d,e,f]],[2,1]);
+[[a,b,c],[-d,e,f]] ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  Table[MapAt[f,{a,b,c,d},i],{i,4}] */
+Table(MapAt(f,[a,b,c,d],i),[i,4]);
+[[f(a),b,c,d],[a,f(b),c,d],[a,b,f(c),d],[a,b,c,f(d)]] ; 
+/* endex */
+
+/* ex ok  MapAt  */
+/* mma  MapAt[h,{{a,b,c},{d,e},f,g},-3] */
+MapAt(h,[[a,b,c],[d,e],f,g],-3);
+[[a,b,c],h([d,e]),f,g] ; 
+/* cm negative indices supported */
+/* endex */

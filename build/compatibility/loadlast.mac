@@ -1,0 +1,6 @@
+/* wxmaxima has a bug that causes an error when reading
+ this. So, load it last.
+ */
+/*> Function Clear */
+/* This works at least some of the time */
+Clear(['e]) := apply('kill,e);

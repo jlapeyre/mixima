@@ -1,0 +1,12 @@
+Extra notes on compatibility functions.
+The README contains more information.
+
+Np() -- This function is not an Mma function.
+  Np(expr,n) converts  expr to a number with
+  n digits of precision and prints it to that precision.
+  N(expr,n) also exists and it returns a number with
+  the required precision. But the standard command line
+  print loop does not print them all unless fpprintprec
+  is set large enough.  This is a workaround to this
+  difference in how Mma and maxima work.
+

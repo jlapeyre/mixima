@@ -1,0 +1,57 @@
+/* ex ok  IdentityMatrix  */
+/* mma  IdentityMatrix[3] */
+IdentityMatrix(3);
+[[1, 0, 0], [0, 1, 0], [0, 0, 1]] ;
+/* cm Make a 3x3 identity matrix. */
+/* endex */
+
+/* ex ok  IdentityMatrix  */
+/* mma  IdentityMatrix[3] */
+IdentityMatrix(3);
+[[1, 0, 0], [0, 1, 0], [0, 0, 1]] ;
+/* cm Not a square matrix */
+/* endex */
+
+/* ex br  IdentityMatrix  */
+/* mma IdentityMatrix[3, WorkingPrecision -> MachinePrecision] */
+/* endex */
+
+/* ex ok  DiagonalMatrix  */
+/* mma  DiagonalMatrix[{a,b,c}] */
+DiagonalMatrix([a,b,c]);
+[[a,0,0],[0,b,0],[0,0,c]] ; 
+/* endex */
+
+/* ex ok  IdentityMatrix  */
+/* mma  KroneckerProduct[IdentityMatrix[3],{{1,2},{3,4}}] */
+KroneckerProduct(IdentityMatrix(3),[[1,2],[3,4]]);
+[[1,2,0,0,0,0],[3,4,0,0,0,0],[0,0,1,2,0,0],[0,0,3,4,0,0],[0,0,0,0,1,2],
+ [0,0,0,0,3,4]] ; 
+/* endex */
+
+/* ex ok  DiagonalMatrix  */
+/* mma  DiagonalMatrix[{a,b},1] */
+DiagonalMatrix([a,b],1);
+[[0,a,0],[0,0,b],[0,0,0]] ; 
+/* endex */
+
+/* ex ok  DiagonalMatrix  */
+/* mma  DiagonalMatrix[{a,b},-1] */
+DiagonalMatrix([a,b],-1);
+[[0,0,0],[a,0,0],[0,b,0]] ; 
+/* endex */
+
+
+/* ex br  DiagonalMatrix  */
+/* mma  DiagonalMatrix[{1, 2, 3}, 0, 5] */
+/* endex */
+
+/* ex br  DiagonalMatrix  */
+/* mma  DiagonalMatrix[{1, 2, 3, 4, 5}, 0, 3] */
+/* endex */
+
+/* ex ok  DiagonalMatrix  */
+/* mma  DiagonalMatrix[{a,b,c},2] */
+DiagonalMatrix([a,b,c],2);
+[[0,0,a,0,0],[0,0,0,b,0],[0,0,0,0,c],[0,0,0,0,0],[0,0,0,0,0]] ; 
+/* endex */

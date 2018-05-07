@@ -1,0 +1,27 @@
+/* Test the Mixima compatibility functions by running a testsuite
+  of rtest_xxxx files.
+  Run this file from the toplevel distribution folder at the maxima command prompt with
+  load("./testsuite_slow.mac");
+*/
+
+load("mixima/mixima.mac");
+
+load("./applications/qinf_griffiths/qinf050.mac");
+
+
+testsuite_files : [
+        "./tests/rtest_mixima.mac",
+        "./tests/rtest_primes.mac",
+        "./tests/rtest_table.mac",
+        "./tests/rtest_nintegrate.mac",
+        "./tests/rtest_matrix.mac",
+        "./tests/rtest_sets.mac",
+        "./tests/rtest_special_functions.mac",
+        "./tests/rtest_translator1.mac",
+        "./tests/rtest_translator2.mac",
+        "./tests/rtest_slow.mac",
+        "./applications/qinf_griffiths/rtest_misc10.mac",
+        "./applications/qinf_griffiths/rtest_qinf.mac"];
+
+run_testsuite();
+

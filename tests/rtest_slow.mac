@@ -1,0 +1,31 @@
+/*   Mma compatibility function tests VERSION VERSIONNUMBER
+
+Tests for mixima. These tests are resource (time and/or
+storage) intensive, and so are separated from the other
+tests in rtest_mixima.mac and
+
+*/
+
+block(
+  display2d:false,
+  false,
+
+  load("mixima.mac"),
+  "mixima.mac",
+
+  true);
+true;
+  
+
+
+/* test for bad recursive implmentation
+*/
+Nest("+",0,100000);
+0;
+
+/* test for bad recursion implementation
+*/
+Fold("+",1,Table((-1)^i,[i,100000]));
+1;
+
+

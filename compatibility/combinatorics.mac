@@ -1,0 +1,27 @@
+/* Compute  the signature of a permutation. Eg.
+  SignaturePermutation([1,2,3]) ->  1
+  SignaturePermutation([2,1,3]) -> -1
+  translated from matlab code by  Derek O'Connor 20
+   If ce(n) is the number of even-length cycles in a
+   permutation p of length n, then one of the formulas for the
+   sign of a permutation p is sgn(p)=(−1)ce(n).
+
+   Here is an O(n) Matlab function that computes the sign of a
+   permutation p by traversing each cycle of p and (implicitly)
+   counting the number of even-length cycles.
+*/
+
+/*> Function SignaturePermutation */
+SignaturePermutation(p) := block(
+  [ n:length(p), s:1, k, visited , knext, L, sgn:1],
+  visited : makelist(false,n),
+  for k : 1 thru n do (
+    if not visited[k] then (
+      knext : k,
+      L : 0,
+      while not visited[knext] do (
+        L : L + 1,
+        visited[knext] : true,
+        knext : p[knext]),
+      if evenp(L) then sgn : -sgn )),
+  sgn);

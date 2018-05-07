@@ -1,0 +1,13 @@
+Conjugate((1+%i));
+(%pi*1/2*%i*%e);
+Conjugate(Exp((%i*%pi*1/4)));
+Root(lambda( [[lambda_args]], (5+(3*(lambda_args[1]^2))+(5*(lambda_args[1]^6))) ),4);
+Conjugate(%);
+[N(%),N(%th(2))];
+Conjugate((2-(1.6*%i)));
+Conjugate((2-(1.6*%i)));
+Conjugate([(-1-%i),0,(1+%i)]);
+Conjugate((%i*inf));
+Conjugate(infinity);
+(toCCForm(f,[x,y],z):=REPLACEALL(f,[RULE(x,((z+Conjugate(z))*1/2)),RULE(y,((z-Conjugate(z))*((2*%i)^-1)))]));
+

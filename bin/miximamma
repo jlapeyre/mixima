@@ -1,0 +1,3 @@
+#
+maxima  --init=mixima/mixima -r 'tomma();'
+

@@ -1,0 +1,71 @@
+Mixima User Document
+
+This document contains more detailed information than the Readme
+
+* The following global variables are set in mixima_func.mac in order
+to emulate Mma more closely.
+
+ simpsum:true; /* So that Sum does symbolic sums by default */
+ simpproduct:true;
+ expand_hypergeometric : true;
+ logexpand:false;
+
+* NIntegrate
+
+  This makes calls to the maxima quadpack and romberg routines.
+  Multiple integrals are implemented automatically as in Mma, but via nesting, which is slow.
+  Details of the call are different from Mma.  Here is an example call
+
+  NIntegrate(sin(sin(x)),[x,0,2], Rule(Method,NewtonCotesRule),
+    Rule(MinRecursion,2),Rule(MaxRecursion,12),Rule(PrecisionGoal,10),Rule(AccuracyGoal,Infinity);
+
+  Specifiying the Rules is optional.
+  Method   can be one of Automatic NewtonCotesRule=RombergRule QagsRule Oscillatory=GaussKronrodRule6
+       GaussKronrod=GaussKronrodRule=GaussKronrodRule1 GaussKronrodRule2 GaussKronrodRule3 GaussKronrodRule4
+       GaussKronrodRule5
+
+  Some rules are duplicated for deprecated Mma
+  options. Here, the Rule Oscillatory does not work with
+  infinite intervals, whereas in Mma 3.0 it *only* works
+  with infinite intervals
+
+  The default Method is Automatic which makes a few tests to choose a method. It is a good start,
+  but needs improvment
+
+  Other options are PrecisionGoal and AccuracyGoal. Options MinRecursion and MaxRecursion are only used
+  with RombergRule method.
+  See examples in tests/rtest_mixima_nintegrate.mac
+
+
+* FindRoot
+
+  With two boundary points, the secant method in maxima find_root is used.
+  Examples:
+  FindRoot(sin(x) = x/2,[ x, 0.1, %pi]);
+  FindRoot(sin(x) - x/2,[ x, 0.1, %pi], Rule(PrecisionGoal,3), Rule(AccuracyGoal,10));
+  FindRoot(sin(x) - x/2,[ x, 0.1, %pi]);
+
+  With one starting point, Newton's method is used (using a modified version of the
+  maxima function to include, for instance, a limit on the number of iterations).
+  Examples:
+  FindRoot(sin(x) = x/2,[ x, 1.0]);
+  FindRoot(sin(x) = x/2,[ x, 1.0],Rule(MaxIterations,10));
+  FindRoot(sin(x) - x/2,[ x, 1.0]);
+
+  The options PrecisionGoal and AccuracyGoal are supported by the secant method.
+  The options AccuracyGoal and MaxIterations are supported by Newton's method.	
+
+  Note that in Newton's method AccuracyGoal determines how close the function evaluation
+  must be to zero, not how close the variable will be to it's true value.
+  Eg, the default AccuracyGoal is 6, but
+  FindRoot(((Sin((x-10))-x)+10),[x,0]); gives 9.98318 .
+  I more sophisticated stopping criterion ought to be used.
+
+* Head
+
+  If MiximaHeadStrict is true then Head returns Real for both floats and bfloats. Otherwise
+  Head returns BFloat for bfloats. The default value of MiximaHeadStrict is true
+  
+
+
+

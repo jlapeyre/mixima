@@ -1,0 +1,142 @@
+/***************************************************************
+   Matrix functions
+   (most of) These matrix functions take either a Maxima matrix, or
+   a list of lists (Mma matrix) as an argument. If the return
+   type is the same as the input type if the return type
+   is a matrix or list of lists (ie not a scalar)
+
+   Most functions will not work with floats because numbers are
+   converted to rationals.
+*/
+
+
+/*> Function ConjugateTranspose  */
+/* This should be replaced by doing conjugate on result of
+  the more sophisticated Transpose */
+ConjugateTranspose(m) := maxMatTrans('ctranspose,m);
+
+/*> Function DiagonalMatrix  */
+/*==============  DiagonalMatrix  ===============*/
+/* dl is list of diagonal entries. puts them on kth diagonal.
+  k=0 (main diagonal) if not given. Returns list, not matrix.
+ */
+DiagonalMatrix(dl,[kl]) := block([len:length(dl), k, n,m],
+  if length(kl) = 1 then k:first(kl) elseif
+  length(kl) = 0 then k:0
+  else throw("DiagonalMatrix: too many arguments"),
+  n:len+abs(k),
+  m:Table(0,[n],[n]),
+  if (k>=0) then 
+  for  i:k thru n-1 do (
+    m[i-k+1][i+1]:dl[i-k+1]
+    )
+  else ( k:-k,
+    for  i:k thru n-1 do (
+      m[i+1][i-k+1]:dl[i-k+1]
+    )),
+  m);
+
+/*> Function Det  */
+Det(m) := determinant(ensuremat(m));
+
+/*> Function Eigenvalues  */
+/*==============  Eigenvalues  ===============*/
+/* check if the first number is floating point to compute floating
+  point eigenvalues.
+*/
+Eigenvalues(m) := if floatnump(inpart(m,1,1)) then
+      inpart(dgeev(ensuremat(m)),1) else list_eivals(eivals(ensuremat(m)));
+
+
+/*> Function IdentityMatrix */
+IdentityMatrix([args]) := ensurelist(apply('ident,args));
+
+/*> Function Inverse */
+Inverse(m) :=   maxMatTrans('invert,m);
+
+/*> Function KroneckerProduct  */
+/* Return Kronecker product of a list of matrices or Mma matrices.
+   The list can be mixed. Return type is type of first argument.
+   Maxima kronecker_product takes 2 args; Mma takes indefinite.
+*/
+KroneckerProduct([a]) := block( [n,c,i],
+  n : length(a),
+  c : ensuremat(a[1]),
+  for i:2 thru n do (
+    c : kronecker_product(c,ensuremat(a[i]))),
+  if listp(first(a)) then args(c) else ensuremat(c));
+
+/*> Function MatrixRank  */
+MatrixRank(m) := rank(ensuremat(m));
+
+/*> Function Outer */
+Outer(op,[facs]) := block( [],
+  apply(outermap , cons(op,map('ensurelist,facs))));
+
+/*> Function Tr  */
+Tr(m) := mat_trace(ensuremat(m));
+
+/*> Function Transpose */
+Transpose(m,[perm]) :=  if length(perm) = 0 then maxMatTrans('transpose,m)
+	     else gen_transpose(m,part(perm,1));
+
+
+/*
+  Need to replace this with the builtin maxima function. This
+  one came from user code.
+  It is interesting that the maxima builtin 'permanent' fails
+  with ident(40), whereas this one does fine!
+  But with less trivial matrices, this implementation is much less
+  efficient.
+  Also fix their local variables.
+  
+*/
+
+/* This one is not as good generally as the maxima version */
+/*
+ works for ident(40) , where permanent() fails. But for
+ other matrices in application, this is worse.
+Permanent(m) := block([v,x],
+        v:Array(x,Length(m)),
+        Coefficient(expand(Apply(Times,Dot(ensurelist(m),v))),Apply(Times,v)));
+*/
+
+/* This is probably best */
+/*> Function Permanent */
+Permanent(m) := permanent(ensuremat(m));
+
+/* This does not return type matrix, but a nested list.
+  It will take macs matrices as input args. */
+list_eivals(lst) := apply('append,apply('map, cons(lambda([a,b],  create_list(a,i,1,b)), lst)));
+
+/**********************************************************
+ * Following are not Mma functions, but rather helper functions.
+ **********************************************************/
+/* mat_to_list(x) := if matrixp(x) then args(x) else x; */
+/* suggested by Barton Willis */
+/* convert  matrix to list or fall through */
+/*> AuxFunction ensurelist */
+ensurelist(m) := if matrixp(m) then args(m) else m;
+
+/* convert list to matrix or fall through.
+  Note that scalar falls through as well
+*/
+/*> AuxFunction ensuremat */
+ensuremat(m) := if (matrixp(m) or scalarp(m)) then m elseif
+  mapatom(m[1]) then matrix(m) else  apply('matrix,m);
+
+/* For function that takes a matrix and returns a matrix.
+   We want to allow either a macsyma or a mma matrix. Use
+   this to wrap a function that requires a macsyma matrix.
+   f%%% is the Maxima function name, m the matrix.
+   Return same matrix type as input.
+*/ 
+/*> AuxFunction maxMatTrans */  
+maxMatTrans(f%%%,m) :=  if matrixp(m) then f%%%(m)
+   else  ensurelist(f%%%(apply('matrix,m)));
+
+/* Use this to wrap a function that requires an mma matrix.
+  But return the same type as input */
+/*> AuxFunction mmaMatTrans */  
+mmaMatTrans(f%%%,m) :=  if matrixp(m) then apply('matrix,f%%%(ensurelist(m)))
+   else  f%%%(m);

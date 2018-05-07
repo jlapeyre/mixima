@@ -1,0 +1,170 @@
+===============================================
+Some things that can be done. These are not listed in order of importance of by the
+effort required.
+===============================================
+
+-----------------
+  Apply in Mma replaces the head of any expression.
+   'apply' in maxima needs a list.
+
+-----------------
+
+--------------
+
+List of funcs to implement
+Part
+Reduce
+
+
+-------------
+Compatibility functions:
+Usually implementation of some functionality of a particular function is better than
+none at all.
+
+--------------
+Switches for translator options:
+
+How can these be implemented. Are there usual lisp ways to do it?
+Command line args, configuration files.
+
+-------------------------
+Array vs. normal functions:
+ Can this choice be made automatically, and/or can it be made with
+ translator switches.
+
+--------------------------
+Patterns in function definitions:
+
+Definitions like
+  myf[x_,{a_,b_}] :=  ...
+ 
+should be translated something like:
+ 
+  block ([simp : false],
+    local (aa,bb,cc),
+    matchdeclare ( [aa,bb,cc], all),
+    tellsimp(myf(aa,[bb,cc]), myin(aa,[bb,cc])));
+
+ myin([args]) := ...
+ 
+Actually, all functions should be defined this way so that
+they remain unevaluated if they don't match.
+
+A related problem is a kind of unpacking problem. If the pattern is
+  [x_,{a_,{b_,c_}}], then we need to pull these arguments out
+  of a maxima function definition that looks like this
+  ([args]). That is
+  bloc([b:args[2][1],... )
+  Also the Mma pattern x_Integer (or IntegerQ or whatever) could be handled.
+
+Patterns can be more sophisticated. This is one of the most difficult problems
+in implementing the translator. But maybe something useful for common cases can be
+done.
+
+Another possibility is to change Maxima itself to handle f(x,{a,b}) etc.
+
+-------------------------
+Parts: [] vs. inpart
+
+Following partly fixed. For mma Part, appearing as lvalue, we always
+use [] in macsyma. Otherwise, we always use inpart(). There will no
+doubt be situations where this is not enough.
+
+Sort out how to handle part. There are a few problems. Here is one.
+Mma parts work like this for a list a
+ a[[n]]  , nth part
+ a[[n,m]] , nested part with coords n,m
+ a[[ {n,m} ]] , a list consisiting of top level parts n and m
+
+Mma also uses Part[a,...] with the same args and same meanings as above.
+All above forms can be used as lvalues.
+
+In macsyma, a[n] and a[n,m] have the same meanings as the Mma counterpart.
+a[ [n,m] ] is illegal. But part(a,[n,m]) does give the same as Mma a[[ {n,m}]].
+However, in Macsyma, only the [] form can be used as an lvalue, not the
+ part() form.
+
+-------------------------
+Series[]:
+
+ It is easy enough for Series to return SeriesData, and to write
+Normal, which converts it to just a polynomial. But this is not worth much
+unless SeriesData features are implemented. For instance: Using Series Data
+in expressions that return a polynoimial omit terms of higher order than
+that in SeriesData.
+
+--------------------------
+Exact answers to inverse trig, etc.:
+
+See note at end of atrig1.mac, Mma might give a few more
+exact values for inverse trig functions by default than
+macsyma. But they can be added in the same manner as shown
+in artig1.macl-- more or less just listing them.
+
+----------------------------
+Log[b,x]:
+
+R.D. implemented log10. in contrib. Can Mma's
+Log[b,x] be done this way. It is currently just a function call suitable mostly
+for fp evaluations.
+
+--------------------------
+Cos,Sin, etc.
+
+Compatibility: These currently apply cos, etc. to the args. Thus Cos(x) evaluates to cos(x).
+Should they be handled instead with tellsimp or something, so that Cos(x)
+remains unevaluated? 
+
+-------------------------
+regression test. Perhaps revert to using our own testing system. The system
+test facility is relatively crude and inflexible.
+
+-------------------------
+regression test: separate tests of the shadowed math functions to a separate
+file. Perhaps other shadowed functions should have a separate test file as
+well.
+
+-------------------------
+enter Mma at Maxima command line
+It should be possible to call the translation routines
+somehow from the Maxima command line. A function that takes
+a string is one option. We need to trap errors because the
+translator crashes easily and would crash the Maxima session.
+
+--------------------
+Translator: maybe have the translator use native cos, sin.
+
+--------------------------
+Translator internal form:
+
+Think about internal forms in translator. Standardize
+refering to output of parser as Mma internal form, and first
+translated form as Macsyma internal. Try to make this form
+as close to the real Macsyma internal form as
+possible. Check document simplifier.txt to do this. For
+instance 'For' is never translated to macsyma internal form,
+but is translated during source translation. This can probably
+be done piece by piece.
+
+----------------------
+Assignment:
+
+ = in Mma appears to make a deep copy of a list (at least when the first list is changed)
+ : in Maxima makes an alias. You must use copylist to get new storage. So
+ it seems that 'listnew = listold' should be translated as 'listnew = copylist(listold)'
+I don't know if copylist makes a deep copy or works on other expressions.
+---------------------
+
+Thread, Listable:
+
+Many compatibility functions should be listable but are not. What is the best way
+to handle it? With tellsimp and map ? Can the listable attribute be handled
+generally via tellsimp?
+
+There is a Maxima feature implemented in part by a function distibute_over that
+reproduces at least approximately the Listable attribute, which apparently intercepts
+function calls to Listable functions and calls Thread[] on them. This feature should
+be exploited to make these compatibility functions listable (ie IntegerDigits currently
+has particular code written for this.) It may work only for lip functions, I am not
+sure. distribute_over is used on suprisingly few Maxima functions.
+

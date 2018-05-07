@@ -1,0 +1,30 @@
+/* ex ok  Permutations  */
+/* mma  Permutations[{a,b,c}] */
+Permutations([a,b,c]);
+[[a, b, c], [a, c, b], [b, a, c], [b, c, a], [c, a, b], [c, b, a]] ; 
+/* endex */
+
+/* ex br  Permutations  */
+/* mma Permutations[{a, b, c, d}, {3}] */
+/* endex */
+
+/* ex ok  Permutations  */
+/* mma  Permutations[{a,a,b}] */
+Permutations([a,a,b]);
+[[a, a, b], [a, b, a], [b, a, a]] ;
+/* endex */
+
+/* ex ok  Permutations  */
+Permutations({a, a, b});
+{[a, b], [b, a]};
+/* cm If maxima sets are passed, then duplicates don't count in input. */
+/* endex */
+
+/* ex ok  Permutations  */
+/* mma  Permutations[{x,x^2,x+1}] */
+Permutations([x,(x^2),(x+1)]);
+[[x,x+1,x^2],[x,x^2,x+1],[x+1,x,x^2],[x+1,x^2,x],[x^2,x,x+1],[x^2,x+1,x]] ;
+/* cm Not really correct. The elements are in a different order. */
+/* endex */
+
+

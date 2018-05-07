@@ -1,0 +1,9 @@
+/* Convert del(f)/del(x) to 'diff(f,x).
+  This is not very well tested */
+dttodiff(expr) := block([aa,bb,r1],
+    matchdeclare([aa,bb,cc],all),
+    defrule(r1,del(aa)/del(bb),'diff(aa,bb)),
+    defrule(r2,(cc*del(aa))/del(bb),cc*'diff(aa,bb)),
+    apply1(expr,r1),
+    apply1(expr,r2));
+

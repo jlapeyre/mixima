@@ -1,0 +1,293 @@
+/* endex */
+
+/************************************************
+  Regression test for mixima, Mathematica compatibility functions
+  Special functions including trigonometric functions, etc.
+  
+  VERSION 0.25
+
+  Copyright (C) 2008, John Lapeyre  All rights reserved.
+
+  This program is free software; you can redistribute it
+  and/or modify it only under the terms of the GNU General
+  Public License version 2 as published by the Free Software
+  Foundation.
+
+  Mathematica is a registered trademark of Wolfram Research,
+  Inc. (2008)
+
+  Run with batch("rtest_mixima.mac",test).
+  These are tests for functions that duplicate Mathematica
+  functionality. None of them are perfect. Included are
+  some tests that give different results. These are noted.
+  Also commented out are some tests that fail completely.
+
+  The examples are divided into two parts. In the first part,
+  all examples are from Mma documentation. In the second part
+  are additional examples.
+
+*************************************************/
+/* Initialization is wrapped in this block, so the test software only
+   looks at the return value: true
+*/   
+block(
+  display2d:false,
+/*  load("mixima.mac"), */
+/*  f(x) := 0, */
+  true);
+true;
+
+
+/*************************************
+ * ArcCos
+ *************************************/
+
+/* ex ok ArcCos */
+ArcCos(0);
+%pi/2;
+/* endex */
+
+/* ex ok ArcCos */
+Series(ArcCos(x),[x,0,10]);
+%pi/2-x-x^3/6-3*x^5/40-5*x^7/112-35*x^9/1152;
+/* endex */
+
+ArcCos(0.4);
+1.159279480727409;
+
+/* succeeds but batch test says fail because of precision 
+ArcCos(1.5);
+0.96242365011921*%i;
+*/
+
+/* succeeds but batch test says fail because of precision 
+ArcCos(2.5+%i);
+0.40617281650551-1.658693298856433*%i;
+*/
+
+N(ArcCos(1/3), 50);
+1.2309594173407746821349291782479873757103400093551b0;
+
+/* precision is not propagated automatically... */
+
+/* fails
+ArcCos(0.33333333333333333333333333333333333333b0);
+*/
+
+/* fails
+ArcCos(0.99999999999999999999999999999999999991b0);
+*/
+
+ArcCos(1/2);
+%pi/3;
+
+/* succeeds but batch test says fail because of precision 
+ArcCos([0.2, 0.5, 0.8]);
+[1.369438406004566,1.047197551196598,0.64350110879328];
+*/
+
+/* This is kind of correct. When acos cannot be evalutated further,
+ then ArcCos returns acos. It is probably possible to fix this, if desired */
+ArcCos([ [1, 1/3 ], [x,1/2] ]);
+[[0,acos(1/3)],[acos(x),%pi/3]];
+
+/* not implemented
+ArcCos[Interval[{-1/3, 1/2}]]
+*/
+
+/* infinity represents ComplexInfinity 
+*/
+
+/* fails
+ArcCos(infinity);
+expected:  infinity
+returns: acos(infinity)
+*/
+
+/* not implemented
+ArcCos[x + x^2/2 + x^3/3 + O[x]^4]
+*/
+
+/* Branch points and branch cuts not handled */
+/* fails
+Series(ArcCos(x), [x, 1, 1]);
+*/
+
+/* not implemented
+NumericQ[ArcCos[2 + E]]
+*/
+
+/* acos(cos(z)) cancels in Mma */
+/* fails
+[Cos(ArcCos(z)), ArcCos(Cos(z))];
+[z,acos(cos(z))]
+*/
+
+/* answer is in terms of bessel function */
+/* fails
+laplace(ArcCos(t), t, s);
+*/
+
+/* fails
+inverse_jacobi_cd(z,0)
+expected: acos(z)
+*/
+
+/*************************************
+ * end ArcCos
+ *************************************/
+
+/*************************************
+ * ArcSin
+ *************************************/
+
+ArcSin(1);
+%pi/2;
+
+/* kind of correct. Mma has a series object */
+Series(ArcSin(x), [x, 0, 10]);
+x+x^3/6+3*x^5/40+5*x^7/112+35*x^9/1152;
+
+Chop(  ArcSin(0.4)  -0.41151684606749,  1e-14);
+0;
+
+
+/* several other numerical results fail because of precision problem. 
+  Add them with chop later
+ */
+
+ArcSin(1/2);
+%pi/6;
+
+/* succeeds but we get asin instead of ArcSin. This is a generic problem with these compatibility
+  functions. Don't have a solution now */
+ArcSin(-x);
+-asin(x);
+
+ArcSin(%i*x);
+%i*asinh(x);
+
+
+/*************************************
+ * end ArcSin
+ *************************************/
+
+/*************************************
+ * ArcTan
+ *************************************/
+
+ArcTan(1);
+%pi/4;
+
+/* ex ok ArcTan */
+N(ArcTan(1)/Degree);
+45.0;
+/* endex */
+
+/* ex ok ArcTan */
+ArcTan(1,1);
+%pi/4;
+/* endex */
+
+/* ex ok ArcTan */
+ArcTan(-1,-1);
+-3*%pi/4;
+/* endex */
+
+
+Series(ArcTan(x), [x, 0, 15]);
+x-x^3/3+x^5/5-x^7/7+x^9/9-x^11/11+x^13/13-x^15/15;
+
+/* a whole bunch of numerical stuff that works, but the
+  tests don't work here 
+  Include them with Chop here!
+*/
+
+ArcTan(-x);
+-atan(x);
+
+/* fail
+ArcTan[{Infinity, I Infinity, -Infinity, -I Infinity}]
+*/
+
+/* fail
+ArcTan(infinity,1);
+*/
+
+/*************************************
+ * end ArcTan
+ *************************************/
+ 
+/****************************
+ * Cos
+ **************************/
+
+Cos((%pi*1/6));
+sqrt(3)/2;
+
+Cos((30*Degree));
+sqrt(3)/2;
+
+Series(Cos(x),[x,0,10]);
+1-x^2/2+x^4/24-x^6/720+x^8/40320-x^10/3628800;
+
+Chop(Cos(1.2)-0.36235775447667,1e-14);
+0;
+
+Chop(Cos((2.5+%i)) - (-0.70332517811353*%i-1.236229198856342),1e-14);
+0;
+
+N(Cos(6/5),50);
+3.6235775447667357763837335562307602033994778557665b-1;
+
+Chop(Cos([1.2,1.5,1.8]) - [0.36235775447667,0.070737201667703,-0.22720209469309],1e-14);
+[0,0,0];
+
+Cos([[%pi,u],[v,(%pi*1/2)]]);
+[[-1,cos(u)],[cos(v),0]];
+
+/* mixima.mac loads ntrig package which does this */
+
+/* ex ok  Cos  */
+/* mma  Cos[Pi/5] */
+Cos((%pi*1/5));
+(sqrt(5)+1)/4 ; 
+/* endex */
+
+/* not implemented
+Cos((%pi*1/24));
+FunctionExpand(%);
+*/
+
+/* ex ok TrigExpand  */
+TrigExpand(Cos((4*x)));
+sin(x)^4-6*cos(x)^2*sin(x)^2+cos(x)^4;
+/* endex */
+
+/* ex ok TrigReduce  */
+TrigReduce(TrigExpand(Cos((4*x))));
+cos(4*x);
+/* endex */
+
+/* Still need to try these, but they rely on unimplemented
+ things.
+TrigFactor((Cos(x)+Cos(y)));
+ComplexExpand(Cos((x+(%i*y))));
+TrigToExp(Cos(z));
+Cos(inf);
+Cos((x+(2*%pi)));
+[Cos((-1*x)),Cos((%i*x))];
+(Cos(x)^-1);
+[Cos(ArcCos(z)),Cos((2*ArcCos(z))),Cos((3*ArcCos(z)))];
+*/
+
+/****************************
+ * end Cos
+ **************************/
+
+/* ex ok Gamma   */
+/* mma  Gamma[15/2] */
+Gamma(15/2);
+135135*sqrt(%pi)/128 ; 
+/* endex */
+

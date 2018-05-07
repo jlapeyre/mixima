@@ -1,0 +1,47 @@
+#!/usr/bin/sbcl --script
+
+;; mparse_int
+;; Usage:  mparse_int source_file.m
+;; Reads Mma code from source_file.m and
+;; writes three stages of translation to stdout.
+;; first the mma source is parsed to a kind of s-expression.
+;; this is then translated to an s-expression close to macsyma
+;; internal code. Finally, this is translated to macsyma source.
+
+; Documentation of sbcl is astoundingly bad. Discovering what
+; options to put on the first line and then the preliminary code
+; below is a very long, difficult task; the answer also has changed
+; with new versions of sbcl. There is plenty of documentation, it is
+; just mind-blowingly worthless.
+
+;(declaim (sb-ext:muffle-conditions sb-ext:compiler-note))
+; It is a miracle that I discovered how to supress the warnings with the
+; line below. It was not at all clear from the documentation
+(declaim (sb-ext:muffle-conditions t))
+
+(setq mixima-installation-path "/usr/share/maxima/5.24.0/share/mixima")
+
+(defun mmapath (mmafile) (concatenate 'string mixima-installation-path "/"  mmafile))
+
+; Load preliminary stuff
+(load (mmapath "jmma.lisp"))
+; Load the parser
+(load (mmapath  "mixima-mockmma-parser.lisp"))
+(load (mmapath "parser_patch.lisp"))
+; Load the translator
+(load (mmapath "mma-to-mixima.lisp"))
+
+; avoid prepending mma::
+(in-package :mma)
+(write-line "Pseudo Lisp")
+(prsl (second sb-ext:*posix-argv*))
+
+
+(write-line "")
+(write-line "Maxima internal")
+(prsm (second sb-ext:*posix-argv*))
+(write-line "")
+
+(write-line "Maxima external")
+(pst (second sb-ext:*posix-argv*))
+(write-line "")

@@ -1,0 +1,101 @@
+/* Try to set the search path for lisp and mac files so that
+  the other files in the mixima directory can be found
+  mixima.mac -- input file to search for , ie
+  "mixima/mixima.mac"
+  Find where this file is located and set the search path to
+  include this directory
+*/
+
+set_file_search_paths(f) := block([r1,r2,ft:false,mp,lp],
+  for i:1 thru length(file_search_maxima) do (
+    if (ssearch("mixima",file_search_maxima[i]) # false) then ft:true),
+  if ft then ( print("Path to ", f , " already added"),return(true)),
+  r1 : file_search(f),
+  if (not r1) then (
+    print("Can't find file ", f),
+    return(false)),
+  r2 : substring(r1,1,slength(r1)-slength(f)),
+  mp : sconcat(r2,"/mixima/###.{mac,mc}"),
+  lp : sconcat(r2,"/mixima/###.lisp"),  
+  mixima_installation_dir : sconcat(r2,"/mixima/"),
+  file_search_maxima : cons(mp,file_search_maxima),
+  file_search_lisp : cons(lp,file_search_lisp),
+  file_search_tests : cons(lp,file_search_lisp),
+  true
+);
+
+set_file_search_paths("mixima/mixima.mac");
+
+load("mockmma-mixima-shell.lisp"); /* some defuns needed from here. should be moved */
+load("defs.lisp");
+load("helper.lisp");
+load("function.lisp");
+load("newblock.lisp");
+load("assign.lisp");
+load("expressions.lisp");
+load("vars.mac");
+load("flow_control.mac");
+load("flow_control_lisp.lisp");
+load("block.lisp");
+load("mixdoc.lisp");
+load("table.lisp");
+load("list.lisp");
+load("sum_product.lisp");
+load("derivatives_integrals.lisp");
+load("roots.lisp");
+load("limit.lisp");
+load("newton.mac");
+load("dttodiff.mac");
+load("matrix.lisp");
+load("simplify.lisp");
+load("shadow.mac");	
+load("shadow_math_functions.mac");
+load("predicates.lisp");
+load("predicates.mac");
+load("reformat.lisp");
+load("limit.lisp");
+load("function_list.lisp");
+load("polynomials.mac");
+load("combinatorics.mac");
+load("matrix.mac");
+load("devel.mac");
+load("incr_decr.lisp");
+load("mma_translator.mac");
+
+
+/* end of comaptibility function lisp code */
+
+
+/* On some broken installations, this lapack package is broken */
+/* load("lapack"); */
+
+
+/*
+   Simplifying trig functions eg cos(%pi * 1/5)  --> (sqrt(5)+1)/4
+   Must be loaded for this to work.
+*/   
+load(ntrig);
+
+/*
+    This appears not to be autoloaded, but no rtests use it now.
+    So disable loading it here. It would be need if prob. dist. things are added later
+    load(distrib);
+*/
+
+/*  This one is autoloaded in our calls to Sum (or, inefficiently Product as well)
+load(simplify_sum);
+*/
+
+/*  We also autoload this.
+load(grobner);
+*/
+
+/* load("eigen");  This is now autoloaded in stock maxima */
+
+load("list.mac");
+
+load("general.mac");
+
+print("mixima version VERSIONNUMBER loaded.");
+
+load("loadlast.mac");

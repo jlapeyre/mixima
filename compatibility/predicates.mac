@@ -1,0 +1,10 @@
+/*> Function AtomQ */
+AtomQ(x) := if atom(x) or numberp(x) or complexp(x) then true else atom(x);
+
+/*> Function Unequal */
+/* only gets crude cases correct */
+Unequal(x,y):=is(x # y);
+
+/* Real numbers are complex according to this function */
+/*> AuxFunction complexp */
+complexp(x) := (numberp(subst(1,%i,x)));

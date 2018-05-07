@@ -1,0 +1,244 @@
+kill(z,y,x,cat);
+done$
+
+/* endex */
+
+/* mma  Increment[] */
+Increment();
+Increment() ; 
+
+/* ex ok  Increment  */
+/* mma  cat=dog;Increment[cat]-cat */
+((cat:"dog"),(Increment(cat)-cat));
+- 1 ; 
+/* endex */
+
+/* ex ok  Increment  */
+/* mma  Increment[z] */
+(kill(z), Increment(z));
+z$
+/* cm Mma prints error and returns Increment(z) */
+/* cm we disabled that check and allow everything. */
+/* endex */
+
+(kill(z), Increment(z) - z);
+-1$
+
+/* ex ok  Increment  */
+/* mma  y=1;Increment[y] */
+((y:1),Increment(y));
+1 ; 
+/* endex */
+
+/* ex ok  Increment  */
+/* mma  Increment[y]-y */
+(Increment(y)-y);
+- 1 ; 
+/* endex */
+
+/* ex ok  Increment  */
+/* mma  y=a;Increment[y] */
+((y:a),Increment(y));
+a ; 
+/* endex */
+
+/* ex ok  Increment  */
+/* mma  y=a;Increment[y]-y */
+((y:a),(Increment(y)-y));
+- 1 ; 
+/* endex */
+
+/* mma  y=3.4;Chop[Increment[y]-y] */
+((y:3.4),Chop((Increment(y)-y)));
+- 1.0 ; 
+/* endex */
+
+/* ex ok  Increment  */
+/* mma  x=1;y=3;z=4;Increment[{x,y,{z}}] */
+((x:1),(y:3),(z:4),Increment([x,y,[z]]));
+[1, 3, [4]] ; 
+/* endex */
+
+
+/****************************************/
+
+kill(z,y,x,cat);
+done$
+
+/* ex ok  PreIncrement  */
+/* mma  PreIncrement[z] */
+(kill(z), PreIncrement(z));
+z+1$
+/* endex */
+
+(kill(z), PreIncrement(z) - z);
+0$
+
+/* ex ok  PreIncrement  */
+/* mma  y=1;PreIncrement[y] */
+((y:1),PreIncrement(y));
+2 ; 
+/* endex */
+
+/* ex ok  PreIncrement  */
+/* mma  PreIncrement[y]-y */
+(PreIncrement(y)-y);
+0 ; 
+/* endex */
+
+/* ex ok  PreIncrement  */
+/* mma  y=a;PreIncrement[y] */
+((y:a),PreIncrement(y));
+a+1 ; 
+/* endex */
+
+/* ex ok  PreIncrement  */
+/* mma  y=a;PreIncrement[y]-y */
+((y:a),(PreIncrement(y)-y));
+0 ; 
+/* endex */
+
+/* mma  y=3.4;Chop[PreIncrement[y]-y] */
+((y:3.4),Chop((PreIncrement(y)-y)));
+0 ; 
+/* endex */
+
+/* ex ok  PreIncrement  */
+/* mma  x=1;y=3;z=4;PreIncrement[{x,y,{z}}] */
+((x:1),(y:3),(z:4),PreIncrement([x,y,[z]]));
+[2, 4, [5]] ; 
+/* endex */
+
+kill(z,y,x,cat);
+done$
+
+/****************************************/
+
+/* ex ok  Decrement  */
+/* mma  Decrement[z] */
+(kill(z), Decrement(z) );
+z$
+/* endex */
+
+(kill(z), Decrement(z) - z );
+1$
+
+/* ex ok  Decrement  */
+/* mma  y=1;Decrement[y] */
+((y:1),Decrement(y));
+1 ; 
+/* endex */
+
+/* ex ok  Decrement  */
+/* mma  Decrement[y]-y */
+(Decrement(y)-y);
+1 ; 
+/* endex */
+
+/* ex ok  Decrement  */
+/* mma  y=a;Decrement[y] */
+((y:a),Decrement(y));
+a ; 
+/* endex */
+
+/* ex ok  Decrement  */
+/* mma  y=a;Decrement[y]-y */
+((y:a),(Decrement(y)-y));
+1 ; 
+/* endex */
+
+/* mma  y=3.4;Chop[Decrement[y]-y] */
+((y:3.4),Chop((Decrement(y)-y)));
+1.0 ; 
+/* endex */
+
+/* ex ok  Decrement  */
+/* mma  x=1;y=3;z=4;Decrement[{x,y,{z}}] */
+((x:1),(y:3),(z:4),Decrement([x,y,[z]]));
+[1, 3, [4]] ; 
+/* endex */
+
+kill(z,y,x,cat);
+done$
+
+/****************************************/
+
+/* ex ok  PreDecrement  */
+/* mma  PreDecrement[z] */
+(kill(z), PreDecrement(z));
+z-1$
+/* endex */
+
+(kill(z), PreDecrement(z)-z);
+0$
+
+/* ex ok  PreDecrement  */
+/* mma  y=1;PreDecrement[y] */
+((y:1),PreDecrement(y));
+0 ; 
+/* endex */
+
+/* ex ok  PreDecrement  */
+/* mma  PreDecrement[y]-y */
+(PreDecrement(y)-y);
+0 ; 
+/* endex */
+
+/* ex ok  PreDecrement  */
+/* mma  y=a;PreDecrement[y] */
+((y:a),PreDecrement(y));
+a-1 ; 
+/* endex */
+
+/* ex ok  PreDecrement  */
+/* mma  y=a;PreDecrement[y]-y */
+((y:a),(PreDecrement(y)-y));
+0 ; 
+/* endex */
+
+/* mma  y=3.4;Chop[PreDecrement[y]-y] */
+((y:3.4),Chop((PreDecrement(y)-y)));
+0 ; 
+/* endex */
+
+/* ex ok  PreDecrement  */
+/* mma  x=1;y=3;z=4;PreDecrement[{x,y,{z}}] */
+((x:1),(y:3),(z:4),PreDecrement([x,y,[z]]));
+[0, 2, [3]] ; 
+/* endex */
+
+kill(z,y,x,cat);
+done$
+
+/****************************************/
+
+kill(z,r);
+done$
+
+/* ex ok  TimesBy  */
+/* mma  a=z;TimesBy[a,r] */
+((a:z),TimesBy(a,r));
+r*z ; 
+/* endex */
+
+/* ex ok  SubtractFrom  */
+/* mma  SubtractFrom[a,r] */
+SubtractFrom(a,r);
+r*z-r ; 
+/* endex */
+
+
+/* ex ok   DivideBy */
+/* mma  DivideBy[a,r] */
+DivideBy(a,r);
+(r*z-r)/r ; 
+/* endex */
+
+/* ex ok  AddTo  */
+/* mma  AddTo[a,r] */
+AddTo(a,r);
+(r*z-r)/r+r ; 
+/* endex */
+
+kill(a);
+done$

@@ -1,0 +1,165 @@
+Permanent(m):=With([v => Array(x,Length(m))],
+          Coefficient(Apply("*",Dot(m,v)),Apply("*",v)));
+
+
+zzz(a,b):=a^b;
+
+
+Perm(n,q):=Module([nn => n],
+     Permanent(Outer(zzz,Table(z(i),[i,1,n]),Table(inpart(q,i),[i,1,n]))));
+
+
+Slat(n,q):=Module([nn => n],
+     Det(Outer(zzz,Table(z(i),[i,1,n]),Table(inpart(q,i),[i,1,n]))));
+
+
+cc[0] => 0;
+
+
+tab(n,l):=Table(
+    [cc[i],cc[i-1],if i = 1 then l else (l-Sum(cc[j],[j,0,i-1]))*1/2],
+    [i,1,n-1]);
+
+
+Pots(na,L):=if na = 2 then Table([i,L-i],[i,0,L*1/2])
+      else Module([nna => na,nn => L],
+                  (Clear(pat),
+                   pat[nna] => Join(Table(cc[i],[i,1,nna-1]),
+                                    [nn-Sum(cc[i],[i,1,nna-1])]),
+                   pat[a]:=Table(pat[1+a],Evaluate(inpart(tab(nna,L),a))),
+                   Flatten(pat[1],nna-2)));
+
+
+ConjS(na,L):=Module([nna => na,nn => L],
+      (poty => Pots(nna,nn),dimy => inpart(Dimensions(poty),1),
+       Table(Perm(nna,inpart(poty,i)),[i,1,dimy])));
+
+
+PotsF(na,L):=Module([nna => na,nn => L],
+      Complement(Table(if NumberQ(inpart(ConjS2(nna,nn),i)) then 0
+                           else inpart(Pots(nna,nn),i),
+                       [i,1,inpart(Dimensions(Pots(nna,nn)),1)]),[0]));
+
+
+ConjS2(na,L):=Module([nna => na,nn => L],
+       (poty => Pots(nna,nn),dimy => inpart(Dimensions(poty),1),
+        Table(Slat(nna,inpart(poty,i)),[i,1,dimy])));
+
+
+Laughlin(n,nu):=Product((z(i)-z(j))^(1/nu),[i,1,n],[j,1+i,n]);
+
+
+Laug(n):=Laughlin(n,1/2);
+
+
+Pfaffian(nn,ff):=if EvenQ(nn)
+          then Module([n => nn],
+                      (listy => Table(i,[i,1,n]),ab => Permutations(listy),
+                       sigs => Map(SignaturePermutation,Permutations(listy)),
+                       toli => Sum(inpart(sigs,i)
+                                    *Product(
+                                     1/(z(inpart(ab,i,j))
+                                       -z(inpart(ab,i,1+j))),[j,1,n,2]),
+                                   [i,1,inpart(Dimensions(sigs),1)])
+                            /(2^(n*1/2)*(n*1/2)!),aout => toli*Laughlin(n,ff),
+                       Expand(Simplify(aout)))) else 0;
+
+
+Conje(nn):=if EvenQ(nn)
+       then Module([n => nn],
+                   (listy => Table(i,[i,1,n]),ab => Permutations(listy),
+                    sigs => Map(SignaturePermutation,Permutations(listy)),
+                    toli => Sum(ReplaceAll(Laughlin(n*1/2,1/2),
+                                           Table(
+                                            Rule(z(jj),z(inpart(ab,i,jj))),
+                                            [jj,1,n*1/2]))
+                                 *ReplaceAll(Laughlin(n*1/2,1/2),
+                                             Table(
+                                              Rule(z(jj-n*1/2),
+                                                   z(inpart(ab,i,jj))),
+                                              [jj,n*1/2,n])),
+                                [i,1,inpart(Dimensions(sigs),1)])
+                         /(2^(n*1/2)*(n*1/2)!),aout => toli,aout))
+       else Module([n => nn],
+                   (listy => Table(i,[i,1,n]),ab => Permutations(listy),
+                    sigs => Map(SignaturePermutation,Permutations(listy)),
+                    toli => Sum(ReplaceAll(Laug((1+n)*1/2),
+                                           Table(
+                                            Rule(z(jj),z(inpart(ab,i,jj))),
+                                            [jj,1,(1+n)*1/2]))
+                                 *ReplaceAll(Laug((n-1)*1/2),
+                                             Table(
+                                              Rule(z(jj-(1+n)*1/2),
+                                                   z(inpart(ab,i,jj))),
+                                              [jj,1+(1+n)*1/2,n])),
+                                [i,1,inpart(Dimensions(sigs),1)])
+                         /(2^(n*1/2)*(n*1/2)!),aout => toli,aout));
+
+
+deltaL2(n,i):=Laug(n)*inpart(ConjS(n,2),i);
+
+
+deltaL4(n,i):=Laug(n)*inpart(ConjS(n,4),i);
+
+
+qh(n,nu,xi):=Product(xi-z(i),[i,1,n])*Laughlin(n,nu);
+
+
+quah(n,nu):=qh(n,nu,0);
+
+
+qp(na,nu,xi):=Module([nn => na],
+   (dd[i]:=xi*dd[i-1]-D(dd[i-1],z(i)),dd[0] => Laughlin(nn,nu),dd[nn]));
+
+
+quap(n):=qp(n,1/2,0);
+
+
+deltaQP2(n,i):=quap(n)*inpart(ConjS(n,2),i);
+
+
+edge(n):=Laug(n)*inpart(ConjS(n,1),1);
+
+
+deltaP2(n,i):=Conje(n)*inpart(ConjS(n,2),i);
+
+
+deltaP4(n,i):=Conje(n)*inpart(ConjS(n,4),i);
+
+
+nami(na,L):=Module([nna => na,nn => L],
+     (potty => Pots(nna,nn),pp => inpart(Dimensions(potty),1),
+      inde => Table(Complement(inpart(potty,i)),[i,1,pp]),
+      ta => Table(Table(Count(inpart(potty,i),inpart(inde,i,j)),
+                        [j,1,inpart(Dimensions(inpart(inde,i)),1)]),[i,1,pp]),
+      Table(Product(inpart(ta,i,j)!,[j,1,inpart(Dimensions(inpart(ta,i)),1)]),
+            [i,1,pp])));
+
+
+tip(na,L):=Module([nna => na,nn => L],
+    (potty => Pots(nna,nn),nimy => nami(nna,nn),
+     Table(Sqrt(inpart(nimy,i))*Sqrt(Product(%pi*Gamma(1+inpart(potty,i,jj)),
+                                             [jj,1,nna])),
+           [i,1,inpart(Dimensions(nimy),1)])));
+
+
+namiF(na,L):=Module([nna => na,nn => L],
+      (potty => PotsF(nna,nn),pp => inpart(Dimensions(potty),1),
+       Table(1,[i,1,pp])));
+
+
+tipF(na,L):=Module([nna => na,nn => L],
+     (potty => PotsF(nna,nn),nimy => namiF(nna,nn),
+      Table(Sqrt(inpart(nimy,i))*Sqrt(Product(%pi*Gamma(1+inpart(potty,i,jj)),
+                                              [jj,1,nna])),
+            [i,1,inpart(Dimensions(nimy),1)])));
+
+
+LaugDeco(na):=Module([nna => na],
+         (state => Laug(nna),base => ConjS(nna,nna*(nna-1)),
+          symb => Table(z(i),[i,1,nna]),
+          laur => PolynomialReduce(state,base,symb),
+          if Unequal(inpart(laur,2),0) then Print("Problem in reduction"),
+          prf => inpart(laur,1)*tip(nna,nna*(nna-1)),
+          outp => prf/Sqrt(Dot(prf,prf)),[outp]));
+

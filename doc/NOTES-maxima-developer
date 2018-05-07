@@ -1,0 +1,147 @@
+   Some ideas for Macsyma developers
+RD: Robert Dodier
+SM: Stavros Macrakis
+BW: Barton Willis
+
+*=* Coding style
+  (RD): My advice is to make it look like some existing Maxima code.
+  Here are some exemplars:
+
+  share/contrib/log10.mac
+  share/contrib/amatrix/amatrix.mac
+  share/contrib/augmented_lagrangian.mac
+
+  Common features: header comments; ample white space;
+  pronounceable identifier names; right parentheses stuck
+  together (not hanging).
+
+  Also please consider creating a test script (a collection of
+  pairs of expressions, one is an input and the other is the
+  expected output). batch(rtest_foo, test) runs a test script
+  named rtest_foo.mac.
+
+*=* cons vs. endcons.
+  Maxima, like lisp, uses singly linked lists to represent lists.
+  Finding the first element is fast. Finding the last element requires traversing the entire list.
+  So building a list with cons is faster than building it with endcons.
+
+-----------
+*=*  how can one pass functions as arguments to another function?
+  
+  For example:
+  /*WRONG*/
+  ygen(f,x,L) :=  integrate(f(t)*g2(x,t),t,0,x) 
+         + integrate(f(t)*g1(x,t),t,x,L);
+
+*=*  Turning off simplification (SM)
+ > This last result is mathematically correct, but I dont know how to
+ >  stop the replacement   conjugate(cos(z)) --> cos(conjugate(z)), which
+ > happens before it is passed to my routine.
+
+ What I would suggest is to not try to evade or override built-in
+ Maxima simplification, but to work with it. If Maxima simplifies
+ sin(x)*conjugate(sin(x)) to sin(x)*sin(conjugate(x)), then the latter
+ form is what you need to simplify.
+
+ simp:false is almost always a bad thing to do, because everything in
+ Maxima depends on simplification, even arithmetic as you can see.
+ Many parts of Maxima do not work correctly with simp:false.
+
+ As a general rule, it is a bad idea to block Maxima's simplifications,
+ which standardize the form of expressions so that further
+ simplifications can be applied.  For example, if conjugate(cos(x))
+ weren't simplified to cos(conjugate(x)), Maxima wouldn't be able to
+ recognize that conjugate(cos(x)) - cos(conjugate(x)) = 0. Or that
+ sqrt(x)=x^(1/2).
+
+*=* part vs. inpart
+
+ (SM) The visible form of the expression is what "part" works off
+ of.  So part(a/b) => "/". The internal form is what
+ "inpart" works off of, so inpart(a/b,0) => "*" and
+ inargs(a/b) => [a, 1/b] where
+ inargs(ex):=block([inflag:true],args(ex)).  You can also
+ look at the internal (Lisp-based) representation with
+ ?print(expr).  As a general rule, if you are manipulating
+ expressions programmatically, I would strongly recommend
+ using inpart and inargs; part is extremely inefficient
+ because it reformats the whole expression every time it
+ looks at it....
+
+*=* viewing internal lisp based representation 
+  (SM)  Use ?print(expr) from the Maxima prompt
+
+
+*=* define vs. function definition
+  >  2) I want to integrate g1 and make a function h1 from the
+  >    result. Is there  a good idiom? This seems to work ok.
+  >
+  >    h1(x,t) := ''(ratsimp(integrate(g1(x,t),t)));
+
+ (RD): Probably better to write
+
+ define (h1 (x, t), ratsimp (integrate (g1 (x, t), t)));
+
+ which evaluates ratsimp(...) *when the define expression is evaluated*.
+ The quote-quote operator evaluates ratsimp(...) *when it is parsed*.
+
+ When you're working at the interactive prompt, the two might have
+ the same result. Otherwise they can be quite different.
+
+-----------
+
+*=* prefer mfuncall to ev
+ (BW) Brief example:
+
+(defmspec $minimakelist (x)
+  (let ((f (second x))
+        (x (third x))
+        (lo (meval (fourth x)))
+        (hi (meval (fifth x)))
+        (l nil))
+    (setq f `((lambda) ((mlist) ,x) ,f))
+    (while (<= lo hi)
+      (push (mfuncall f lo) l)
+      (incf lo))
+    (simplifya (cons '(mlist) (reverse l)) t)))
+
+I think it's OK to call simplifya with a second argument of t, but I'm not sure.
+A few examples:
+
+ (%i68) minimakelist(if x = 6 then 1 else 0,x,0,9);
+ (%o68) [0,0,0,0,0,0,1,0,0,0]
+
+ (%i69) minimakelist(integrate(x^k,x),k,-1,3);
+ (%o69) [log(x),x,x^2/2,x^3/3,x^4/4]
+
+ (%i70) showtime : all$
+  Evaluation took 0.0000 seconds (0.0000 elapsed)
+
+An unfair test (minimakelist lacks features and error checking)
+
+ (%i71) minimakelist(if x = 6 then 1 else 0,x,0,99999)$
+  Evaluation took 1.0200 seconds (1.0200 elapsed)
+
+ (%i72) makelist(if x = 6 then 1 else 0,x,0,99999)$
+  Evaluation took 1.5200 seconds (1.5200 elapsed)
+
+-----------
+
+*=* makelist vs create_list and more ev vs mfuncall
+ (BW) Unlike create_list, makelist allows for so-called subscripted
+  variables:
+
+ (%i1) makelist(x[i],x[i],-1,8); (%o1) [-1,0,1,2,3,4,5,6,7,8]
+
+ (%i2) makelist('x[i],x[i],-1,8); 
+
+ (%o2) [x[i],x[i],x[i],x[i],x[i],x[i],x[i],x[i],x[i],x[i]]
+
+ (%i3) makelist('(x[i]),x[i],-1,8); 
+ (%o3) [-1,0,1,2,3,4,5,6,7,8]
+
+ My first effort to fix minimakelist to duplicate (%o3) failed 
+ (substitute a gensym for the subscripted variable). Maybe it's
+ not so easy to do away with the explicit call to $ev in makelist?
+
+-----------

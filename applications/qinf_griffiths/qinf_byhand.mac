@@ -1,0 +1,14 @@
+/* By-hand translations. Automatic translation does everything currently */
+
+/* This does not work.
+   Need to find a  way to do memoizing or caching (or whatever this is called)
+
+sigl[l]:=sigl[l]
+     :Fold(tenprod,sig[First(l)],
+           Map(lambda([[lambda_args]],sig[lambda_args[1]]),Rest(l)));
+*/
+
+kill(sigl);
+
+sigl(l):= Fold(tenprod,sig[First(l)],
+           Map(lambda([[lambda_args]],sig[lambda_args[1]]),Rest(l)));

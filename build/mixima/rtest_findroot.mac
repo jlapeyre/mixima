@@ -1,0 +1,25 @@
+/* endex */
+
+/*
+   Accuracy and Precision are implemented, but they return
+   very different values than mma
+*/
+
+/* ex ok  FindRoot  */
+/* mma  Chop[Part[FindRoot[Sin[x]+Exp[x],{x,0}],1,2]+0.5885327439774] */
+Chop((inpart(FindRoot((Sin(x)+Exp(x)),[x,0]),1,2)+0.58853274397739996));
+0 ; 
+/* endex */
+
+
+/* ex ok  FindRoot  */
+/* mma  Chop[Part[FindRoot[Cos[x]==x,{x,0}],1,2]-0.73908513338528403] */
+Chop((inpart(FindRoot((Cos(x)=x),[x,0]),1,2)-0.73908513338528403));
+0 ;
+/* endex */
+
+/* ex ni  FindRoot  */
+/* mma FindRoot[{Exp[x - 2] == y, y^2 == x}, {{x, 1}, {y, 1}}] */
+
+/* ex ni  FindRoot  */
+/* mma  FindRoot[Zeta[z], {z, 1/2 + 14 I}] */

@@ -1,0 +1,99 @@
+ Mon Apr 26 15:56:32 CEST 2010
+ diff qinf050.ma modgriffith.ma  > diff_qinf050_modgriffith
+
+Griffith's original code is in qinf050.ma. I edited it to modgriffith.ma
+so that the modified Fateman parser would read it without failing. This
+file is a diff between the two files.
+
+
+107a108,109
+> (*
+> 
+115a118,119
+> *)
+> 
+432c436
+< If[ ((0==x)&(0==y))||(0.==x)&&(0.==y), phi=0, phi = ArcTan[x,y],
+---
+> If[ ((0==x)&&(0==y))||(0.==x)&&(0.==y), phi=0, phi = ArcTan[x,y],
+525,526c529
+< 	expandout[op_,ls_,dl_]:=
+<     permmat[tenprod[op,IdentityMatrix[Fold[Times,1,dl]/Length[op]]],
+---
+> 	expandout[op_,ls_,dl_]:=   permmat[tenprod[op,IdentityMatrix[Fold[Times,1,dl]/Length[op]]],
+533,534c536,538
+< 	expandout2[op_,ls_,n_]:= 
+< permmat2[addidents[op,n-Log[2,Length[op]]],Join[ls,invertlist[n,Sort[ls]]]];
+---
+> 	expandout2[op_,ls_,n_]:= permmat2[addidents[op,n-Log[2,Length[op]]],Join[ls,invertlist[n,Sort[ls]]]];
+> 
+> (*
+546a551,552
+> *)
+> 
+651,652c657
+< 	ket2kten[v_, dl_] := 
+<     If[Length[dl] == 1, v, 
+---
+> 	ket2kten[v_, dl_] :=     If[Length[dl] == 1, v, 
+724a730,731
+> (*
+> 
+731a739,740
+> *)
+> 
+773,774c782
+< 	partrace[mat_,q_,dl_] := 
+<  Module[{t=transpose[mat2oten[mat,dl],permptrace[Length[dl],q]]},
+---
+> 	partrace[mat_,q_,dl_] := Module[{t=transpose[mat2oten[mat,dl],permptrace[Length[dl],q]]},
+779,780c787
+< 	partrace2[m_,q_]:=
+< 	Module[{t=transpose[mat2oten2[m],permptrace[Log[2,Length[m]],q]]},
+---
+> 	partrace2[m_,q_]:= Module[{t=transpose[mat2oten2[m],permptrace[Log[2,Length[m]],q]]},
+787,788c794
+< 	partrans[mt_,q_,dl_]:=
+<     oten2mat[transpose[mat2oten[mt,dl],permtrans[Length[dl],q]]];
+---
+> 	partrans[mt_,q_,dl_]:= oten2mat[transpose[mat2oten[mt,dl],permtrans[Length[dl],q]]];
+792,793c798
+< 	partrans2[mt_,q_]:=
+<   oten2mat[transpose[mat2oten2[mt],permtrans[Log[2,Length[mt]],q]]];
+---
+> 	partrans2[mt_,q_]:= oten2mat[transpose[mat2oten2[mt],permtrans[Log[2,Length[mt]],q]]];
+869,870c874
+< 	permmat[mt_,pm_,dl_]:=
+<     oten2mat[
+---
+> 	permmat[mt_,pm_,dl_]:=    oten2mat[
+876,877c880
+< 	permmat2[mt_,pm_]:=
+<   oten2mat[
+---
+> 	permmat2[mt_,pm_]:=  oten2mat[
+980a984,986
+> (*
+> 
+> 
+989a996,998
+> 
+> *)
+> 
+1088a1098,1099
+> (*
+> 
+1095a1107,1109
+> *)
+> 
+> 
+1125a1140,1141
+> (*
+> 
+1128a1145,1146
+> *)
+> 
+1187a1206,1208
+> 
+> (* needed to add blank line so Fateman parser would succeed *)
+> 

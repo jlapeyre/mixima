@@ -1,0 +1,149 @@
+------------------------------------------------------------
+ VERSION VERSIONNUMBER
+
+  Copyright (C) 2008, John Lapeyre  All rights reserved.
+
+  This program is free software; you can redistribute it
+  and/or modify it only under the terms of the GNU General
+  Public License version 2 as published by the Free Software
+  Foundation.
+
+  Mathematica is a registered trademark of Wolfram Research,
+  Inc. (2008)
+
+------------------------------------------------------------
+
+Translation of Mma to maxima.
+
+See README for how to install.
+
+Quick Start:
+
+THIS SOFTWARE IS AN AID TO TRANSLATION. DON'T EXPECT EVERYTHING TO BE TRANSLATED
+WITHOUT MANUAL INTERVENTION.
+
+Load mixima as described in the README.
+
+There are two functions 
+ miximaTransFile("filename");
+ miximaEvalFile("filename");
+The first prints a translation from Mma to Maxima.
+The second translates from Mma to Maxima and evalutes the result
+
+smmatomax("a=1");
+Translates and evaluates the string.
+
+In all translation run from maxima, setting the following list
+'declares' arrays to the translator.
+ mixima_translate_arrays : ["z","d","c","cc"];
+Thus z[3] --> z[3] instead of z(3) 
+
+There is also a script installed to /usr/local/bin/mmatomax
+called like this
+  mmatomax mma_code.m
+
+Introduction to  Translator:
+The translator converts Mathematica code into Maxima
+code. It is far from perfect, but can translate some
+practical real-world code. The translator makes code that
+calls compatibility functions, so these compatibility
+functions must installed for the translated code to run. The
+translator is known to work under Steel Bank Common Lisp and
+gcl. It will probably work with other versions of common
+lisp without too much additional work.
+
+There are many features of Mathematica that the translator
+cannot handle; such as patterns (other than two common
+idioms). At this point, it is intended to be a useful
+starting point for translating exisiting Mma code.
+
+There is an example of a translation project "qinf" in the
+applications folder. Almost all the code (~95%) is
+translated automatically (without special hacks). However,
+almost all features and bug fixes have been directed to this
+end, and the code is mostly written in a functional style.
+YMMV. There is an application of the application of which
+90% works.
+
+Here is an example of how the translator and compatibility
+functions can be used together.  (Note the translator is now
+written in lisp. The previous versions were written in perl.
+) In certain fortunate instances the translator will
+automatically create working Maxima code that does what you
+want. More likely it will merely be an aid to a translation
+that takes quite a bit of manual intervention.
+
+1) Prepare a file code.m with Mma code (It must be exported
+somehow from notebook .nb files, because the parser cannot
+read them.) Call 'mmatomax code.m' on the code.m. Repeat
+cycles of editing code.m and attempting translation.  The
+parser is sometimes sensitive about comments or the
+placement of newlines, and does not handle the later
+additions to syntax. The translator has its own quirks.
+
+2) Name the output file of Maxima code code.mac. If you
+are lucky and use mostly functions rather than patterns
+and rules, most of the resulting code should work. Start
+maxima and load the compatibility functions (see below).
+Load code.mac. Edit it until it loads properly. Test the
+code and edit it further by hand till it does what you want.
+It is likely that your Mma code will use functions (or
+other language features) that are not implemented in the
+parser or in the compatibility functions. If you write
+a compatibility function, please consider contributing it.
+
+Use of Translator:
+
+There are two unix/linux scripts written for Steel Bank CL
+that can translate code (they could easily be adapted to other 
+lisp implementations). There are a few example Mma source
+files there.
+
+Use:
+ mmatomax mma_source_file
+mmatomax is installed to /usr/local/bin by default and loads
+code installed to the maxima share directory.
+
+Another option is to put source code and all the translator code in a folder
+(it is already in the distribution like this), cd there, and type
+
+  ./mmatomax mma_source_file
+
+to read mma source and write Maxima source to stdout.
+For example: ./mmatomax ./mma_examples/Log.m
+
+Type (this is broken now, I think)
+
+  mmatomax_int mma_source_file
+
+to read mma source and write intermediate stages of the
+translation to stdout.
+
+The translation code is in jmma.lisp, mma_parser.lisp, and
+translator.lisp. The code in mma_parser.lisp is a slightly modified
+version of a Mathematica parser written by Richard Fateman.
+
+The parser cannot read some newer Mma syntax, especially things that appear in
+notebooks. For example \[Infinity] must be replaced by Infinity, or the parser
+will fail.
+
+The parser/translator don't have any error checking, so you may have to translate
+code separately in small pieces.
+
+NOTE: None of this code is compiled, but you can probably do it.
+
+------------------------------
+
+Reformatting code:
+To reformat code you can try a few different things. Here is one that
+works somewhat.
+Start with output from the translator (eg mmatomax) code_raw.mac.
+
+start maxima;
+load("./reformat.lisp");
+batch("code_raw.mac");
+grind:true;
+newstringout("code_reformatted.mac",[0,10000],2);
+
+Then edit to remove the additional undesired lines at the beginning
+and end of code_reformatted.mac.

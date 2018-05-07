@@ -1,0 +1,130 @@
+
+
+This message is about copyright issues for freely distributed software
+and it contains a new copyright notice that has been approved by the
+University.  If you don't care about these issues you need read no
+further.
+
+As most of you probably know, there are many avenues open to us as
+researchers for distributing our software.  Two of the most commonly
+used are:
+
+1. Copyright your software in the name of the Regents of U.C. with
+all rights reserved and work with the Office of Technology and
+Licensing (directed by Bill Hoskins) to distribute the software.
+OTL will license the software to research organizations for a
+distribution charge only, but will demand a royalty-bearing license
+from anyone using the software for profit.  In any case, OTL will
+restrict the redistribution of software by requiring licenses of all
+users.  Several of our faculty have worked with OTL and been happy
+with the results.
+
+2. A more common approach is to make software freely available without
+any restrictions whatsoever.  I've been doing this with all my software
+for many years and have been delighted with the resulting wide
+distribution that has occurred.  The department also has many other
+success stories that resulted from freely-distributed software, such
+as SPICE, Ingres, and BSD Unix (although until recently AT&T has
+exercised some control over the redistribution of BSD).  There are many
+ways to distribute free software, such as placing it on server machines
+where it can be retrieved electronically via public FTP, or using the
+services of the ILP Software Distribution Office.  Bill Hoskins has
+affirmed the right of faculty to distribute software in this way,
+although he prefers to have an opportunity to discuss the licensing
+approach with faculty first.
+
+One question that people often ask about free software is whether to
+copyright the software and, if so, how.  The best approach is to place
+copyright notices on the software so that ownership is clear and no-one
+else can claim ownership of our software, and then to add a disclaimer
+to the copyright notice that allows arbitrary use and redistribution.
+I've recently reached an agreement on the wording for such a notice with
+Mary MacDonald of the Office of the General Counsel and Bill Hoskins.
+We believe that this wording achieves our goal of wide and unrestricted
+distribution while protecting the University from liability.  The rest
+of this notice contains the exact text of the notice, followed by some
+explanatory comments.
+
+Wording for the copyright notice:
+---------------------------------
+
+Copyright (c) 1992 The Regents of the University of California.
+All rights reserved.
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose, without fee, and without written agreement is
+hereby granted, provided that the above copyright notice and the following
+two paragraphs appear in all copies of this software.
+
+IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+
+Comments on the notice:
+-----------------------
+
+1. Obviously, the software must not have any conflicting ownership claims
+if you are to copyright it for the Regents of U.C.  If any of it was
+developed by people outside of U.C., or if it was derived from software
+created outside U.C., then you need to be careful to get permission from
+the original authors before copyrighting it in for the Regents of U.C.
+I don't know much about the issues related to this.
+
+2. This notice is intended to be included at the beginning of each file
+of source code for the software (e.g. each ".c" or ".h" file).  Having
+it appear on the computer screen when the software runs is also desirable,
+but it looks bureaucratic and threatening at best and in many applications
+it isn't practical to display the notice every time the software is run.
+
+3. The official copyright sign is preferable to "(c)" in the first line,
+but for most of us it isn't practical.
+
+4. The year "1992" should be replaced by whatever year the software first
+became available, and additional years should be added (e.g. "1989, 1991,
+1992") for later modified versions.
+
+5. The last two paragraphs must be in capital letters to conform with the
+requirements of the Uniform Commercial Code.
+
+6. If you have the above language in your software, there should be no
+need for a company desiring to use the software to obtain any other
+written confirmation from the University.  My understanding is that they
+can still do so if they wish, but my experience is that OTL is pretty
+slow in handling such requests.
+
+7. If you don't like having all the above wording in every source file,
+you can place the full text of the copyright notice in a separate file
+that is always distributed with your software (e.g. put it in a file
+"copyright.h" that's included by all the source files).  Then the last
+three paragraphs can be replaced with the following wording in the
+individual source files:
+
+    "See [insert proper technical description of where the language
+    first appears] for copyright notice and limitation of liability
+    an disclaimer of warranty provisions."
+
+7. To protect a copyrighted work for the long term (i.e. to prevent
+copyright infringement), it must be registered with the U.S. Copyright
+Office within five years of its first publication.  If you don't do
+this then the work effectively enters the public domain.  Mary
+MacDonald says that there's not much point in registering software
+with the above copyright notice on it, since it's effectively in
+the public domain anyway.  However, if you think you might eventually
+want to restrict the software, then it should be registered.
+
+If you have any questions or concerns about these copyright issues,
+please send them to me.  If I can't answer them myself I'll refer them
+on to Mary MacDonald.
+
+Personally, I think that free software distributions are a great way
+to disseminate results and influence the computer science community;
+I strongly encourage other faculty to adopt this approach and use the
+above copyright notice to do it in a legally correct way.
+

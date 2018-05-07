@@ -1,0 +1,72 @@
+/* 35 functions shadowed */
+/*> Function Abs abs */
+Abs([e]) := apply('abs,e);
+/*> Function InputForm grind */
+InputForm([e]) := apply('grind,e);
+/*> Function Drop rest */
+Drop([e]) := apply('rest,e);
+/*> Function EvenQ evenp */
+EvenQ([e]) := apply('evenp,e);
+/*> Function Exit quit */
+Exit([e]) := apply('quit,e);
+/*> Function First first */
+First([e]) := apply('first,e);
+/*> Function Factor factor */
+Factor([e]) := apply('factor,e);
+/*> Function Expand expand */
+Expand([e]) := apply('expand,e);
+/*> Function Evaluate ev */
+Evaluate([e]) := apply('ev,e);
+/*> Function Solve solve */
+Solve([e]) := apply('solve,e);
+/*> Function Im imagpart */
+Im([e]) := apply('imagpart,e);
+/*> Function Re realpart */
+Re([e]) := apply('realpart,e);
+/*> Function Join append */
+Join([e]) := apply('append,e);
+/*> Function Last last */
+Last([e]) := apply('last,e);
+/*> Function Mod mod */
+Mod([e]) := apply('mod,e);
+/*> Function OddQ oddp */
+OddQ([e]) := apply('oddp,e);
+/*> Function NumberQ numberp */
+NumberQ([e]) := apply('numberp,e);
+/*> Function StringQ stringp */
+StringQ([e]) := apply('stringp,e);
+/*> Function StringSplit split */
+StringSplit([e]) := apply('split,e);
+/*> Function PrimeQ primep */
+PrimeQ([e]) := apply('primep,e);
+/*> Function ListQ listp */
+ListQ([e]) := apply('listp,e);
+/*> Function IntegerQ integerp */
+IntegerQ([e]) := apply('integerp,e);
+/*> Function Plus "+" */
+Plus([e]) := apply('"+",e);
+/*> Function Times "*" */
+Times([e]) := apply('"*",e);
+/*> Function Minus "-" */
+Minus([e]) := apply('"-",e);
+/*> Function Plot plot2d */
+Plot([e]) := apply('plot2d,e);
+/*> Function Print print */
+Print([e]) := apply('print,e);
+/*> Function Rest rest */
+Rest([e]) := apply('rest,e);
+/*> Function Riffle join */
+Riffle([e]) := apply('join,e);
+/*> Function Series taylor */
+Series([e]) := apply('taylor,e);
+/*> Function Sort sort */
+Sort([e]) := apply('sort,e);
+/*> Function ToString sconcat */
+ToString([e]) := apply('sconcat,e);
+/*> Function StringReverse sreverse */
+StringReverse([e]) := apply('sreverse,e);
+/*> Function TrigExpand trigexpand */
+TrigExpand([e]) := apply('trigexpand,e);
+/*> Function Characters charlist */
+Characters([e]) := apply('charlist,e);
+

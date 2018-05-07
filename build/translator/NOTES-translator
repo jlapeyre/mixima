@@ -1,0 +1,29 @@
+mma-to-mixima.lisp --
+   read eval print loop (repl) for mockmma shell used with mixima compatibility
+   functions. entermma is the entry point, which is wrapped in a maxima function
+   tomma. Also reading from string and file supported.
+   
+pf.lisp    -- BuildFormat converts internal form of mma expressions
+              to another lisp-like description of how to print it
+disp1.lisp -- disp takes description returned by BuildFormat and builds
+              and prints a string in the standard Mma print form.
+
+eval.lisp  -- original repl for mockmma... hmmm ... already modified by Lapeyre. It
+              looks like it was by Richard Fateman and then
+              modified by Hunter Monroe.
+
+------------------------
+Authors           
+Fateman, Lai, Monroe: pf.lisp, disp1.lisp, eval.lisp
+Fateman, Lapeyre: mockmma-mixima-shell.lisp:
+
+------------------------
+
+In bottom of Mockmma/maxima.lisp
+is a redefinition of mread1 and some stuff to
+allow parser to work with gcl.
+
+-------------------------
+Look in the source files, eg translate.lisp for some information.
+The README in the toplevel folder also has information on the translator.
+

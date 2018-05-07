@@ -1,0 +1,217 @@
+/* test reading mma code from a string, translating to maxima, and evaluting. */
+
+(kill(a,i,b,cat,sm,dog,zebra), sm(s) := smmatomax(s),0);
+0$
+
+
+
+/* start tests */
+
+sm("");
+false$
+
+sm("1");
+1$
+
+sm("1=a");
+false$
+
+sm("a");
+a$
+
+sm("a=1");
+1$
+
+a;
+1$
+
+kill(a);
+done$
+
+sm("2+3");
+5$
+
+sm("2*3");
+6$
+
+sm("a+b");
+a+b$
+
+sm("a*b");
+a*b$
+
+sm("a b");
+a*b$
+
+sm("a - b");
+a-b$
+
+sm("a / b");
+a/b$
+
+sm("a^-1");
+1/a$
+
+sm("{}");
+[]$
+
+sm("{1}");
+[1]$
+
+sm("{a}");
+[a]$
+
+sm("{a,b}");
+[a,b]$
+
+/*************************************
+ * multiline strings.
+ */
+
+sm("  1
+ ");
+1$
+
+sm("  1
+  +
+
+  1");
+2$
+
+sm( "
+
+   cat
+
+   + zebra
+
+   - dog
+
+");
+cat-dog+zebra$
+
+/**************************************/
+
+sm("f[x_] := x^2");
+f(x):=x^2$
+
+sm("f[3]");
+9$
+
+sm("f[a]");
+a^2$
+
+kill(f);
+done$
+
+sm("i=1");
+1$
+
+sm("i=i+1");
+2$
+
+sm("i=i-1");
+1$
+
+/* post- and pre- increment */
+
+(kill(i),sm("i=0; i = ++i + 1"));
+2$
+
+sm("i=0; i = i++ + 1");
+1$
+
+(kill(a), sm("i=0; i = --i + a"));
+a-1$
+
+sm("i=0; i = i-- + a");
+a$
+
+kill(i);
+done$
+
+/***************************************
+ * Constants
+ */
+
+sm("Cos[Pi]");
+-1$
+
+sm("Log[E]");
+1$
+
+sm("I^2");
+-1$
+
+sm("I=1");
+false;
+
+sm("Pi=3.14.159");
+false;
+
+sm("E=\"cat\"");
+false;
+
+
+/***************************************
+* Part of list
+*/
+
+(kill(a,x,y), sm("a = Table[x^2,{x,1,1000}]; 0"));
+0$
+
+sm("a[[500]]");
+250000$
+
+sm("a = Table[x^2+y^2,{x,1,10},{y,1,10} ]; 0");
+0$
+
+sm("Sqrt[ a[[3]][[4]] ]");
+5$
+
+/******
+* Assign to a part
+*/
+
+/* failed to get quotes escaped
+sm( " a[[3]][[4]] = \"zebra\"  " );
+"zebra"$
+*/
+
+/* fix these. Assiging to a part does work.
+sm( " a[[3]][[4]] = -1  " );
+-1$
+
+sm("a[[3]][[4]");
+-1$
+*/
+
+kill(a);
+done$
+
+
+/*
+sm("");
+sm("");
+sm("");
+*/
+
+
+/**************************************/
+is (sm("Table[i,{i,1,10}]") = Table(i,[i,1,10]) );
+true$
+
+sm("Table[i,{i,1,10}");
+false$
+
+
+/**************************************/
+
+/* done with tests. clean up */
+(kill(sm),0);
+0$
+
+
+
+
+
+

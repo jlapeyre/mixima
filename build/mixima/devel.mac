@@ -1,0 +1,50 @@
+/*
+ *   Some utilities for developing mixima
+ */
+
+/* Run a testsuite */
+
+/*> AuxFunction mixtest */  
+mixtest() := load("mixima/testsuite2.mac");
+
+/*> AuxFunction mixtest3 */  
+mixtest3() := load("./tests/testsuite3.mac");
+
+/*> AuxFunction mixcompile */  
+mixcompile() := block( [source, source1, dir, path],
+  dir : "./compatibility/",
+  source : [
+/*    "funcs.mac", */
+    "combinatorics.mac",
+    "newton.mac",
+    "polynomials.mac",
+    "shadow.mac",
+    "shadow_math_functions.mac",
+/*    "derivatives_integrals.lisp", */
+    "limit.lisp",
+/*    "list.lisp", */
+    "matrix.lisp",
+    "predicates.lisp",
+    "roots.lisp",
+/*    "simplify.lisp", */
+    "sum_product.lisp",
+    "table.lisp"
+/*    "reformat.lisp" */
+    ],
+    source1 : [ "table.lisp" ],
+    for onefile in source do (
+      path : sconcat(dir,onefile),
+      print(path),
+      compile_file(path))
+);
+
+/* source files that should probably not be compiled
+        "dttodiff.mac", 
+    "devel.mac",
+    "function_list.lisp",
+    "helpitems.lisp",
+    "mixdoc.in.lisp",
+    "mixdoc.lisp",
+    "mixima.mac",
+    "old_table.lisp",
+*/

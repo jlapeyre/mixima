@@ -1,0 +1,73 @@
+This folder contains a translation project from Mathematica (Mma)
+to Macsyma of
+
+  Quantum Information Program in Mathematica
+  Copyright (C) 2005 Robert Griffiths
+
+This program is free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE. See the GNU General Public License for more
+details.
+
+You should have received a copy of the GNU General Public
+License along with this program; if not, write to the Free
+Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+Boston, MA 02110-1301, USA.
+
+See the file license.txt
+
+The original distribution with documentation is available at
+http://quantum.phys.cmu.edu/QPM/index.html
+The documentation is not included here.
+
+------------------------------------------------------------
+To use the Macsyma translation:
+Install the compatibility functions as described in the distribution above.
+Start maxima and load the code:
+
+(%i1) load("mixima");
+(%o1)                 /home/user/.maxima/mixima.mac
+(%i2) load("./qinf050.mac");
+(%o2)                            ./qinf050.mac
+
+To test some of the routines with application code, start maxima and give these commands.
+  load("mixima");
+  batch("./rtest_qinf.mac",test);
+
+An application of the Quantum Information Programs is in misc10.ma. The translation is
+in rtest_misc10.mac formatted as a Maxima test. To run the test, enter Maxima and type
+
+load("mixima");
+batch("./rtest_misc10.mac",test);
+
+Note for some of the above you may have to do load("./qinf050.mac") twice in a row.
+Some of this code is slow. Compiling the code and/or the Mixima functions might help
+quite a bit.
+
+------------------------------------------------------------
+Most of these files are intermediate files from the translation. They are useful for studying
+the translation, but are not necessary for using the quantum information package.
+Files:
+qinf050.ma -- the original Mma source code to the software
+qinf050_mod.m -- a few hand edits to qinf050.ma
+             to allow the parser to read it, and to fix a 
+             few small errors.
+diff_qinf050_modqinf -- the difference between qinf050.ma and qinf050_mod.m
+qinf050_mod_raw.mac -- raw output of translator mtrans on qinf050_mod.m
+qinf050.mac -- raw output reformatted by function in reformat.lisp
+qinf_byhand.mac -- file to be loaded afer qinf050.mac that fixes some
+                  translation errors.
+rtest_qinf.mac -- tests of qinf.mac (not complete!)
+misc10.ma -- Some application code that uses qinf050.ma
+misc10_raw.mac -- translation by mtrans
+misc10_mod.mac -- hand edits to trim garbage, mistranlsations etc.
+misc10_reformatted.mac -- reformatted by stringout(filename,input)
+rtest_misc10.mac  -- test of translation of misc10
+

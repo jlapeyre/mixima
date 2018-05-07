@@ -1,0 +1,24 @@
+#!/usr/bin/sbcl --script
+;; mparse
+;; Usage:  mparse source_file.m
+;; Reads Mma code from source_file.m and
+;; writes macsyma to stdout.
+(declaim (sb-ext:muffle-conditions t))
+
+(setq mixima-installation-path "/usr/share/maxima/5.24.0/share/mixima")
+
+(defun mmapath (mmafile) (concatenate 'string mixima-installation-path "/"  mmafile))
+
+; Load preliminary stuff
+(load (mmapath "jmma.lisp"))
+; Load the parser
+(load (mmapath  "mixima-mockmma-parser.lisp"))
+(load (mmapath "parser_patch.lisp"))
+; Load the translator
+(load (mmapath "mma-to-mixima.lisp"))
+
+; avoid prepending mma::
+(in-package :mma)
+; This routine calls everything.
+(read-trans-print-file (second sb-ext:*posix-argv*))
+(write-line "")

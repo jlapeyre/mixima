@@ -1,0 +1,130 @@
+/* endex */
+/****************************
+ * NIntegrate
+ **************************/
+
+/* ex ok NIntegrate */
+NIntegrate(x*y,[x,0,1],[y,0,1]);
+0.25;
+/* endex */
+
+/* from Mma 3.0 */
+
+/* ex ok NIntegrate */
+Chop(NIntegrate(Sin(x*y),[x,0,1],[y,0,x]) - 0.11990590880424,1e-7);
+0;
+/* endex */
+
+
+/* ex ok NIntegrate */
+Chop(NIntegrate(Sin(Sin(x)),[x,0,2]) - 1.2470560582440,1e-7);
+0;
+/* endex */
+
+/* ex ok NIntegrate */
+NIntegrate(Exp((-1*(x^2))),[x,(-1*Infinity),Infinity]);
+1.772453850905516;
+/* endex */
+
+NIntegrate(Exp((-1*(x^3))),[x,0,Infinity]);
+0.89297951156925;
+
+/* ex ok NIntegrate */
+NIntegrate(((x^2)+(y^2)),[x,-1,1],[y,-1,1]);
+2.666666666666667;
+/* endex */
+
+
+/* ex ok NIntegrate */
+Chop(NIntegrate(1/Sqrt(x),[x,0,1])-2,1e-7);
+0;
+/* cm detect singularities */
+/* endex */
+
+/* ex ok NIntegrate */
+Chop(NIntegrate(1/Sqrt(x-1),[x,1,2])-2,1e-7);
+0;
+/* endex */
+
+/* ex ok NIntegrate */
+/* cm Can't detect this singularity */
+Chop(NIntegrate(Sin(x)/x,[x,0,1],Rule(Method,QagsRule)) - 0.94608307036718, 1e-7);
+0;
+/* endex */
+
+
+/* ex ok NIntegrate */
+/* cm Can't detect automatically */
+Chop(NIntegrate(Sin(9*x^3)*Sqrt(x),[x,1,10],Rule(Method,Oscillatory)) + 0.031722571737888,1e-7);
+0;
+/* endex */
+
+/* ex ok NIntegrate */
+NIntegrate(x*y*z,[x,0,2],[y,0,2],[z,0,2]);
+8.0;
+/* endex */
+
+/* Fails.
+NIntegrate((Sqrt(((x1*1/3)+(x2*1/2)+(x3*1/2)+(x4*1/10)))^-1),[x1,0,1],[x2,0,1],[x3,0,1],[x4,0,1]);
+*/
+
+/* This works but is very slow */
+/*
+NIntegrate(((Sqrt((x1+x2+x3))^-1)+(Sqrt(((1-x1)+(1-x3)+(1-x2)))^-1)),[x1,0,1],[x2,0,1],[x3,0,1],Rule(Method,QagsRule));
+1.7257541542782222;
+*/
+
+/* ex ok NIntegrate */
+NIntegrate(Exp((-1*x)),[x,0,Infinity]);
+1.0;
+/* cm quadrature is detected in these cases */
+/* endex */
+
+Chop(NIntegrate(Exp(((-1*x)+y)),[x,0,Infinity],[y,0,1]) - 1.71828184221844,1e-7);
+0;
+
+Chop(NIntegrate(Exp((-x*x)),[x,-Infinity,Infinity]) -1.772453850905516, 1e-7);
+0;
+
+Chop(NIntegrate(Exp((-x*x)),[x,-Infinity,1]) - 1.633051058265185, 1e-7);
+0;
+
+
+Chop(NIntegrate(Sin(10*x^3)*sqrt(x),[x,1,10])+0.027647549723772, 1e-7);
+0;
+
+/* ex ok NIntegrate */
+Chop(NIntegrate(((Log(x)*(Sqrt(x)^-1))+(Sqrt((1-x))^-1)),[x,0,1]) + 2,1e-7);
+0;
+/* endex */
+
+/* ex ok NIntegrate */
+Chop(NIntegrate((Sin((2000*x))*(Sqrt(x)^-1)),[x,0,2],Rule(Method,Oscillatory))-0.0282830615003, 1e-7);
+0;
+/* cm Mma detects this automatically */
+/* endex */
+
+/* slow
+Chop(NIntegrate(Abs((x-y)),[x,0,1],[y,0,Sqrt(x)])-0.18333328, 1e-6);
+0;
+*/
+
+/* Fails
+NIntegrate((BesselJ(4,((20*(x^3))+4))*(Sqrt(x)^-1)),[x,1,Infinity]
+*/
+
+/* ex ok NIntegrate */
+Chop( NIntegrate(sin(sin(x)),[x,0,2], Rule(Method,NewtonCotesRule),Rule(MinRecursion,2),Rule(MaxRecursion,12),Rule(PrecisionGoal,10),Rule(AccuracyGoal,Infinity)) - 1.247056058244003, 1e-7);
+0;
+/* endex */
+
+block([res],
+(x(t):=(Cos(t)+(1/7*Cos(((7*t)+(Pi*1/3)))))),
+(y(t):=(Sin(t)+(1/7*Sin((7*t))))),
+ res:Chop(NIntegrate((x(t)*D(y(t),t)),[t,0,(2*Pi)]) - 3.3659921288462, 1e-7),
+ kill(x,y),res);
+0;
+
+/****************************
+ * end NIntegrate
+ **************************/

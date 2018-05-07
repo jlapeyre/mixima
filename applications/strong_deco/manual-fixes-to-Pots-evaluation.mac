@@ -1,0 +1,85 @@
+
+/*
+
+  Only the functions mtab and Pots are changed. The rest of the
+  stuff here does not need to be used at all.
+
+  But mtab and Pots are copied into the machine generated code.
+
+  mtab is only changed in that tab --> mtab.
+
+  Pots changes how the Table is evaluated.
+
+*/  
+  
+
+Permanent(m):=With([v:Array(x,Length(m))],
+          Coefficient(Apply(Times,Dot(m,v)),Apply(Times,v)));
+
+
+zzz(a,b):=a^b;
+
+
+Perm(n,q):=block([nn:n],
+     Permanent(Outer(zzz,Table(z(i),[i,1,n]),Table(inpart(q,i),[i,1,n]))));
+
+
+Slat(n,q):=block([nn:n],
+     Det(Outer(zzz,Table(z(i),[i,1,n]),Table(inpart(q,i),[i,1,n]))));
+
+
+cc[0]:0;
+
+
+mtab(n,l):=Table(
+    [cc[i],cc[i-1],if i = 1 then l else Times(l-Sum(cc[j],[j,0,i-1]),1/2)],
+    [i,1,n-1]);
+
+
+goodPots(na,L):=if na = 2 then Table([i,L-i],[i,0,Times(L,1/2)])
+      else block([nna:na,nn:L,res],
+                 ( 
+                   pat[nna]:Join(Table(cc[i],[i,1,nna-1]),
+                     [nn-Sum(cc[i],[i,1,nna-1])]),
+                     pat[a] :=  'Table(pat[1+a],(inpart(Evaluate(mtab(nna,L)),a))),
+                     res : ev(pat[1]),
+                     res : ev(res,nouns),
+                   Flatten(res,nna-2)));
+
+Pots(na,L):=if na = 2 then Table([i,L-i],[i,0,Times(L,1/2)])
+      else block([res],
+                 ( Clear[pat],
+                   pat[na]:Join(Table(cc[i],[i,1,na-1]),
+                     [L-Sum(cc[i],[i,1,na-1])]),
+                     pat[a] :=  'Table(pat[1+a],(inpart(mtab(na,L),a))),
+                     res : ev(pat[1]),
+                     res : ev(res,nouns),
+                   Flatten(res,na-2)));
+
+
+ConjS(na,L):=block([nna:na,nn:L],
+      (poty:Pots(nna,nn),dimy:inpart(Dimensions(poty),1),
+       Table(Perm(nna,inpart(poty,i)),[i,1,dimy])));
+
+
+PotsF(na,L):=block([nna:na,nn:L],
+      Complement(Table(if NumberQ(inpart(ConjS2(nna,nn),i)) then 0
+                           else inpart(Pots(nna,nn),i),
+                       [i,1,inpart(Dimensions(Pots(nna,nn)),1)]),[0]));
+
+
+ConjS2(na,L):=block([nna:na,nn:L],
+       (poty:Pots(nna,nn),dimy:inpart(Dimensions(poty),1),
+        Table(Slat(nna,inpart(poty,i)),[i,1,dimy])));
+
+
+ConjSF(na,L):=Select(ConjS2(na,L),
+       lambda([[lambda_args]],not IntegerQ(lambda_args[1])));
+
+
+Laughlin(n,nu):=Product((z(i)-z(j))^(1/nu),[i,1,n],[j,1+i,n]);
+
+
+Laug(n):=Laughlin(n,1/2);
+
+

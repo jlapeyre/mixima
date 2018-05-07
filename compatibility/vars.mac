@@ -1,0 +1,98 @@
+
+/* aliasing %i breaks input line expr, eg %i3 */
+/*> GlobalVariable  I  */
+/*> GlobalVariable  E  */
+/*> GlobalVariable  EulerGamma */
+/*> GlobalVariable  Infinity */
+/*> GlobalVariable Degree */
+define_variable (E, %e, any_check);
+qput (E, lambda([x],error("E is a constant.")), value_check);
+define_variable (I, %i, any_check);
+qput (I, lambda([x],error("I is a constant.")), value_check);
+define_variable (Pi , %pi , any_check);
+qput (Pi , lambda([x],error(" Pi is a constant.")), value_check);
+define_variable (EulerGamma ,%gamma  , any_check);
+qput (EulerGamma , lambda([x],error(" EulerGamma  is a constant.")), value_check);
+define_variable (Infinity , inf , any_check);
+qput (Infinity , lambda([x],error("Infinity  is a constant.")), value_check);
+define_variable (Degree , %pi/180 , any_check);
+qput (Degree , lambda([x],error("Symbol Degree  is protected.")), value_check);
+
+
+/*
+I:%i $
+Pi:%pi $
+EulerGamma:%gamma $
+Infinity:inf $
+*/
+
+/* don't know whats best. probably not aliasing
+  Robert Dodier for one insists that it is evil.
+  The bug with %i -> I took a bit to find
+*/
+/*
+alias(
+ Pi,%pi,
+ E,%e,
+ EulerGamma,%gamma,
+ Infinity,inf
+);
+*/
+
+/* Implement these as shadow functions
+   Can't use them as aliases because of their weird form
+Times:"*"$
+Plus:"+"$
+Minus:"-"$
+Power:"^"$
+*/
+
+/* Make Rule operator */
+infix("->")$
+"->"(a,b) ::= buildq([a:a,b:b],Rule('a,b));
+
+/* infix Apply operator */
+infix("@@");
+"@@"(a,b) ::= buildq([a:a,b:b],Apply('a,b));
+
+
+/* perhaps not neccessary to add syntax for this.
+  also , how to get both prefix and postfixe ?
+  */
+postfix("++")$
+"++"(y) ::= buildq([y],Increment(y))$
+
+/*
+   try to generalize assignmet so that we get
+   x =~ 3   -->  x:3,  if x is an atom
+   inpart(y,n) =~ 3    ->   y : substinpart(y,n,3) if y is an expression
+   Not really sure how or why this works
+*/
+
+/*
+  don't know what the precedence of assignment : is, although I have tried
+  to get it.
+*/
+infix("=>",80,80);
+
+/* was able to define this directly in lisp
+"=>"(xx,yy) ::= buildq([xx:xx,yy:yy], mixSetQ(xx,yy));
+*/
+
+/* Default maxima values for the following are given by
+
+  [simpsum , simpproduct, logexpand, fpprintprec, solveradcan ] : [false, false, false, 0, false];
+
+   I think, simpsum, etc. shold be set locally in Sum to get the correct
+   answers,  not globally here.
+   
+*/
+
+/* simpsum:true; */ /* hmm.. not neccessary anymore, i guess */ /* So that Sum does symbolic sums by default */
+/* simpproduct:true; */  /* in a few tests in rtest_mixima.mac, we temporarily set this to true */
+expand_hypergeometric : true;
+logexpand:false;
+fpprintprec : 0$
+/* solveradcan:true$ */
+
+MiximaHeadStrict:true;

@@ -1,0 +1,206 @@
+/*> Function Append */
+Append([e]) := endcons(second(e),first(e));
+
+/*> Function AppendTo */
+AppendTo('al,x) := ( al :: endcons(x,ev(al)));
+
+/*> Function Complement */
+/* Can't find documentation on the call to unique, but that is
+   what the real one does.  */
+Complement(ls,[args]) := block([res:[], allargs:apply('append,args)],
+  if length(args) = 0 then unique(ls) else
+  ((map(lambda([x], if not member(x,allargs) then res:cons(x,res)),ls),res),
+  reverse(res)));
+
+/*> Function Intersection */
+Intersection([e]) := apply(mmasetfunc,cons('intersection,e));
+
+/*> Function Length */
+Length(x) :=   if atom(x) or numberp(x) or complexp(x) then 0   else length(x);
+
+/*> Function Most */
+Most(v) := rest(v,-1);
+
+/*> Function Partition */
+/*
+   Partition(x,n) partitions list x into n lists 
+   Partition(x,n,d) does the same with offset d
+   Partition([a,b,c,d,e,f],2);
+    --> [[a,b],[c,d],[e,f]]
+   Partition([a,b,c,d,e,f],2,1);
+    --> [[a,b],[b,c],[c,d],[d,e],[e,f]]
+*/
+/* compiling, with modedeclare, makes code slower, by a factor of two
+  or more gcl */
+Partition(x,n,[id]) := block([d:n,j,len:length(x),res:[]],
+  modedeclare([d,i,j,n,len],fixnum), /* does not seem to do much */
+  if length(id) = 1 then d : id[1],
+  if d < 1 then (print("Single or non-empty list of positive machine-size integers expected at  position 3 of Partition"),
+    return(false)),
+  if length(x) <= n   then [] else
+  for i:1 thru len step d do (
+    j:i+n-1,
+    if j>len then return(res) else
+    res:cons(Take(x,[i,j]),res)),reverse(res));
+
+/*> Function Prepend */
+Prepend([e]) := cons(second(e),first(e));
+
+/*> Function PrependTo */
+PrependTo('al,x) := ( al :: cons(x,ev(al)));
+
+/*> Function Range */
+/*============== Range  ===============*/
+/*
+ range(n) --> [1,2,...,n]
+ range(n1,n2) --> [n1,...,n2]
+ range(n1,n2,step) --> [n1,n1+st,n1+2*st,...,n2]
+ eg
+ range(3) --> [1,2,3],
+ range(x,x+4) --> [x,x+1,x+2,x+3,x+4]
+ range(4,1,-1) --> [4,3,2,1]
+*/
+block ([simp : false],
+    local (aa,bb,cc,ee),
+    matchdeclare ( aa, numberp, [bb,ee], all,
+      cc, lambda([x,y], maybe(x<y) # unknown )(bb)),
+    tellsimp (Range(aa), mixima_nlrange(aa)),
+    tellsimp (Range(bb,cc), mixima_nlrange(bb,cc)),
+    tellsimp (Range(bb,cc,ee), mixima_nlrange(bb,cc,ee))
+    );
+
+mixima_nlrange([v]) := block([imin:1,imax,steps:1,res:[]],
+  if length(v) = 1 then (imax:v[1])
+  else if length(v) = 2 then (imin:v[1],imax:v[2])
+  else if length(v) = 3 then (imin:v[1],imax:v[2],steps:v[3]),
+  if  steps > 0 then (
+    for i:imin while i<=imax step steps do
+    res:cons(i,res),reverse(res))
+  else (
+    for i:imin while i>=imax step steps do
+    res:cons(i,res),reverse(res)));
+
+/************** end Range  **************/
+
+/*> Function ReplacePart */
+/* Griffiths uses ReplacePart in a way that is apparantly 
+  not documented in Mma 7.0. He does not use any rules, but simply specifies
+  the part to replace. Here I do not implement the rule functionality, but
+  only what Griffiths uses.
+   zz : [1,2,3,[4,q,[s,rr,ww],3]];
+   then both substmixpart("hi",zz,4,3,2);
+   and ReplacePart(zz,"hi",[4,3,2]);
+   give [1,2,3,[4,q,[s,"hi",ww],3]]
+
+*/
+ReplacePart([x]) := block([rep:x[2],ls:x[1],spec:x[3]],
+      if mapatom(spec) then spec:cons(spec,[]),		 
+      apply('smixpart, cons(rep,cons(ls,spec))));
+
+/*> Function Reverse  */
+/* This implements all documented Mma 7.0 features */
+
+/* %Reverse is called recursively.
+  lst -- the list to be reversed
+  level -- the depth in the top level list (not visible here) at which to reverse
+  ilevel -- the current depth wrt the top level.
+  If we are looking at an atom, then return the atom-- can't be reversed,
+     ends recursion.
+  If we are at the correct level for reversing (ilevel=level) then reverse lst and return it,
+      ending recursion.
+  If we are not yet at the level for reversing, then descend one more level and build
+  return lst with %Reverse applied to each element, and increasing ilevel by 1 for these applications.
+ */
+
+%Reverse(lst,level,ilevel) := block([res],
+  if mapatom(lst) then lst else
+    if ilevel = level then
+       reverse(lst)
+     else (
+      map(lambda([x],%Reverse(x,level,ilevel+1)),lst)));
+
+ /* e is a list.
+    If e has one element (it must be a list), then call 'reverse' on this element.
+    If e has 2 elements then they are 'lst', the list to be reversed, and 'levels'
+    the levels(depths) at which to reverse. (If levels is just a number then make it
+     a list of length 1).
+    We can reverse at the different levels independently. So just call %Reverse above
+    once for each depth in 'levels', each time setting ilevel to 1 because we are calling
+    with the entire list.
+  */
+Reverse([e]) := block([i,levels,lst],
+       if length(e) = 1 then apply('reverse,e)
+        else ( levels : mixpart(e,2), lst : mixpart(e,1),
+            if mapatom(levels) then levels:[levels],
+            for i in levels do lst:
+               lst:%Reverse(lst,i,1),lst));
+         
+/************** end Reverse  **************/
+
+/*> Function Select */
+Select(expr,pred,[opts]) := block([res:sublist(args(expr),pred),len,h:op(expr)],
+  len : Length(res),
+  if (Length(opts) = 0 or opts[1] > len ) then apply(h,res)
+  else apply(h,Take(res,opts[1])));
+
+
+/*> Function Subsets */
+/* Subsets --> powerset */
+Subsets([e]) := block([res],
+  res:apply(mmasetfunc,cons('powerset,e)),
+  if setp(first(e)) then res else args(map(lambda([x], apply(op(first(e)),listify(x))),res)));
+
+
+
+/*> Function Take */
+/***
+  Take(list,n) -- returns the first n elements of list
+              if n>0 and the last |n| elements if n<0.
+  Take(list,[n1,n2]) returns elements n1 through n2.
+  Take(list,[n1,n2,skip]) returns elements n1 through n2, skipping by skip.
+  Take(list,seq1,seq2,...) for nested lists, seq1 operates at level 1, seq2
+      at level2, etc., where seqn is of the same form and meaning as the arguments
+      given in the case of one level.
+  just as with n, n1 and n2 count from the end if they are negative.
+  Take(list,[-1,1,-1]) --> reverse(list)
+*/
+/* '%Take' operates on top level, it is called via recursion from 'Take' */
+%Take(list,[v]) := block([len:length(list),i1,i2],
+  if not listp(v[1]) then if v[1] >=0 then rest(list,v[1]-len)
+    else rest(list,len+v[1])
+    else (
+      if v[1][1] > 0 then i1:v[1][1] else i1:len+v[1][1]+1,
+      if v[1][2] > 0 then i2:v[1][2] else i2:len+v[1][2]+1,
+      if length(v[1]) = 2 then rest(rest(list,i1-1),-len+i2)
+    else create_list(mixpart(list,i1+v[1][3]*i),i,0,mixima_intdiv((i2-i1),v[1][3]))));
+
+/* integer division discarding remainder.
+   This must be possible more easily somehow, but this
+   works here
+*/
+/*> AuxFunction mixima_intdiv */
+mixima_intdiv(a,b):=a/b-mod(a,b)/b;
+
+
+Take(list,[v]) := block([res:[]],
+  if length(v) = 1 then %Take(list,v[1]) else (
+   res:%Take(list,v[1]),
+   v:rest(v,1),
+   res:map(lambda([x],apply('Take,cons(x,v))),res),
+   res));
+/************** end Take  **************/
+
+/*> Function Union */
+/*** Keep the un-refactored code around for a bit, because I dont trust passing
+     functions
+disabled Union([e]) := block( [u],
+  u:apply('union,map(lambda([x],if setp(x) then x else setify(args(x))) ,e)),
+  if setp(first(e)) then u elseif listp(first(e)) then listify(u) else
+       apply(op(first(e)),listify(u)));
+disabled Intersection([e]) := block( [u],
+  u:apply('intersection,map(lambda([x],if setp(x) then x else setify(args(x))) ,e)),
+  if setp(first(e)) then u elseif listp(first(e)) then listify(u) else
+       apply(op(first(e)),listify(u)));
+***/
+Union([e]) := apply(mmasetfunc,cons('union,e));
+

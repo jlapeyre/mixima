@@ -1,0 +1,14 @@
+I have always found plotting cumbersome and difficult with
+Mathematica, so I am inclined to use native Maxima plotting
+(ie the interface to gnuplot) rather than implement Mma plotting
+in Maxima. Only the following is done.
+
+Mma Plot simply shadows Maxima plot2d, which means only
+basic things work. Eg.
+
+Plot(f(x),[x,a,b]);
+Plot(f,[x,a,b]); /* if f(x) is defined */
+Plot([f,g,h] ,[x,a,b]);
+
+None of the options or other kinds of plots are implemented.
+Plotting currently is not tested via rtest_...

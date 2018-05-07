@@ -1,0 +1,10 @@
+This list of bugs is not very useful or up-to-date.
+
+Mon May 31 15:40:31 CEST 2010:
+Fails with Table:
+ Table(i,[i,1/2,2]);
+
+KroneckerProduct broken,
+  try KroneckerProduct(m,m);
+  with m : [ [a,b], [c,d]] 
+

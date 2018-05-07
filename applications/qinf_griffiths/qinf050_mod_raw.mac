@@ -1,0 +1,874 @@
+
+
+
+
+
+
+
+
+Needs("Statistics`NormalDistribution`");
+
+
+(addidents_usage:"tensor n one qubit identity operators to
+the right of op");
+
+(addidents(op,n):= if (n=0) then (op) else (addidents(tenprod(op,sig[0]),(n-1))));
+
+
+
+(mma_user_adjoint_usage:"adjoint[mat] is the complex conjugate of the
+transpose. For a ket this is simply the complex conjugate.");
+(mma_user_adjoint(mat):=mma_user_transpose(Conjugate(mat)));
+
+
+(adjointc_usage:"adjointc[mat] applies ComplexExpand to
+adjoint[]");
+(adjointc(mat):=ComplexExpand(Conjugate(mma_user_transpose(mat))));
+
+
+
+(adjointr_usage:"adjointr[mat] is just the transpose; it is
+the adjoint if mat is real");
+(adjointr(mat):=mma_user_transpose(mat));
+
+
+
+
+
+
+
+
+
+
+(bell[0]:([1,0,0,1]*(Sqrt(2)^-1)));
+
+(bell[1]:([0,1,1,0]*(Sqrt(2)^-1)));
+
+(bell[2]:([1,0,0,-1]*(Sqrt(2)^-1)));
+
+(bell[3]:([0,1,-1,0]*(Sqrt(2)^-1)));
+
+
+
+
+
+(bell[0]:([1,0,0,1]*(Sqrt(2)^-1)));
+
+(bell[1]:([1,0,0,-1]*(Sqrt(2)^-1)));
+
+(bell[2]:([0,1,1,0]*(Sqrt(2)^-1)));
+
+(bell[3]:([0,1,-1,0]*(Sqrt(2)^-1)));
+
+
+
+
+
+
+
+(bellbas:mma_user_transpose(Table(bell[j],[j,0,3])));
+
+(basbell:mma_user_adjoint(bellbas));
+
+(bell2mat(mat):=Dot(bellbas,mat,basbell));
+
+
+
+
+(bin2ket_usage:"bin2ket[ls] takes list ls of n 0's and 1's,
+thought of as basis states of n qubits, and returns the corresponding ket in a
+2^n dimensional Hilbert space. E.g. bin2ket[{0,1}] -> {0,1,0,0}.  One can
+multiply by coefficients, and add if the number of qubits is the
+same. c*bin2ket[{0,1}] + d*bin2ket[{1,1}] -> {0,c,0,d}.  Also see bket[].");
+(bin2ket(ls):=block([ket,(ln:Length(ls)),m],((ket:Table(0,[(2^ln)])),(m:(1+Fold(lambda( [[lambda_args]], ((2*lambda_args[1])+lambda_args[2]) ),0,ls))),((ket[m]):(inpart(ket,m))+1),ket)));
+
+
+(bket_usage:"bket[bin,n]. Returns stadard form of basis ket
+corresponding to |bin>, where 'bin' is a string of n 0's or 1's. E.g.,
+bket[01,2]={0,1,0,0}; bket[010,3]={0,0,1,0,0,0,0,0}. Also see bin2ket");
+
+
+(bket(bin,n):=block([(lst:Table(0,[(2^n)])),m],((m:(1+Fold(lambda( [[lambda_args]], ((2*lambda_args[1])+lambda_args[2]) ),0,Take(ToExpression(Characters(ToString(((2*(10^n))+bin)))),(-1*n))))),(lst[m]:1),lst)));
+
+
+(blochket_usage:"blochket[{x,y,z}] takes the Cartesian
+coordinates of a point on the Bloch sphere and returns the corresponding ket in
+the form {cos(th/2),sin(th/2)e^i*phi}.");
+
+
+(blochket(ls):=block([theta,phi,(x:inpart(ls,1)),(y:inpart(ls,2)),(z:inpart(ls,3))],((theta:ArcCos(z)), if (maybe((((0=x) and (0=y)) or ((0.0=x) and (0.0=y)))) = true) then ((phi:0)) elseif (maybe((((0=x) and (0=y)) or ((0.0=x) and (0.0=y))))= false) then ((phi:ArcTan(x,y))) else ((phi:ArcTan(x,y))),[Cos((theta*1/2)),(Sin((theta*1/2))*(%e^(%i*phi)))])));
+
+
+(cgate_usage:"cgate[W_] returns a controlled-W on A x B,
+where A is the control qubit and W a unitary on B (any dimension), as a matrix");
+(cgate(w):=(tenprod([[1,0],[0,0]],IdentityMatrix(Length(w)))+tenprod([[0,0],[0,1]],w)));
+
+
+(cnot_usage:"returns controlled-not gate on 2 qubits, with
+first qubit the control");
+(cnot:[[1,0,0,0],[0,1,0,0],[0,0,0,1],[0,0,1,0]]);
+
+
+(coeffs_usage:"coeffs[v,b] gives the list of expansion
+coefficients of the ket v in the orthonormal basis b (= list of basis
+vectors).");
+(coeffs(v,b):=Dot(Conjugate(b),v));
+
+
+
+(copygate_usage:"copygate[gate,nn] returns the tensor product
+gate ox gate ox ... ox gate, containing 'gate' nn times, as a matrix");
+(copygate(gate,nn):=block([(fgate:gate),jn],(for (jn):(2) while (jn<=nn) step 1 do ((fgate:tenprod(fgate,gate)))
+,fgate)));
+
+
+(cphase_usage:"returns controlled-phase gate on two qubits");
+(cphase:[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,-1]]);
+
+
+(diags_usage:"diags[M] takes a matrix M as a list of lists,
+and extracts the diagonal elements as a single list.");
+
+
+(diags(mat):=block([j,(v:Table(0,[(l:Length(mat))]))],((v:Table(0,[l])),for (j):(1) while (j<=l) step 1 do ((v[j]:inpart(mat,j,j)))
+,v)));
+
+
+(dyad_usage:"Takes |a> |b>, represented as lists, and forms
+the matrix |a><b|, applying Conjugate to |b>.");
+(dyad(a,b):=Outer("*",a,Conjugate(b)));
+
+
+
+(dyadc_usage:"Takes |a> |b>, represented as lists, and forms
+the matrix |a><b|, applying ComplexExpand[Conjugate to |b>.");
+(dyadc(a,b):=Outer("*",a,ComplexExpand(Conjugate(b))));
+
+
+
+(dyadr_usage:"Takes two kets, each REAL and represented by a
+list, and forms the corresponding dyad matrix.  |a>, |b> -> |a><b|.");
+(dyadr(a,b):=Outer("*",a,b));
+
+
+
+(dyap_usage:"dyap[kt_] makes operator |kt><kt| from ket kt.");
+(dyap(kt):=dyad(kt,kt));
+
+
+(entang_usage:"entang[ket,dl] takes a ket on a tensor product
+AxB, with dl = {dim A, dim B}, normalizes it, forms the partial trace of the
+projector, and uses this to compute the entanglement in bits.");
+(entang(ket,dl):=block([(eps:(10^-16)),evals,j,rho,rhoa,sum,x],((rho:dyad(ket,ket)),(rhoa:Chop((partrace(rho,2,dl)*(Tr(rho)^-1)))),(evals:Re(Eigenvalues(rhoa))),(sum:0),for (j):(1) while (j<=inpart(dl,1)) step 1 do (((x:inpart(evals,j)), if (x>eps) then (sum:sum + (x*Log(x)))))
+,((-1*sum)*(Log(2)^-1)))));
+
+
+
+
+(entsq_usage:"entsq[ket,dl] takes a ket on a tensor product
+AxB, with dl = {dim A, dim B}, normalizes it, forms the partial trace rhoa of
+the projector, and returns -log_2 of the trace of its square, for a Renyi
+entanglement.");
+(entsq(ket,dl):=block([rho,rhoa],((rho:dyad(ket,ket)),(rhoa:Chop((partrace(rho,2,dl)*(Tr(rho)^-1)))),((-1*Log(Re(Tr(Dot(rhoa,rhoa)))))*(Log(2.0)^-1)))));
+
+
+
+
+(entropy_usage:"entropy[list] takes a list of probabilities
+{p_i} and calculates the sum {-p_i log p_i}, where log is to base 2");
+
+
+(entropy(list):=block([j,(n:Length(list)),p,sum],((sum:0),for (j):(1) while (j<=n) step 1 do (((p:inpart(list,j)), if (p<(10^-12)) then (Continue()),sum:sum + (p*Log(2,p))))
+,(-1*sum))));
+
+
+
+
+(exchg_usage:" 4 x 4 unitary that exchanges two qubits");
+(exchg:[[1,0,0,0],[0,0,1,0],[0,1,0,0],[0,0,0,1]]);
+
+
+(expandout_usage:"expandout[op,ls,dl] takes an operator op as
+a matrix defined on a list ls of Hilbert spaces in the tensor product of spaces
+with dimensions given by dl, and returns it as a matrix on the full space.
+E.g., expandout[cnot,{3,2},{4,2,2}] gives a controlled not with the last qubit
+(3rd space) the control.");
+(expandout(op,ls,dl):=permmat(tenprod(op,IdentityMatrix((Fold("*",1,dl)*(Length(op)^-1)))),Join(ls,invertlist(Length(dl),Sort(ls))),dl));
+
+
+
+(expandout2_usage:"expandout2[op,ls,n] takes a matrix op
+representing a gate or other operation, a list ls of the qubits which forms the
+basis of the matrix, and the total number n of qubits in circuit, and forms the
+2^n by 2^n matrix representing that operation");
+
+(expandout2(op,ls,n):=permmat2(addidents(op,(n-Log(2,Length(op)))),Join(ls,invertlist(n,Sort(ls)))));
+
+
+
+
+
+
+
+(fourierg_usage:"fourierg[n] produces a n x n
+unitary matrix representing the quantum Fourier transform.");
+(fourierg(n):=Table((Exp((2*%pi*%i*j*k*(n^-1)))*(Sqrt(n)^-1)),[j,0,(n-1)],[k,0,(n-1)]));
+
+
+(fouriern_usage:"fouriern[ket] produces ket' = QFT ket
+using Mathematica Fourier[], where ket must be a string of (complex) numbers.");
+(fouriern(ket):=Fourier(ket));
+
+
+(grschm_usage:"grschm[ls] produces from a list ls of kets an
+orthonormal set.  The original set must be linearly independent.");
+
+
+(grschm(ls):=block([j,k,(ln:Length(ls)),(ns:[]),v,w],(for (j):(1) while (j<=ln) step 1 do (((v:inpart(ls,j)),(w:v),for (k):(1) while (k<j) step 1 do (((w:(w-(ketinner(inpart(ns,k),v)*inpart(ns,k))))))
+,(ns:Append(ns,ketnorm(w)))))
+,ns)));
+
+
+(grschmr_usage:"grschmr[ls] produces from a list ls of real
+kets an orthonormal set.  The original set must be linearly independent.");
+
+
+(grschmr(ls):=block([j,k,(ln:Length(ls)),(ns:[]),v,w],(for (j):(1) while (j<=ln) step 1 do (((v:inpart(ls,j)),(w:v),for (k):(1) while (k<j) step 1 do (((w:(w-(Dot(inpart(ns,k),v)*inpart(ns,k))))))
+,(ns:Append(ns,ketnormr(w)))))
+,ns)));
+
+
+(hgate_usage:"Hadamard gate for 1 qubit");
+(hgate:([[1,1],[1,-1]]*(Sqrt(2)^-1)));
+
+
+(mma_user_ident_usage:"ident[n]=IdentityMatrix[n]");
+(mma_user_ident(n):=IdentityMatrix(n));
+
+
+(invertlist_usage:"takes n, and a sorted list l, returns list
+of elements not in list");
+
+(invertlist(n,l):=Complement(Array(lambda( [[lambda_args]], lambda_args[1] ),[n]),l));
+
+
+(invperm_usage:"invperm[perm] returns inverse permutation
+to perm, a list of integers 1 to n in some order.");
+(invperm(perm):=block([invp,j,(ln:Length(perm))],((invp:Table(0,[ln])),for (j):(1) while (j<=ln) step 1 do ((invp[perm[j]]:j))
+,invp)));
+
+
+
+
+(ketcofs_usage:"ketcofs[v_,b_,dl_] returns a list of kets
+which are the expansion coefficients of ket v in the orthonormal basis b (list
+of basis vectors) of the first factor in a tensor product BC.... Here dl is the
+list of dimensions of the factors, e.g., {3,4}, in which case b is a 3x3
+matrix.");
+
+
+(ketcofs(v,b,dl):=Map(Flatten,Dot(Conjugate(b),ket2kten(v,dl))));
+
+
+
+(ketinner_usage:"ketinner[v,w] =  inner product <v|w>");
+
+(ketinner(v,w):=Dot(mma_user_adjoint(v),w));
+
+
+
+(ketinnerc_usage:"ketinnerc[v,w] = ComplexExpand applied to
+inner product <v|w>");
+
+(ketinnerc(v,w):=ComplexExpand(Dot(mma_user_adjoint(v),w)));
+
+
+
+
+
+(ketnorm_usage:"ketnorm[v] returns the normalized counterpart
+of the ket v.");
+(ketnorm(v):=(v*(Sqrt(Dot(Conjugate(v),v))^-1)));
+
+
+
+(ketnormr_usage:"ketnormr[v] returns the normalized
+counterpart of the real ket v.");
+(ketnormr(v):=(v*(Sqrt(Dot(v,v))^-1)));
+
+
+
+(ketprod_usage:"ketprod[kt1,kt2,...] returns 
+tensor product kt1 ox kt2 ox ... as a single ket (i.e., list).");
+(ketprod([args]):=Flatten(apply(outer,append(args))));
+
+
+(ket2bin_usage:"ket2bin[ket] assumes list of length 2^n
+represents n-qubit k, and produces a list where each member of the ket list is
+associated with a symbol of type, say |010>. E.g., ket = {al,0,bt,2} yields
+{{al,|00>},{bt,|10>},{2,|11>}}.");
+
+
+(ket2bin(ket):=block([it,item,jt,(lng:Length(ket)),nlist,nn,(olist:[]),str],((nn:IntegerExponent(lng,2)),for (it):(0) while (it<lng) step 1 do (((nlist:IntegerDigits(it,2,nn)),(str:"|"),for (jt):(1) while (jt<=nn) step 1 do (((str:StringJoin(str,ToString(inpart(nlist,jt))))))
+,(str:StringJoin(str,">")),(item:inpart(ket,(it+1))), if (0=item) then (Continue(
+)),AppendTo(olist,[item,str])))
+,olist)));
+
+
+(ket2kten_usage:"ket2kten[ket, dl] transforms ket to a tensor
+on the product space given by dl.  E.g., if dl={3,2}, a 6 component ket is
+mapped to t_jk, with j in [1,3] and k in [1,2]");
+(ket2kten(v,dl):= if (Length(dl)=1) then (v) else (Map(lambda( [[lambda_args]], ket2kten(lambda_args[1],Rest(dl)) ),Partition(v,(Length(v)*(First(dl)^-1))))));
+
+
+
+(ket2kten2_usage:"ket2kten2[ket] transforms ket to a tensor
+on a product space of qubits.  The dimension of ket must be 2^n.");
+(ket2kten2(ket):=block([(va:ket)],(while (Length(va)>2) do ((va:Partition(va,2)))
+,va)));
+
+
+(kten2ket_usage:"Inverse of ket2kten");
+
+(kten2ket(t):=Flatten(t));
+
+
+
+(mat2paul_usage:"mat2paul[mat] converts matrix for qubits
+to Pauli representation tensor.  New name for mattopauli");
+(mat2paul(mat):=oten2paul(mat2oten2(mat)));
+
+
+(matinner_usage:"matinner[amat,bmat] computes the matrix
+inner product Tr[adjoint[mata] . matb], but because it does not actually find
+the matrix product it is faster.");
+(matinner(amat,bmat):=block([(cmat:Conjugate(amat)),(ln:Length(bmat))],Sum(Dot(inpart(bmat,j),inpart(cmat,j)),[j,ln])));
+
+
+(matinp_usage:"matinp[amat,bmat] evaluates Tr[amat . bmat]
+without computing the full matrix product (which makes it faster).");
+(matinp(amat,bmat):=block([(cmat:mma_user_transpose(amat)),(ln:Length(bmat))],Sum(Dot(inpart(bmat,j),inpart(cmat,j)),[j,ln])));
+
+
+(matinq_usage:"matinq[amat,bmat]=sums amat[[j,k]]*bmat[[j,k]]
+over j and k. Here amat must be a matrix, bmat could be a tensor of rank >2.");
+(matinq(amat,bmat):=block([(ln:Length(amat))],Sum(Dot(inpart(amat,j),inpart(bmat,j)),[j,ln])));
+
+
+(matnorm_usage:"matnorm[M] normalizes each row of the matrix
+M.");
+(matnorm(mat):=Map(ketnorm,mat));
+
+
+
+(mat2bell_usage:"mat2bell[mat] converts a 4 x 4 matrix mat to
+the Bell basis");
+(mat2bell(mat):=Dot(basbell,mat,bellbas));
+
+
+(mat2nten_usage:"mat2nten[mt,ddl] converts the (possibly
+rectangular) matrix mt to an n-tensor using the double dimension list ddl,
+with, e.g., {2,3,{4,5}} interpreted as {{2,2},{3,3},{4,5}}.");
+
+
+(mat2nten(mt,ddl):=block([(ddm:ddl),(fmt:Flatten(mt)),jm,(lnd:Length(ddl))],(for (jm):(1) while (jm<=lnd) step 1 do (( if (0=Length(inpart(ddm,jm))) then ((ddm[jm]:[inpart(ddl,jm),inpart(ddl,jm)]))))
+,Fold(Partition,fmt,Most(Reverse(Flatten(Transpose(ddm))))))));
+
+
+(mat2nten2_usage:"mat2nten2[mt] assumes mt is a
+2^m x 2^m matrix for some integer m, and converts it to an n-tensor.");
+(mat2nten2(mt):=block([(ntnm:Flatten(mt))],(while (Length(ntnm)>2) do ((ntnm:Partition(ntnm,2)))
+,ntnm)));
+
+
+(mat2oten_usage:"mat2oten[mt_,ddl_] converts the (possibly
+rectangular) matrix mt to an o-tensor using the double dimension list ddl,
+with, e.g., {2,3,{4,5}} interpreted as {{2,2},{3,3},{4,5}}.");
+(mat2oten(mt,ddl):=nten2oten(mat2nten(mt,ddl)));
+
+
+(mat2oten2_usage:"mat2oten2[mt] assumes mt is a
+2^n x 2^n matrix for some integer n, and converts it to an o-tensor.");
+(mat2oten2(mt):=nten2oten(mat2nten2(mt)));
+
+
+(mat2paul_usage:"mat2paul[mat] is the tensor
+c[[j1,j2,...jn]] of coefficients of the expansion of the 2^n x 2^n matrix mat
+in the form Sum c[[j1,j2,...jn]] sigma^1_j1 ... sigma^n_jn");
+(mat2paul(mat):=oten2paul(mat2oten2(mat)));
+
+
+(mat2sbell_usage:"mat2sbell[mat] converts a 4 x 4 matrix mat
+to the special Bell basis");
+(mat2sbell(mat):=Dot(bassbell,mat,sbellbas));
+
+
+
+
+
+
+(nten2mat_usage:"nten2mat[ntn] converts the n-tensor ntn to
+a (possibly rectangular) matrix.");
+(nten2mat(ntn):=block([(dims:Dimensions(ntn))],Partition(Flatten(ntn),prodlist(Take(dims,((-1*Length(dims))*1/2))))));
+
+
+(nten2oten_usage:"nten2oten[ntn] converts n-tensor referenced
+(i,j,...,i',j',...) to an o-tensor referenced (i,i',j,j'...).");
+(nten2oten(ntn):=mma_user_transpose(ntn,permno((TensorRank(ntn)*1/2))));
+
+
+
+(oten2mat_usage:"oten2mat[otn] converts o-tensor otn
+to a (possibly rectangular) matrix.");
+(oten2mat(otn):=nten2mat(oten2nten(otn)));
+
+
+(oten2nten_usage:"oten2nten[otn] converts o-tensor 
+referenced (i,i',j,j'...) to an n-tensor referenced (i,j,...,i',j',...).");
+(oten2nten(otn):=mma_user_transpose(otn,permon((TensorRank(otn)*1/2))));
+
+
+
+(oten2paul_usage:"oten2paul[oten] returns the Pauli
+coefficient tensor for an operator in the form of an o tensor, for n qubits");
+(oten2paul(oten):=block([j,lst,nq,(pten:oten),qq,(tr:TensorRank(oten)),(theta:[[1,0,0,1],[0,1,1,0],[0,%i,(-1*%i),0],[1,0,0,-1]])],((nq:(tr*1/2)),(qq:(tr-1)),while (qq>=nq) do (((pten:Flatten(pten,1)),(pten:Dot(theta,pten)),(lst:Table((j-1),[j,qq])),(lst[1]:qq),(pten:mma_user_transpose(pten,lst)),((qq):(qq)-1)))
+,(pten*((2^nq)^-1)))));
+
+
+(outer_usage:"outer[ls1, ls2, ...] gives the outer product");
+(outer([args]):=apply(Outer,append(["*"],args)));
+
+
+(partrace_usage:"M'=partrace[M,q,dl] traces M over space q
+(=1 or 2 or ...)  in the list dl of factors in a tensor product.  Both M and M'
+are square matrices.");
+(partrace(mat,q,dl):=block([(t:mma_user_transpose(mat2oten(mat,dl),permptrace(Length(dl),q)))],oten2mat(Sum(inpart(t,i,i),[i,Length(t)]))));
+
+
+(partrace2_usage:"partrace2[M,q] Traces 2^n matrix M over
+qubit q (=1.2...)");
+(partrace2(m,q):=block([(t:mma_user_transpose(mat2oten2(m),permptrace(Log(2,Length(m)),q)))],oten2mat((inpart(t,1,1)+inpart(t,2,2)))));
+
+
+
+(partrans_usage:"partrans[mt,q,dl] performs a partial
+transpose on the matrix mt with respect to space q (=1, 2, etc.) on a tensor
+product of spaces corresponding to dimension list dl. E.g., q=2, dl={2,3},
+transposes on the 3 dimensional space.");
+(partrans(mt,q,dl):=oten2mat(mma_user_transpose(mat2oten(mt,dl),permtrans(Length(dl),q))));
+
+
+
+(partrans2_usage:"partrans2[mt,q] returns partial transpose
+of mt over qubit q in a tensor product of qubits");
+(partrans2(mt,q):=oten2mat(mma_user_transpose(mat2oten2(mt),permtrans(Log(2,Length(mt)),q))));
+
+
+
+
+
+(paul2mat_usage:"paul2mat[ptn] takes a tensor of
+coefficients in the sum ptn[[i,j,...]] sig[i] x sig[j] x ... and returns the
+corresponding matrix");
+(paul2mat(ptn):=oten2mat(paul2oten(ptn)));
+
+
+
+(paul2oten_usage:"paul2oten[ptn] takes a tensor ptn of
+Pauli coefficients and generates the corresopnding o-form (dyad) tensor.
+Inverse of oten2paul");
+(paul2oten(ptn):=block([j,lst,(nq:TensorRank(ptn)),(otn:ptn),(thetab:[[1,0,0,1],[0,1,(-1*%i),0],[0,1,%i,0],[1,0,0,-1]])],((lst:Table((j-1),[j,nq])),(lst[1]:nq),for (j):(0) while (j<nq) step 1 do (((otn:Dot(thetab,otn)),(otn:mma_user_transpose(otn,lst))))
+,(otn:Flatten(otn)),while (Length(otn)>2) do ((otn:Partition(otn,2)))
+,otn)));
+
+
+
+
+
+
+(paulnz_usage:"paulnz[ptn] forms a list
+{{label1,entry1},{label2,entry2},...} of nonzero elements of the Pauli tensor
+ptn, where label is a string of the form {i, j, k...}  and the entry is
+ptn[[i+1,j+1,...]]. E. g. {1,0,3} labels the coef. of (sig_x ox I ox sig_z).");
+(paulnz(ptn):=block([digs,jp,(lp:TensorRank(ptn)),(np:(4^TensorRank(ptn))),(outlist:[]),(plist:Flatten(ptn))],(for (jp):(1) while (jp<=np) step 1 do (( if (0=inpart(plist,jp)) then (Continue(
+)),(digs:IntegerDigits((jp-1),4,lp)),AppendTo(outlist,[digs,inpart(plist,jp)])))
+,outlist)));
+
+
+(paulnzch_usage:"paulnzch[ptn,ep] forms a list
+{{label1,entry1},{label2,entry2},...} of elements of the Pauli tensor ptn which
+are nonzero in the sense that Chop[...,ep] is not 0. Here label is a string of
+the form {i, j, k...}  and the entry is ptn[[i+1,j+1,...]]. E. g. {1,0,3}
+labels the coef. of (sig_x ox I ox sig_z).");
+(paulnzch([args]):=block([digs,(ep:(10^-10)),jp,(largs:apply("[",append(args))),lp,np,(outlist:[]),plist],( if (1<Length(largs)) then ((ep:inpart(largs,2))),(lp:TensorRank(ptn)),(np:(4^lp)),(plist:Chop(Flatten(ptn),ep)),for (jp):(1) while (jp<=np) step 1 do (( if (0=inpart(plist,jp)) then (Continue(
+)),(digs:IntegerDigits((jp-1),4,lp)),AppendTo(outlist,[digs,inpart(plist,jp)])))
+,outlist)));
+
+
+(paulten_usage:"paulten[1,0,3] will generate the Pauli tensor
+corresponding to sg_x ox I ox sg_z, and similarly for any number of arguments,
+each of which must be an integer between 0 and 3.");
+(paulten([args]):=block([(ls:apply("[",append(args))),ln,lsf,lsp,ptn],((ln:Length(ls)),(lsp:(1+ls)),(lsf:Table(4,[ln])),(ptn:Array(lambda( [[lambda_args]], (0*lambda_args[1]) ),lsf)),(ptn:ReplacePart(ptn,1,lsp)),ptn)));
+
+
+
+
+(permket_usage:"permket[kt,pm,dl] returns ket corresponding
+to kt on tensor product with dimension list dl when order of factors is
+permuted according to pm. E.g., kt defined on A ox B ox C, dl = {4,2,3},
+pm={2,3,1},the new ket is defined on the 3 x 4 x 2 space C ox A ox B");
+
+(permket(kt,pm,dl):=kten2ket(mma_user_transpose(ket2kten(kt,dl),pm)));
+
+
+
+(permket2_usage:"permket2[kt,pm] returns ket for a tensor
+product of qubits in the permuted order corresponding to pm.  E.g. for kt
+defined on A ox B ox C, pm={2,3,1}, the new ket is defined on C ox A ox B.");
+(permket2(kt,pm):=Flatten(mma_user_transpose(ket2kten2(kt),pm)));
+
+
+
+(permmat_usage:"permmat[mt,pm,dl] Converts matrix mt
+according to permutation pm of tensor product with dimension list dl");
+(permmat(mt,pm,dl):=oten2mat(nten2oten(mma_user_transpose(oten2nten(mat2oten(mt,dl)),Join(pm,(pm+Length(pm)))))));
+
+
+
+(permmat2_usage:"permmat[mt,pm] Converts matrix mt to form
+corresponding to permutation pm of tensor product of qubits");
+(permmat2(mt,pm):=oten2mat(nten2oten(mma_user_transpose(oten2nten(mat2oten2(mt)),Join(pm,(pm+Length(pm)))))));
+
+
+
+(permptrace_usage:"permptrace[n,q] returns a permutation of
+the integers 1,2,3, ... 2n such that 2q-1 and 2q are moved to the beginning of
+the list.  Thus for n=3 and q = 2 it returns 3,4,1,2,5,6.  Used to form a
+partial trace");
+(permptrace(n,q):=Array(lambda( [[lambda_args]],  if (lambda_args[1]<((2*q)-1)) then ((lambda_args[1]+2)) else ( if (lambda_args[1]>(2*q)) then (lambda_args[1]) else ( if OddQ(lambda_args[1]) then (1) else (2))) ),(2*n)));
+
+
+
+(permno_usage:"permno[n] is permutation list taking
+(1a,2a,3a,...na,1b,2b,...,nb) to (1a,1b,2a,2b,...,na,nb), namely
+(1,3,5,...,2n-1,2,4,...,2n).");
+(permno(n):=Join((-1+(2*Table(i,[i,n]))),(2*Table(i,[i,n]))));
+
+
+(permon_usage:"permon[n] is permutation list taking 
+(1a,1b,2a,2b,...na,nb) to (1a,2a,3a,...na,1b,2b,...nb); namely
+{1,n+1,2,n+2,3,n+3...}.");
+(permon(n):=Flatten((Table([i,i],[i,n])+Table([0,n],[n]))));
+
+
+(permtrans_usage:"returns the permutation 
+	(1a,1b,2a,2b,...,qb,qa,...)");
+
+(permtrans(n,q):=Array(lambda( [[lambda_args]],  if (lambda_args[1]=(2*q)) then (((2*q)-1)) else ( if (lambda_args[1]=((2*q)-1)) then ((2*q)) else (lambda_args[1])) ),(2*n)));
+
+
+(permute_usage:"permute[ls,pm] returns permutation of list
+ls determined by pm. E.g., ls={a,b,c}, pm={2,3,1} returns {c,a,b}.");
+(permute(list,pm):=inpart(list,invperm(pm)));
+
+
+
+
+(permutmat_usage:"permutmat[pm] returns a permutation matrix
+corresponding to the permutation list pm.  E.g. pm={2,3,1} will yield a matrix
+'permt' which applied to the ket {a,b,c} will yield {c,a,b}; also 
+(permt.oper.adjoint[permt]) for an operator on qubit 3 will yield the
+corresponding operator on qubit 1");
+(permutmat(pm):=block([(len:Length(pm)),w,j],((w:Table(0,[j,1,len],[k,1,len])),for (j):(1) while (j<=len) step 1 do (((w[pm[j]][j]:1)))
+,w)));
+
+
+
+
+(plabc_usage:"plabc[ls] takes, e.g., {2,0,3} and turns
+it into a string like c[2,0,3]= .");
+
+
+(plabc(ls):=block([jj,(ln:Length(ls)),(str:"  c[")],((str:StringJoin(str,ToString(inpart(ls,1)))),for (jj):(2) while (jj<=ln) step 1 do (((str:StringJoin(str,",",ToString(inpart(ls,jj))))))
+,(str:StringJoin(str,"]= ")),str)));
+
+
+
+
+(pop2dop_usage:"pop2dop[mt] takes a positive operator
+represented by the matrix mt and returns the corresponding density operator
+matrix: mt divided by its trace.");
+(pop2dop(mt):=(mt*(Tr(mt)^-1)));
+
+
+
+(prodlist_usage:"prodlist[ls] returns the product of the
+elements in list ls.");
+(prodlist(ls):=Product(inpart(ls,i),[i,Length(ls)]));
+
+
+
+
+(prtpaul_usage:"prtpaul[ptn] uses Mca Print[] to output
+nonzero elements of the Puali tensor ptn in the form c[3,0,2]= ... for
+the coefficient corresponding to sg_z ox I ox sg_y.");
+
+
+(prtpaul(ptn):=block([list,llist,newfn],((newfn(x):=ReplacePart(x,plabc(inpart(x,1)),1)),(list:paulnz(ptn)),(llist:Map(newfn,list)),Apply(Print,Flatten(llist)))));
+
+
+(prtpaulch_usage:"prtpaulch[ptn,ep] uses Mca Print[] to
+output nonzero--in sense that Chop[,ep] is not 0--elements of the Puali tensor
+ptn in the form c[3,0,2]= ... for the coefficient corresponding to sg_z ox I ox
+sg_y. Single argument ptn results in default ep determined by paulnzch");
+
+
+(prtpaulch([args]):=block([list,llist,newfn],((newfn(x):=ReplacePart(x,plabc(inpart(x,1)),1)),(list:paulnzch(args)),(llist:Map(newfn,list)),Apply(Print,Flatten(llist)))));
+
+
+
+
+(quadn_usage:"quadn[ml] is the sum of the absolute squares
+of the elements in ml, whether a scalar, vector, matrix or tensor.");
+
+
+(quadn(m):=block([(lng:Length(m))],( if (0=lng) then (Return((Conjugate(m)*m))),Re(Dot(Conjugate(Flatten(m)),Flatten(m))))));
+
+
+
+(quadr_usage:"quadr[ml] is the sum of the squares
+of the elements in ml, assumed to be a REAL vector or matrix or tensor.");
+(quadr(m):=block([(lng:Length(m))],( if (0=lng) then (Return((m^2))),Dot(Flatten(m),Flatten(m)))));
+
+
+
+
+Needs("Statistics`NormalDistribution`");
+(ranbas_usage:"ranbas[n] returns a random basis of an
+n-dimensional Hilbert space");
+(ranbas(n):=ranorn(n,n));
+
+
+(ranbasr_usage:"ranbas[n] returns a random real basis of an
+n-dimensional Hilbert space");
+(ranbasr(n):=ranornr(n,n));
+
+
+
+
+
+
+
+
+
+
+(ranket_usage:"ranket[n] generates a normalized random ket
+for an n-dimensional complex Hilbert space");
+(ranket(n):=block([],ketnorm((RandomArray(NormalDistribution(0,1),n)+(%i*RandomArray(NormalDistribution(0,1),n))))));
+
+
+(ranketr_usage:"ranketr[n] generates a normalized real random
+ket for an n-dimensional Hilbert space");
+(ranketr(n):=block([j,(ket:[])],(for (j):(1) while (j<=n) step 1 do (((ket:Append(ket,Random(NormalDistribution(0,1))))))
+,ketnorm(ket))));
+
+
+(ranorn_usage:"ranorn[m,n] randomly generates m orthonormal
+kets on a space of dimension n, as a list of m lists of n terms");
+(ranorn(m,n):=block([j,(kets:[])],( if (m>n) then (Return("ranorn[m,n] called with m > n")),for (j):(0) while (j<m) step 1 do (((kets:Append(kets,ranket(n)))))
+,grschm(kets))));
+
+
+(ranornr_usage:"ranornr[m,n] randomly generates m orthonormal
+real kets on a space of dimension n, as a list of m lists of n terms");
+(ranornr(m,n):=block([j,(kets:[])],( if (m>n) then (Return("ranornr[m,n] called with m > n")),for (j):(0) while (j<m) step 1 do (((kets:Append(kets,ranketr(n)))))
+,grschmr(kets))));
+
+
+(rgate_usage:"Single qubit rgate[j,th] for j=1,2,3=(x,y,z)
+rotates by angle th about axis j as per Nielsen and Chuang p. 174");
+(rgate(j,th):=((Cos((th*1/2))*sig[0])-(%i*Sin((th*1/2))*sig[j])));
+
+
+
+
+
+
+
+(sbell[0]:([0,1,-1,0]*(Sqrt(2)^-1)));
+
+(sbell[1]:([%i,0,0,(-1*%i)]*(Sqrt(2)^-1)));
+
+(sbell[2]:([1,0,0,1]*(Sqrt(2)^-1)));
+
+(sbell[3]:([0,(-1*%i),(-1*%i),0]*(Sqrt(2)^-1)));
+
+
+
+(sbellbas:mma_user_transpose(Table(sbell[j],[j,0,3])));
+(bassbell:mma_user_adjoint(sbellbas));
+
+
+(sbell2mat_usage:"sbell2mat[mat_] converts a 4 x 4 matrix in
+the special Bell basis to one in the standard basis");
+(sbell2mat(mat):=Dot(sbellbas,mat,bassbell));
+
+
+(schmidt_usage:"schmidt[ket,dl] takes a ket, assumed
+normalized, on a tensor product AxB, with dl = {dim A, dim B}, expands it in
+the Schmidt form as a sum of type c_j |a_j> |b_j>, with c_j > 0, and returns a
+list {c_j, |a_j>, |b_j>}, where |a_j> and |b_j> are themselves lists. For |c_j|
+< 10^-8, nothing is returned.");
+
+
+(schmidt(ket,dl):=block([basa,bkets,(eps:(10^-16)),j,list,rho,rhoa,snorm],((rho:dyad(ket,ket)),(rhoa:partrace(rho,2,dl)),(basa:grschm(Eigenvectors(rhoa))),(bkets:ketcofs(ket,basa,dl)),(list:[]),for (j):(1) while (j<=inpart(dl,1)) step 1 do (((snorm:quadn(inpart(bkets,j))), if (snorm<eps) then (Continue()),AppendTo(list,[Sqrt(snorm),inpart(basa,j),ketnorm(inpart(bkets,j))])))
+,list)));
+
+
+
+
+
+
+(schmidtprobs_usage:"schmidtprobs[ket,dl] returns Schmidt
+probabilities for normalized 'ket' on tensor product A x B with dl={da,db}.");
+(schmidtprobs(ket,dl):=block([rho,rhoa],((rho:dyad(ket,ket)),(rhoa:partrace(rho,2,dl)),Chop(Re(Eigenvalues(rhoa))))));
+
+
+
+
+(schmidtproj_usage:"Takes a list {c_j,|a_j>,|b_j>} and forms
+the projector sum_j |a_j><a_j x |b_j><b_j|, ignoring the c_j.");
+(schmidtproj(ls):=block([i,(l:Length(ls)),ketp,proj],((ketp:ketprod(inpart(ls,1,2),inpart(ls,1,3))),(proj:dyad(ketp,ketp)),for (i):(2) while (i<=l) step 1 do (((ketp:ketprod(inpart(ls,i,2),inpart(ls,i,3))),proj:proj + dyad(ketp,ketp)))
+,proj)));
+
+
+
+
+
+
+(schmidt2ket_usage:"Applied to a list {c_j, |a_j>, |b_j>},
+where |a_j> and |b_j> are themselves lists, returns the sum_j c_j*|a_j>x|b_j>.");
+(schmidt2ket(ls):=Sum((inpart(ls,i,1)*ketprod(inpart(ls,i,2),inpart(ls,i,3))),[i,Length(ls)]));
+
+
+
+
+
+
+
+
+
+
+
+(sig[0]:[[1,0],[0,1]]);
+
+(sig[1]:[[0,1],[1,0]]);
+
+(sig[2]:[[0,(-1*%i)],[%i,0]]);
+
+(sig[3]:[[1,0],[0,-1]]);
+
+
+
+(sigl_usage:"sigl[ls] returns a tensor product of Pauli
+matrices corresponding to the list ls.  E.g., ls={0,2} produces sig[0] otimes
+sig[2] as a matrix.");
+(sigl[l]:=(sigl[l]:Fold(tenprod,sig[First(l)],Map(lambda( [[lambda_args]], sig[lambda_args[1]] ),Rest(l)))));
+
+
+
+(sigprod_usage:"sigprod[j,k,...] = sig[j] ox sig[j] ox...
+as a matrix; j, k, ... integers in [0,3].  Any number of arguments.");
+(sigprod([args]):=sigl[apply("[",append(args))]);
+
+
+
+
+
+
+(sumlist_usage:"sumlist[ls] returns the sum of the elements
+in list ls.");
+(sumlist(ls):=Sum(inpart(ls,i),[i,Length(ls)]));
+
+
+(tenprod_usage:"tenprod[mt1,mt2,...] returns the matrix of
+the tensor product mt1 0x mt2 0x ... The matrices may be rectangular.");
+
+
+(tenprod([args]):=block([dim,(las:apply("[",append(args))),na,pm],((na:Length(las)),(pm:permon(na)),(dim:prodlist(Map(lambda( [[lambda_args]], Last(Dimensions(lambda_args[1])) ),las))),Partition(Flatten(mma_user_transpose(apply(outer,append(args)),pm)),dim))));
+
+
+
+
+
+
+(traceout_usage:"traceout[mt,ls,dl] takes the partial trace
+of mt over the spaces in list ls which are among those forming the tensor
+product corresponding to the list dl.  E.g., let dl={2,3,4}, ls = {1,3}; the 2
+and 4 dimensional spaces are traced out to leave a 3x3 matrix.");
+(traceout(mt,ls,dl):= if (Length(ls)=0) then (mt) else (traceout(partrace(mt,First(Reverse(Sort(ls))),dl),Rest(Reverse(Sort(ls))),Drop(dl,[First(Reverse(Sort(ls)))]))));
+
+
+(traceout2_usage:"traceout2[mt,ls] Partial trace of matrix mt
+over all qubits in list ls");
+(traceout2(mt,ls):=Fold(lambda( [[lambda_args]], partrace2(lambda_args[1],lambda_args[2]) ),mt,Reverse(Sort(ls))));
+
+
+
+(mma_user_transpose_usage:"transpose[ket] returns ket, not an error
+message; otherwise, transpose[]=Transpose[]");
+(mma_user_transpose([args]):=block([], if (maybe((TensorRank(inpart(apply("[",append(args)),1))<2)) = true) then (Return(inpart(apply("[",append(args)),1))) elseif (maybe((TensorRank(inpart(apply("[",append(args)),1))<2))= false) then (Return(apply(Transpose,append(args)))) else (Print("Error in transpose"))));
+
+
+
+(xgate_usage:"X (sigma_x) or NOT gate on 1 qubit");
+(xgate:sig[1]);
+
+
+(xket_usage:"xket[0], xket[1] are +x and -x axis states
+on Bloch sphere");
+(xket[0]:([1,1]*(Sqrt(2)^-1)));
+(xket[1]:([1,-1]*(Sqrt(2)^-1)));
+
+
+(xprj_usage:"xprj[0], xprj[1] project on +x and -x axis
+states on Bloch sphere");
+(xprj[0]:dyap(xket[0]));
+(xprj[1]:dyap(xket[1]));
+
+
+(ygate_usage:"Y (sigma_y) gate on 1 qubit");
+(ygate:sig[2]);
+
+
+(yket_usage:"yket[0], yket[1] are +y and -y axis states
+on Bloch sphere");
+(yket[0]:([1,%i]*(Sqrt(2)^-1)));
+(yket[1]:([1,(-1*%i)]*(Sqrt(2)^-1)));
+
+
+(yprj_usage:"yprj[0], yprj[1] project on +x and -x axis
+states on Bloch sphere");
+(yprj[0]:dyap(yket[0]));
+(yprj[1]:dyap(yket[1]));
+
+
+(zgate_usage:"Z (sigma_z) gate on 1 qubit");
+(zgate:sig[3]);
+
+
+(zket_usage:"zket[0]=|0>, zket[1]=|1> are +z and -z axis
+states on Bloch sphere");
+(zket[0]:[1,0]);
+(zket[1]:[0,1]);
+
+
+(zprj_usage:"zprj[0]=|0><0|, zprj[1]=|1><1| project on +x and
+-x axis states on Bloch sphere");
+(zprj[0]:dyap(zket[0]));
+(zprj[1]:dyap(zket[1]));
+
+
+
+
+

@@ -1,0 +1,186 @@
+Version 0.25
+	* Added If(),List(),Attributes()
+	* defmix lisp macro for writing compat funcs. major improvement.
+	  This includes many kinds of automatic arg checking. Evaluation control, etc.
+	* added declaring arrays to translator
+	* application strongdeco improvements.
+        * pure functions with Function. more features implemented. SlotSequence(n),Slot(n)
+	  This still is inefficient and not fully implemented.
+	* lisp macro multi-do for nested loops of arbitrary depth. all compat funcs with
+	  loops of this kind now use this macro.
+        * Array() takes head argument
+	* ConstantArray() fixed
+	* fixed some small bugs for Win32
+	* one folder to copy for Win32 install
+	
+Version 0.24
+	* added MapAt
+	* added our own autoloading of share packages to speed up startup
+	* got mockmma working, at least partially
+	* implemented Part (mixpart, smixpart) with negative indices
+	* For,While,Continue,Break,Return.
+	* initial systematic arg checking.
+        * lots of other improvements and changes.
+	
+Version 0.23
+Fri, 09 Dec 2011 17:29:30 +0100
+	* fixed bug in parser with :=
+	* fixed some translation bugs
+	* application code
+	* more compatibility functions to support application
+	
+Version 0.22
+Wed, 07 Dec 2011 00:28:28 +0100  John Lapeyre  <lapeyre@physics.arizona.edu>
+	* Released. Many changes and additions.
+	  The mixima-mockmma shell is much less prone to crashing.
+
+	
+Version 0.21
+	* Not released
+
+Version 0.20
+	* Not released
+	
+Verrsion 0.19
+xxxxxxx  John Lapeyre  <lapeyre@physics.arizona.edu>
+	* Exit added as shadow function
+	* Np
+	* Limit
+	* Apply improved, and @@
+	* Coefficient
+	* Permanent
+	* other shadow functions
+	* in mixima_trans.lisp and maxima.lisp
+	  added maxima::maybe-invert-string-case
+	  and checked (not (eq hin 'null)) to avoid
+	  crashing.
+	* several fixed in mma command line and
+	  added function tomma();
+Version 0.18
+2010-05-25  John Lapeyre  <lapeyre@physics.arizona.edu>
+	* Infix Rule operator ->
+	* Sum now uses simplify_sum
+	
+Version 0.17
+2010-05-25  John Lapeyre  <lapeyre@physics.arizona.edu>
+	* FindRoot
+
+Version 0.16
+2010-05-25  John Lapeyre  <lapeyre@physics.arizona.edu>
+	* introduce Integrate,NIntegrate
+	* fix N bug
+        * shadow functions: Pochhammer ProductLog
+	* HypergeometricPFQ
+	
+Version 0.15
+2010-05-21  John Lapeyre  <lapeyre@physics.arizona.edu>
+	* many changes to translator, eg works with
+	  gcl, can be called from maxima, integrated
+	  with Mockmma.
+
+Version 0.14
+2010-05-19  John Lapeyre  <lapeyre@physics.arizona.edu>
+	* fixed bug in Partition
+	* crude, servicable, not really faithful TableForm and Grid
+	* fixed bug in Map causing error in rtest_qinf050g
+	* added Tuple,SameQ, some others
+Version 0.13
+2010-05-12  John Lapeyre  <lapeyre@physics.arizona.edu>
+	* partial implementations of D,Dt,Expand,Factor,Im,Prime,
+	      and others
+	* spit shadowed functions to separate files. Added 10's of 
+	  shadow functions.
+	* added and split tests in rtest_mmacompat
+	* added docs and changed docs
+	
+Version 0.12
+2010-05-05  John Lapeyre  <lapeyre@physics.arizona.edu>
+	* added application code qinf
+	* lots of other stuff
+	
+Version 0.11
+xxxxxxx  John Lapeyre  <lapeyre@physics.arizona.edu>
+
+        * in jparser.lisp changed APPLY to |Apply|
+        * partial implementation of Apply,Clear,Log,Plus,
+	       Rest,Reverse,Series,
+	       Sinc,Sort,Sqrt,StringJoin,TrigExpand,
+	       TrigReduce,Sum,Product
+	* added Plus for "+" to mmacompat
+	* added many tests to rtest_mmacompat
+	* trans.lisp: translate Pi, %, %%, etc., Infinity,ComplexInfinity
+        * added a few functions to mmacompat
+	* fixed bugs in existing mmacompat functions
+	* added Mma functionality to existing mmacompat functions
+	* fixed bug in translating (Real 2 3/5) -> 2.6
+	
+Version 0.10
+2010-04-09  John Lapeyre  <lapeyre@physics.arizona.edu>
+
+        * Mma to Maxima translator is rewritten in lisp
+	* Added more capable lisp version of Table
+	* Added AppendTo PrependTo
+	* Added generalized Transpose (some functionality still not implemented)
+	* Added extract_func_info.pl to extract a small amount
+	  of documentation from the source files
+
+Version 0.09
+2008-09-23  John Lapeyre  <lapeyre@physics.arizona.edu>
+
+	* parse name infix ops, eg ~Join~. Cant translate it yet.
+	* parse infix map /@  , infix apply @
+
+Version 0.08
+2008-09-23  John Lapeyre  <lapeyre@physics.arizona.edu>
+
+	*  added more griffiths code.
+	*  fixed symbols on logical and and or
+	  there seems to be a bug in the parens, however.
+
+Version 0.07
+2008-09-23  John Lapeyre  <lapeyre@physics.arizona.edu>
+
+	* Implement *=, +=, -=, /= for mma to max.
+
+Version 0.07
+2008-09-23  John Lapeyre  <lapeyre@physics.arizona.edu>
+
+	* fixed some broken things that didn't make it in before.
+	* improve packaging.
+
+Version 0.06
+2008-09-22  John Lapeyre  <lapeyre@physics.arizona.edu>
+
+	* Added Mma to Maxima translator
+
+Version 0.05
+2008-09-12  John Lapeyre  <lapeyre@physics.arizona.edu>
+
+	* Union now accepts and returns both lists and sets
+        * new: Intersection, Subsets, DiagonalMatrix
+	* Used B Willis's mat_to_list, instead of lisp
+	  Applied other B Willis suggestions.
+	* Table called non-existent error reporting function
+	* removed useless block and var from Transpose
+
+Version 0.04
+2008-09-12  John Lapeyre  <lapeyre@physics.arizona.edu>
+
+	* Changed names of functions to Mathematica names
+	* Added many functions
+	* Moved some functionality back to funcion definitions
+	  from simplification rules
+
+Version 0.03
+2008-09-10  John Lapeyre  <lapeyre@physics.arizona.edu>
+
+	* changed chop so atoms fall through, which is what it looks
+	like Mma does
+	* changed nest to use apply so operator "+" works
+
+Version 0.02
+2008-09-09  John Lapeyre  <lapeyre@physics.arizona.edu>
+
+	*  Second version, but first version with a changelog
+	   and packaging.
+
