@@ -1,4 +1,0 @@
-#
-echo Starting Maxima with Mixima
-maxima  --init=mixima/mixima
-

@@ -12,7 +12,6 @@ our $Mixima_share_dir;
 our $Build_dir;
 
 
-
 #-----------------------------------------------------------------
 
 # This file tries to install the mixima code in
@@ -28,17 +27,20 @@ our $Build_dir;
 require "./file_lists.pl";
 require "./config_install.pl";
 
+if (not -e $Build_dir) {
+    die("Can't find '$Build_dir'. You must first build the distribution with 'mkdistcompat.pl'")
+}
 
-check_install_share_dir();
+check_install_directories();
 install_share_files();
 install_bin_files();
 
 #-----------------------------------------------------------------
-sub check_install_share_dir {
+sub check_install_directories {
     make_mixima_install_dir_name();
     print("mkdir( $Mixima_share_dir,0755)\n");
     if (not -e $Mixima_share_dir) 
-        { mkdir($Mixima_share_dir,0755) or die "Failed to create directory $Mixima_share_dir";}
+        { mkdir($Mixima_share_dir,0755) or die "Failed to create directory '$Mixima_share_dir'";}
     if (not -d $Mixima_share_dir) {
         die "Failed to create directory $Mixima_share_dir";
     }

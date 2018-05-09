@@ -1,5 +1,0 @@
-(f(x):=g(x));
-(f1([args]):=apply(g1,append(args,[x])));
-
-
-

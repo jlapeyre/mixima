@@ -1,6 +1,0 @@
-(m:[[1,(2*%i),3],[(3+(4*%i)),5,%i]]);
-ConjugateTranspose(m);
-block([(j:0)],(t:Table((((j):(j)+1)+(%i*((j):(j)+1))),[2],[3],[4])));
-ConjugateTranspose(t);
-ConjugateTranspose(t,[3,2,1]);
-

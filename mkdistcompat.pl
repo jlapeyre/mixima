@@ -81,7 +81,7 @@ sub prepare_files {
 sub install_applications {
     print "------ Installing applications\n";
     my @qinf_griffiths = qw (
-      README qinf050.ma qinf050_mod.m  diff_qinf050_modqinf qinf050_mod_raw.mac
+      README.md qinf050.ma qinf050_mod.m  diff_qinf050_modqinf qinf050_mod_raw.mac
      qinf050.mac qinf_byhand.mac rtest_qinf.mac  misc10.ma misc10_raw.mac
       misc10_mod.mac misc10_reformatted.mac rtest_misc10.mac 
      );
@@ -133,7 +133,7 @@ sub copy_main_files {
 sub copy_translator_files {
     print "------ Installing translator subdirs\n";
     my ($src,$targ) = get_src_targ_dirs('Translator');
-    foreach my $exdir qw( mma_examples our_mma_tests ) {
+    foreach my $exdir (qw( mma_examples our_mma_tests )) {
 	dosys("mkdir $targ/$exdir");
 	dosys("cp -a $src/$exdir/*.m $targ/$exdir");
 	dosys("cp -a $src/$exdir/*.ex.mac $targ/$exdir");
@@ -274,7 +274,7 @@ install_applications();
 more_substitutions();
 #mktar();
 #mkzip();
-mkweb();
-do_version_subs();
+#mkweb();
+#do_version_subs();
 write_installation_path_in_scripts();
 do_final_touch();

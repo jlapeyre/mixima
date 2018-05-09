@@ -7,23 +7,21 @@ supported by, nor endorsed by *Wolfram Research*.
 
 *Mathematica* is a registered trademark of *Wolfram Research, Inc.*
 
-### NOTE
+### Help
 
-This software was last tested with Maxima v5.30. It may
-not work with recent versions of Maxima. If you have any difficulty,
-please [file an issue](https://github.com/jlapeyre/mixima/issues).
+If you have any difficulty, please [file an issue](https://github.com/jlapeyre/mixima/issues).
 
 ## Introduction
 
-This software has three parts:
+This software has four parts:
 
-1. Compatibility functions for Maxima that try to duplicate
- Mathematica(tm) (Mma) functions, eg `Table`. Used alone,
+1. Compatibility functions for [Maxima](http://maxima.sourceforge.net/) that try to duplicate
+ Mathematica (Mma) functions, eg `Table`. Used alone,
  they provide a quasi-Mma environment. Mixima is designed to
  extend the maxima environment more or less like any other
  package-- not to replace it, as does Mockmma.  The
- compatibility functions are maxima functions called with
- maxima syntax from within maxima.
+ compatibility functions are Maxima functions called with
+ Maxima syntax from within Maxima.
 
 2.  A translator that translates a subset of Mma code to
  Maxima code.  The compatitiblity functions can be used by
@@ -31,20 +29,24 @@ This software has three parts:
  produces code that depends on the compatibility functions.
 
 3. A mock Mma mode that allows using Mathematica syntax at
-  the command line. This is a sort of Mma clone.  This is a
-  modified version of the Richard Fateman's Mockmma project. The allowed
-  syntax and semantics is limited at most to that available when
+  the command line. This is sort of a Mma clone. The parser is
+  a modified version of the Richard Fateman's Mockmma project. The allowed
+  syntax and semantics is limited  to that available when
   the Mockmma parser was written.
 
+4. A version of Robert Griffiths' [Quantum Information Programs in Mathematica](http://quantum.phys.cmu.edu/QPM/)
+   translated to Maxima is included here. This was the original motivation for Mixima.
+   It is installed together with the mixima compatibility functions.
+
 There are more READMEs at the top level and some information
-can be found in (doc/mixima_user_doc) Also see the section on
+can be found in [doc/mixima_user_doc](doc/mixima_user_doc). See also the section on
 online help at the bottom of this document.
 
 ## Motivation and context
 
-1. I wrote a quantum-information package for Maxima to
+1. I wrote a quantum-information package, [qinf](https://github.com/jlapeyre/qinf), for Maxima to
 support reproducible research. It was able to verify computations done by hand in a particular
-already-published paper. (None of this is currently in a public repository.)
+already-published paper.
 
 2. I found that progress could be made by translating existing
 quantum-information packages for Mathematica (Wolfram) to Maxima. This
@@ -87,27 +89,16 @@ Then you should have a folder
 `c:\Program Files\Maxima-5.25.1-gcl\share\maxima\5.25.1\share\mixima`
 with all the mixima files in it.
 
-
 ### Linux/unix system
 
-Edit the file (config_install.pl) to suit your preference (the default
-should be ok) and type `mkdistcompat.pl`.
-Then, as root (or sudo) type `./install.pl`.
+Edit the file (config_install.pl) to choose where the
+files are installed. By default, the source is installed
+in `~/.maxima/mixima/` and the executables in `~/bin/`.
+Then type the shell command `./mkdistcompat.pl`.
+Then type the shell command `./install.pl`.
 
-With default settings, this installs files to the maxima
-share directories and some executables to `/usr/local/bin`.
 If  this does not work, try copying (./build/mixima) to a
 location where your maxima installation can see it.
-
-### Known problems
-
-* The mockmma shell does not currently work well with `xmaxima` nor
- `wxmaxima`. The compatibility functions seem to work ok.
-
-* `wxmaxima` has a bug that will print an error message involving STRIPDOLLAR.
-  Mixima can  still be used, but the state of maxima is changed and and some things
- are broken. To avoid this, remove the line that loads `loadlast.mac` in
- the file `mixima.mac`. The offending function is `Clear()`.
 
 ## Testing
 
@@ -120,6 +111,15 @@ mixtest();
 Or in this toplevel directory, start maxima and give the following commands:
 `load("./tests/mixima_testsuite.mac");`  or  `load("./tests/mixima_testsuite_slow.mac");`.
 
+### Known problems
+
+* The mockmma shell does not currently work well with `xmaxima` nor
+ `wxmaxima`. The compatibility functions seem to work ok.
+
+* `wxmaxima` has a bug that will print an error message involving STRIPDOLLAR.
+  Mixima can  still be used, but the state of maxima is changed and and some things
+ are broken. To avoid this, remove the line that loads `loadlast.mac` in
+ the file `mixima.mac`. The offending function is `Clear()`.
 
 ## Quick start
 
@@ -249,7 +249,7 @@ In[1]:=
 ```
 
 As a convenience, the executable `mockmma` starts maxima and
-Mockmma (the version by H.Monroe based on code by Fateman et. al.)
+Mockmma (code by Fateman et. al. modified by H.Monroe)
 
 Note that for many inputs, Mockmma and Mixima with the Mockmma shell
 give identical output. But in fact there are important difference that
@@ -258,7 +258,6 @@ are not explained here.
 ###  Using translator from maxima, Using stand alone translation scripts
 
 For these, see (README.translator)
-
 
 ## Compatibility Functions
 

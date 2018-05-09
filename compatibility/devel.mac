@@ -4,15 +4,16 @@
 
 /* Run a testsuite */
 
-/*> AuxFunction mixtest */  
+/*> AuxFunction mixtest */
 mixtest() := load("mixima/testsuite2.mac");
 
-/*> AuxFunction mixtest3 */  
+/*> AuxFunction mixtest3 */
 mixtest3() := load("./tests/testsuite3.mac");
 
-/*> AuxFunction mixcompile */  
+/*> AuxFunction mixcompile */
 mixcompile() := block( [source, source1, dir, path],
-  dir : "./compatibility/",
+/*  dir : "./compatibility/", */
+  dir : "mixima/",
   source : [
 /*    "funcs.mac", */
     "combinatorics.mac",
@@ -35,11 +36,12 @@ mixcompile() := block( [source, source1, dir, path],
     for onefile in source do (
       path : sconcat(dir,onefile),
       print(path),
+      /* TODO: use file_search here to find the file */
       compile_file(path))
 );
 
 /* source files that should probably not be compiled
-        "dttodiff.mac", 
+        "dttodiff.mac",
     "devel.mac",
     "function_list.lisp",
     "helpitems.lisp",

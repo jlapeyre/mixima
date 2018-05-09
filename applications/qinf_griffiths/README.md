@@ -2,7 +2,10 @@
 
 ### Qinf
 
-Quantum information program by Robert Griffiths. See [./LICENSE](LICENSE)
+This is a port of a quantum information program by Robert Griffiths
+(See [./LICENSE](LICENSE)) from Mathematica to Maxima.
+Robert Griffiths is not involved in the Maxima port. If you
+have questions, please please [file an issue](https://github.com/jlapeyre/mixima/issues).
 
 The original distribution with documentation is available at
 http://quantum.phys.cmu.edu/QPM/index.html.

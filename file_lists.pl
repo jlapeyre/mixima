@@ -122,7 +122,7 @@ our @Test_files = qw (
  rtest_translator2.mac
  rtest_qinf050.mac
  rtest_strongdeco.mac
- 
+
  );
 
 ##############################################################################
@@ -156,7 +156,7 @@ our @someTranslator_source_install_files =
    );
 
 our @Translator_source_install_files = (@someTranslator_source_install_files,@Translator_source_files_requiring_versions);
-    
+
 # other files in the translator directory that are perhaps useful
 our @Translator_other_files = qw (
     NOTES-translator
@@ -173,7 +173,7 @@ our @Files_needing_mixima_install_path = qw (
      ./translator/gcl.mmatomax
      ./translator/gcl.mmatomax_int
      ./translator/sbcl.mmatomax
-     ./translator/sbcl.mmatomax_int     
+     ./translator/sbcl.mmatomax_int
                                         );
 
 
@@ -193,7 +193,7 @@ our @Bin_files = qw (
               { name => 'sbcl.mmatomax', nocopy => 1},
               { name => 'sbcl.mmatomax_int', nocopy => 1},
           );
-                  
+
 
 
 
@@ -205,9 +205,10 @@ our @Doc_files =
    );
 
 
+# moved  README to README.md and has no version subst template
 our @Top_level_files_requiring_version =
     qw(
-          README README.translator function_list
+          README.translator function_list
   );
 
 our @someTop_level_and_other_files =
@@ -239,7 +240,7 @@ our @Top_level_and_other_files = (@someTop_level_and_other_files,@Top_level_file
 our @Files_needing_text_versions =  (
      "./tests/rtest_mixima.mac",
      "function_list",
-     "README",
+#     "README",
      "README.translator",
      "ChangeLog"
  );
@@ -252,7 +253,8 @@ our @Webfiles =  (
     "function_list.txt",
     "./tests/rtest_mixima.txt",
     "ChangeLog.txt",
-    "README.txt",
+#    "README.txt",
+    "README.md",
     "README.translator.txt",
 );
 
@@ -306,7 +308,7 @@ sub get_src_targ_dirs {
     return ( $Main_dirs{$main_dir_name}, $Dist_main_dirs{$main_dir_name} );
 }
 
-
+## Don't use this. It is fragile. Instead we do a user install by default
 # This tries to find the maxima executable, then tries to find
 # the top level share directory.
 # It seems like 'maxima -d' might be a better choice'
@@ -337,10 +339,14 @@ sub find_share_dir {
 
 sub make_mixima_install_dir_name {
     if ( not defined $Install_share_dir or not $Install_share_dir ) {
-	$Install_share_dir = find_share_dir();
+	$Install_share_dir = glob('~/.maxima/');
+#	$Install_share_dir = find_share_dir();
     }
     if (not $Install_share_dir ) {
 	die "Unable to find maxima share directory";
+    }
+    if ( not defined $Install_bin_dir or not $Install_bin_dir ) {
+	$Install_bin_dir = glob('~/bin/');
     }
     $Mixima_share_dir = "$Install_share_dir/mixima";
 }

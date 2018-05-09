@@ -1,7 +1,0 @@
-/*> Function PolynomialReduce */
-/* probably fails without integer coefficients */
-PolynomialReduce(p,facs,vars) := block([res],
-  if length(properties(poly_pseudo_divide)) = 0 then
-      load(grobner),
-      res : poly_pseudo_divide(p,facs,vars),
-      [ inpart(res,1), inpart(res,2) ] );

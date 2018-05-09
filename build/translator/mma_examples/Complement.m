@@ -1,4 +1,0 @@
-Complement[{a, b, c, d, e}, {a, c}, {d}]
-
-Complement[f[a, b, c, d], f[c, a], f[b, b, a]]
-
