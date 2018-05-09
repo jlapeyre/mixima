@@ -34,8 +34,8 @@ This software has four parts:
   syntax and semantics is limited  to that available when
   the Mockmma parser was written.
 
-4. A version of Robert Griffiths' [Quantum Information Programs in Mathematica](http://quantum.phys.cmu.edu/QPM/)
-   translated to Maxima is included here. This was the original motivation for Mixima.
+4. A translation of Robert Griffiths' [Quantum Information Programs in Mathematica](http://quantum.phys.cmu.edu/QPM/)
+   to Maxima is included here. This was the original motivation for Mixima.
    It is installed together with the mixima compatibility functions.
 
 There are more READMEs at the top level and some information
