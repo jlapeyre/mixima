@@ -97,7 +97,7 @@ in `~/.maxima/mixima/` and the executables in `~/bin/`.
 Then type the shell command `./mkdistcompat.pl`.
 Then type the shell command `./install.pl`.
 
-If  this does not work, try copying [./build/mixima](./build/mixima) to a
+If  this does not work, try copying `./build/mixima` to a
 location where your maxima installation can see it.
 
 ## Testing
