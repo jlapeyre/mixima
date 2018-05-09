@@ -257,7 +257,7 @@ are not explained here.
 
 ###  Using translator from maxima, Using stand alone translation scripts
 
-For these, see (README.translator)
+For these, see [README.translator](README.translator)
 
 ## Compatibility Functions
 
