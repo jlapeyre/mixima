@@ -296,9 +296,9 @@ nnest(f%%%,x,n) := block([i,res:apply(f%%%,[x])],
   for i:2 thru n do res:apply(f%%%,[res]),res);
 
 /* don't quote arg or simplifier will choke. */
-nnestlist(f,x,n) := block([i,list,res:(+f)(x)],
+nnestlist(f,x,n) := block([i,list,res:x],
   list:[res],
-  for i:2 thru n do (
+  for i:1 thru n do (
     res:(+f)(res), list:cons(res,list) ), reverse(list));
 
 /************** end Nest and Nestlist  **************/

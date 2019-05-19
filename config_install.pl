@@ -20,7 +20,7 @@
 # This just chooses between scripts
 # Choose either 'gcl' or 'sbcl'
 # This is only used for choosing which script is installed to ~/bin/ or /usr/local/bin
-$Lisp_interpreter_for_scripts = 'gcl';
+$Lisp_interpreter_for_scripts = 'sbcl';
 
 #######        END USER EDIT                ################
 

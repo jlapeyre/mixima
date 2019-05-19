@@ -107,7 +107,7 @@
         (t (setq offsets (make-list n :initial-element 1))))
   (setq res (if head (make-nested-h head dims) (make-nested dims)))
   (multi-do (inds dims)
-        (set-part res (mapply expr  (mapcar #'(lambda (x y) (+ x y)) inds offsets)) inds))
+        (set-part res (mapply expr  (mapcar #'(lambda (x y) (+ x y)) inds offsets) expr) inds))
   res)
 
 #|> Function ConstantArray |#
@@ -155,7 +155,7 @@
 ;; All shadowed functions should prbly be done this way.
 ;; evaluation not controlled well. we evaluate once and  $map does again
 (defmix |$Map| (func form (spec :o))
-  (mapply '$map (list func form)))
+  (mapply '$map (list func form) '$map))
 
 ; Construct a nested list with with number of elements at each level given by
 ; elements of inds. The value of each element is nil, each list is prepended

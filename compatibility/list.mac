@@ -18,8 +18,27 @@ Intersection([e]) := apply(mmasetfunc,cons('intersection,e));
 /*> Function Length */
 Length(x) :=   if atom(x) or numberp(x) or complexp(x) then 0   else length(x);
 
+/*> Function MemberQ */
+MemberQ(l, x) :=   member (x, l);
+
 /*> Function Most */
 Most(v) := rest(v,-1);
+
+/*> Function PadLeft */
+PadLeft(l, n) :=
+  if n < 0 then PadRight (l, -n)
+  else
+    block ([m: length (l)],
+           if m >= n then l
+           else append (makelist (0, n - m), l));
+
+/*> Function PadRight */
+PadRight(l, n) :=
+  if n < 0 then PadLeft (l, -n)
+  else
+    block ([m: length (l)],
+           if m >= n then l
+           else append (l, makelist (0, n - m)));
 
 /*> Function Partition */
 /*
@@ -136,6 +155,28 @@ Reverse([e]) := block([i,levels,lst],
                lst:%Reverse(lst,i,1),lst));
          
 /************** end Reverse  **************/
+
+/*> Function RotateLeft */
+RotateLeft(l, [n]) :=
+ (if n = [] then n:1 else n: n[1],
+  if n < 0
+    then RotateRight (l, -n)
+    else
+      block ([m: length (l)],
+             n: mod (n, m),
+             if n = 0 then l
+               else append (rest (l, n), firstn (l, n))));
+
+/*> Function RotateRight */
+RotateRight(l, [n]) :=
+ (if n = [] then n:1 else n: n[1],
+  if n < 0
+    then RotateLeft (l, -n)
+    else
+      block ([m: length (l)],
+             n: mod (n, m),
+             if n = 0 then l
+               else append (lastn (l, n), rest (l, -n))));
 
 /*> Function Select */
 Select(expr,pred,[opts]) := block([res:sublist(args(expr),pred),len,h:op(expr)],

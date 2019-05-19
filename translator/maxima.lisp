@@ -204,13 +204,13 @@
   (cond 
     ((equal (caaar expr) 'maxima::$is)  (cons (solve-reformatter (car expr)) (cdr expr)))
     ((equal (caaar expr) 'maxima::mlist)  (cons  (cons '(maxima::mlist) (mapcar 'solve-reformatter  (cdar expr)) )(cdr expr)))
-        (t('expr))
+        (t expr)
     )
   )
 
 (defun solve-reformatter (expr) ;(format t "~%expr: ~a" expr) 
    (cons '(maxima::mequal) (cdadr expr)) )
-  )
+
 ;(setf (get '|Eigenvalues| 'math2max) 'maxima::$eigenvalues)
 ;(setf (get 'maxima::$eigenvalues 'max2math) '|Eigenvalues|)
 

@@ -1828,7 +1828,7 @@ Nest(sqrt,100.0,4);
 
 /* ex ok NestList */
 NestList(next_prime,1,10);
-[2,3,5,7,11,13,17,19,23,29];
+[1,2,3,5,7,11,13,17,19,23,29];
 /* cm  first 10 primes */
 
 /* ex ok Nest */
@@ -2611,7 +2611,7 @@ Nest(g,x,3);
 g(g(g(x)));
 
 NestList(g,x,3);
-[g(x),g(g(x)),g(g(g(x)))];
+[x,g(x),g(g(x)),g(g(g(x)))];
 
 Fold(g,x,[a,b,c]);
 g(g(g(x,a),b),c);

@@ -47,7 +47,7 @@
 
 #|> Function Part |#
 (defmspec |$Part| (x)
-  (mapply '$mixpart (rest x)))
+  (mapply '$mixpart (rest x) '$mixpart))
 
 #|
 
@@ -68,7 +68,7 @@
 (defmix |$MapAt| ( func expr (pos-specs :pos-spec) &aux subexpr newexpr )
   (setq pos-specs (mixima-normalize-position-spec  pos-specs))
   (dolist (one-spec (rest pos-specs))
-    (setf subexpr (mapply '$mixpart  (cons expr (rest one-spec))))
+    (setf subexpr (mapply '$mixpart  (cons expr (rest one-spec)) '$mixpart))
     (cond ( (equal 0 (first (last one-spec)))
             (setf newexpr (apply 'mfuncall (cons '$smixpart
                                                  (cons  func  (cons expr (rest one-spec)))))))
