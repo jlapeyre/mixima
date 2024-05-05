@@ -17,8 +17,8 @@
           (setf limitarg (third limitargrule))))
   (setq direction (first optargs))
   (cond ( (eq nil direction)
-          (mapply '$limit (list expr limitvar limitarg)))
+          (mapply '$limit (list expr limitvar limitarg) '$limit))
         ( (eq 1 direction )
-          (mapply '$limit (list expr limitvar limitarg '$minus)))
+          (mapply '$limit (list expr limitvar limitarg '$minus) '$limit))
         ( t
-          (mapply '$limit (list expr limitvar limitarg '$plus)))))
+          (mapply '$limit (list expr limitvar limitarg '$plus) '$limit))))

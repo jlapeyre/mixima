@@ -91,7 +91,7 @@
                   (setf expr (meval inexpr))
                   (setf efunc (meval func))
                   (dolist (one-spec (rest pos-specs))
-                    (setf subexpr (mapply '$mixpart  (cons expr (rest one-spec))))
+                    (setf subexpr (mapply '$mixpart  (cons expr (rest one-spec)) '$mixpart))
                     (cond ( (equal 0 (first (last one-spec)))
                             (setf newexpr (apply 'mfuncall (cons '$smixpart
                                                                  (cons  efunc  (cons expr (rest one-spec)))))))
