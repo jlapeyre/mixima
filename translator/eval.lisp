@@ -8,11 +8,8 @@
 ;;(require "stack1") (require "disp1")(require "pf")(require "simp1")(require "rat1")(require "match")
 (in-package :mma)
 ;(eval-when (load) (export '(mockmma mockmma2 mread1))
-(eval-when (load) (export '(mockmma2 mread1))
-;;**********
-#+excl(import '(excl::errorset))  ;; your system may differ....
-;;**********
-)
+(eval-when (load) (export '(mockmma2 mread1)))
+
 (defvar COUNT 1 "line number for top-level. (same as (meval $Line))")
 (declaim (special env *expand*)) ;; environment
 (declaim (special
@@ -73,18 +70,7 @@ Mockmma is in no way associated with WRI and is based on code written by Richard
           
           (setq timesofar (get-internal-run-time))
           (format t "~%~aIn[~s]:= ~a" mmaprefix COUNT mmasuffix)  ;; actually In and Out are variables too.
-          #-(or gcl clisp)   (setq parsed-with-input (multiple-value-bind
-                                         (isnoerr val)
-                                         (errorset (mma::mma-parser)t)
-                                         (if isnoerr val (clear-input t))))
-          
-          #+clisp (setq parsed-with-input (ignore-errors (mma::mma-parser)))
-          
-          ;   #+gcl   (setq hin (multiple-value-bind
-          ;                       (iserr val)
-          ;                       (system:error-set '(mma::p))
-          ;                       (if iserr (clear-input t) val)))
-          (setq parsed-with-input (mma::mma-parser))
+          (setq parsed-with-input (let ((maxima::errset nil)) (let ((foo (maxima::errset (mma::mma-parser)))) (if foo (first foo) (clear-input t)))))
 ;	  (format t "hin:  ~a~%" hin)
    ;(if (not (null  mockmma-verbose)) (format t "~%parsed raw:~a" hin))
 
@@ -105,26 +91,8 @@ Mockmma is in no way associated with WRI and is based on code written by Richard
    (if (not (null  mockmma-verbose)) (format t "~%parsed:~a" hin))        
    
    (|SetQQ| (ulist '|In| COUNT) hin)
-   ;; 	(setq h (simp(meval hin))) ;; if you don't have errorset, try this.
-   
-   #-(or gcl clisp)   (setq h (multiple-value-bind
-                                (isnoerr val)
-                                (errorset (meval hin) t)
-                                (if isnoerr val (list 'Hold hin))))
-   
-   ;;#+clisp (setq h (meval hin))
-   
-   ;   #+gcl   (setq h (multiple-value-bind
-   ;                     (iserr val)
-   ;                          (system:error-set (list '|MaxEval|  (list 'quote hin))) 
-   ;                     (if iserr (list 'Hold hin) val)))
-;   #+gcl   (setq h (user::handler-case (|MaxEval|  hin)
-;                                       (error (q) (format t "~% error happened here, ~s" q) (list '|Hold| hin)) 
-;                                       (no-error (q) q))) 
-   ;#+gcl   (user::handler-case (/ 1 0) (warning () 'w) (error (q) (format t "~% error happened here, ~s" q)) (no-error () 'hi))
-          
-          (setq h (|MaxEval|  hin))
-             
+   (setq h (let ((maxima::errset nil)) (let ((foo (maxima::errset (maxima::meval hin)))) (if foo (first foo) (list 'Hold hin)))))
+   ;; (setq h (|MaxEval|  hin)) ;; <-- calling MaxEval is apparently an alternative to calling MEVAL; dunno how to choose one or the other
    
    (setq timesofar (- (get-internal-run-time) timesofar))
    ;; this is not the same as mathematica but I find it more convenient
@@ -776,24 +744,24 @@ expr))
 (shadow '(sin cos tan log exp sinh cosh tanh abs sqrt
 	  plusp) :mma) ;;etc
 
-(defun |Sin|(x)(cond ((numberp x)(lisp:sin x))(t (ulist '|Sin| x))))
-(defun |Cos|(x)(cond ((numberp x)(lisp:cos x))(t (ulist '|Cos| x))))
-(defun |Tan|(x)(cond ((numberp x)(lisp:tan x))(t (ulist '|Tan| x))))
+(defun |Sin|(x)(cond ((numberp x)(cl:sin x))(t (ulist '|Sin| x))))
+(defun |Cos|(x)(cond ((numberp x)(cl:cos x))(t (ulist '|Cos| x))))
+(defun |Tan|(x)(cond ((numberp x)(cl:tan x))(t (ulist '|Tan| x))))
 (defun |Log|(x &optional b)(cond ((numberp x)
                                   (cond 
-                                    ( b   (/ ( lisp:log x) ( lisp:log b)))
-                                    ( t   (lisp:log x))
+                                    ( b   (/ ( cl:log x) ( cl:log b)))
+                                    ( t   (cl:log x))
                                     )
                                   )(t (ulist '|Log| x))))
-(defun |Exp|(x)(cond ((numberp x)(lisp:exp x))(t (ulist '|Exp| x))))
+(defun |Exp|(x)(cond ((numberp x)(cl:exp x))(t (ulist '|Exp| x))))
 
-(defun |Sinh|(x)(cond ((numberp x)(lisp:sinh x))(t (ulist '|Sinh| x))))
-(defun |Cosh|(x)(cond ((numberp x)(lisp:cosh x))(t (ulist '|Cosh| x))))
-(defun |Tanh|(x)(cond ((numberp x)(lisp:tanh x))(t (ulist '|Tanh| x))))
+(defun |Sinh|(x)(cond ((numberp x)(cl:sinh x))(t (ulist '|Sinh| x))))
+(defun |Cosh|(x)(cond ((numberp x)(cl:cosh x))(t (ulist '|Cosh| x))))
+(defun |Tanh|(x)(cond ((numberp x)(cl:tanh x))(t (ulist '|Tanh| x))))
 
-(defun |Abs|(x)(cond ((numberp x)(lisp:abs x))(t (ulist '|Abs| x))))
-;(defun |Sqrt|(x)(cond ((numberp x)(lisp:sqrt x))(t (ulist '|Sqrt| x))))
-;;(defun plusp(x)(cond ((numberp x)(lisp:plusp x))(t (ulist 'plusp x))))
+(defun |Abs|(x)(cond ((numberp x)(cl:abs x))(t (ulist '|Abs| x))))
+;(defun |Sqrt|(x)(cond ((numberp x)(cl:sqrt x))(t (ulist '|Sqrt| x))))
+;;(defun plusp(x)(cond ((numberp x)(cl:plusp x))(t (ulist 'plusp x))))
 ;; hmmm, what to do with "and"??
 ;; if the user types in And[a,b] then it becomes (and a b) 
 ;; which is plausible lisp, and there is no quick check.

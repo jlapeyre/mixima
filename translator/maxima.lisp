@@ -31,7 +31,7 @@
 (defun maxeval(e)(|MaxEval| e))
 
 (defun maxapply(op args)
-  (maxima::mapply op args))
+  (maxima::mapply op args op))
        
 (defvar math2max-verbose nil)
 (defun |Math2Max|(e)
@@ -49,7 +49,7 @@
                ;;(conc$ e );; for testing
                )));; A -> $A 
        ;; convert numbers like 1/2
-       ((user::or (integerp e)(floatp e))e)
+       ((cl:or (integerp e)(floatp e))e)
        ((stringp e) e)
        ((realp e)
         (list 
@@ -478,7 +478,7 @@
                         (stripdol e :mma);; for testing
                         )));; $A -> A 
                ;; convert numbers like 1/2
-               ((user::or (integerp e) (floatp e)) e)
+               ((cl:or (integerp e) (floatp e)) e)
                ((equal e "") e) ; wxplot2d
                ((stringp e ) e) 
                (t (error "not implemented mathematica-to-maxima conversion of symbol ~s"e))))

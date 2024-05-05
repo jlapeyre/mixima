@@ -680,7 +680,9 @@ nil mathrt)
 	     (parse-list-hack next (cons nil sofar))))
 	((setq next (parse-comp nil)) ;; end=nil; can't end with just #\newline
 	 (parselist2 (cons next sofar) endmark))
-	(t (error "parse-list: looking for a comma, expression or endmark"))
+	(t
+	  (format t "PARSELIST1: ENDMARK = ~a, SOFAR = ~a, NEXT = ~a~%" endmark sofar next)
+	  (error "PARSELIST1: looking for a comma, expression, or endmark"))
 	))
 (defun parse-list-hack(next sofar) ;make f[g[h]] work ok by parsing as
   ;; f[g[h] ]
@@ -699,7 +701,9 @@ nil mathrt)
 	((equal next endmark) (rt) (nreverse sofar ))
 	((and(equal endmark '\]) ;; we might find a '|]]|
 	 (parse-list-hack next sofar)))
-	(t (error "parse-list: looking for a comma, expression or endmark"))
+	(t
+	  (format t "PARSELIST2: ENDMARK = ~a, SOFAR = ~a, NEXT = ~a~%" endmark sofar next)
+	  (error "PARSELIST2: looking for a comma, expression, or endmark"))
 	))
 
 ;;comparison operators

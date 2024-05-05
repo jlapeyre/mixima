@@ -19,8 +19,12 @@ mixcompile() := block( [source, source1, dir, path],
     "combinatorics.mac",
     "newton.mac",
     "polynomials.mac",
+/* these next two files have disappeared;
+ * from comments elsewhere, I speculate they were defining functions
+ * with the same names as some built-in (Lisp or Maxima?) functions.
     "shadow.mac",
     "shadow_math_functions.mac",
+ */
 /*    "derivatives_integrals.lisp", */
     "limit.lisp",
 /*    "list.lisp", */
@@ -43,9 +47,10 @@ mixcompile() := block( [source, source1, dir, path],
 /* source files that should probably not be compiled
         "dttodiff.mac",
     "devel.mac",
+/* this next file has disappeared.
     "function_list.lisp",
+ */
     "helpitems.lisp",
-    "mixdoc.in.lisp",
     "mixdoc.lisp",
     "mixima.mac",
     "old_table.lisp",

@@ -21,38 +21,27 @@
 |#
 
 
-;(if (find-package :mma) t (defpackage :mma))
-;(defun mmapath (mmafile) (concatenate 'string maxima::*maxima-sharedir* "/mockmma/" mmafile))
-
 (if (find-package :mma) t   (defpackage :mma (:nicknames "MockMMA") (:use :common-lisp
 					      #+allegro     :excl
 					      )))
 (in-package :mma)
-; maxima::$mixima_installation_dir is set in set_file_search_paths in mixima.mac
-(defun mmapath (mmafile) (concatenate 'string maxima::$mixima_installation_dir  mmafile))
-;(defun mmapath (mmafile) (concatenate 'string ""  mmafile))
-(load (mmapath "jmma.lisp"))
 
+;; Assume that set_file_search_paths has been called already to establish search path for Lisp files.
 
-(load (mmapath "uconsalt.lisp"))
-(load (mmapath "jmma.lisp"))
-(load (mmapath "builtinsyms.lisp"))
-(load (mmapath "mixima-mockmma-parser.lisp"))
-(load (mmapath "parser_patch.lisp"))
-(load (mmapath "mma-to-mixima.lisp"))
-(load (mmapath "stack1.lisp"))
-(load (mmapath "disp1.lisp"))
-(load (mmapath "eval.lisp"))
-(load (mmapath "pf.lisp"))
-(load (mmapath "match.lisp"))
-(load (mmapath "maxima.lisp"))
-(load (mmapath "bf.lisp"))
-;; something bad. i have to load this twice or the funcs at the bottom of this
-;; file dont work.
-;; probably to redefine functions that were redefined elsewhere. or so that
-;; a hash table was set up first, or ....
-;; Yes! the problem went away. comment this out for a while
-;;(load (mmapath "mixima-mockmma-parser.lisp"))
+(maxima::$load "jmma.lisp")
+(maxima::$load "uconsalt.lisp")
+(maxima::$load "jmma.lisp")
+(maxima::$load "builtinsyms.lisp")
+(maxima::$load "mixima-mockmma-parser.lisp")
+(maxima::$load "parser_patch.lisp")
+(maxima::$load "mma-to-mixima.lisp")
+(maxima::$load "stack1.lisp")
+(maxima::$load "disp1.lisp")
+(maxima::$load "eval.lisp")
+(maxima::$load "pf.lisp")
+(maxima::$load "match.lisp")
+(maxima::$load "maxima.lisp")
+(maxima::$load "bf.lisp")
 
 (defvar MIXIMA-MMA-COUNT 1)
 (defvar mixima-trans t) ; whether to print translations when in mockmma shell with mixima
@@ -144,11 +133,7 @@ Distributed under the GNU General Public License."))
                                         ; there is something in the input stream the first time through
      (if (or (not firsttime) (> mixima-entry-count 0))
          (format t "~%~aIn[~s]:= ~a" mmaprefix MIXIMA-MMA-COUNT mmasuffix))
-     #-(or gcl clisp)   (setf input-and-parsed (multiple-value-bind
-                                                   (isnoerr val)
-                                                   (errorset (mma::mma-parser) t)
-                                                 (if isnoerr val (clear-input t))))
-     #+clisp (setf input-and-parsed (ignore-errors (mma::mma-parser)))
+     (setf input-and-parsed (let ((maxima::errset nil)) (let ((foo (maxima::errset (mma::mma-parser)))) (if foo (first foo) (clear-input t)))))
      (setf parsed-with-input  (mma::mma-parser stream))
      (setf firsttime nil)
 ;     (format t " parser returned:  <~a>~%" parsed-with-input)
@@ -170,10 +155,7 @@ Distributed under the GNU General Public License."))
                      (setf max-internal (mma::to-macsyma-expr parsed-mma-input))
                      (if mma::mixima-mma-verbose-flag (format t "max internal : ~a~%" max-internal))
                      (setf max-input-string (mma::macsyma-source max-internal))
-                     #-(or gcl clisp)   (setf mma-out-expr(multiple-value-bind
-                                                              (isnoerr val)
-                                                              (errorset (meval parsed-mma-input) t)
-                                                            (if isnoerr val (list 'Hold parsed-mma-input))))
+                     (setf mma-out-expr (let ((maxima::errset nil)) (let ((foo (maxima::errset (meval parsed-mma-input)))) (if foo (first foo) (list 'Hold parsed-mma-input)))))
                      (if (eq t mixima-trans)  (format t " (%i~a) ~a~%"  MIXIMA-MMA-COUNT max-input-string))
                                         ;                     (if  mma::mixima-mma-verbose-flag (trace maxima::meval) )
                      (mixima-mma-shell-debug (format nil " sending string to errcatch ~a" max-input-string))
