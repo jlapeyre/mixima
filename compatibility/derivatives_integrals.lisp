@@ -22,7 +22,7 @@
  (setq newargs (apply #'append (mapcar #'(lambda (x) 
    (cond ( (atom x) (list x 1))
     (t (rest x)))) args)))
-    (mapply '$diff (cons expr newargs)))
+    (mapply '$diff (cons expr newargs) '$diff))
 
 #|> Function Dt |#
 ;; This works (probably) if expr is just a single expression
@@ -58,7 +58,7 @@
      (cond ( ($mapatom item)
 	     (mfuncall '$integrate res item))
 	   (t
-	    (mapply '$integrate (cons res (rest item)))))))
+	    (mapply '$integrate (cons res (rest item)) '$integrate)))))
   res)
 |#
 
@@ -73,7 +73,7 @@
   (cond ( ($mapatom s)
 	  (mfuncall '$integrate expr s))
 	(t
-	 (mapply '$integrate (cons expr (rest s))))))
+	 (mapply '$integrate (cons expr (rest s)) '$integrate))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Numerical Integration
@@ -121,7 +121,7 @@
 ;; first number
 (defun mquad_qags (expr args &aux res epsrel)
   (setq args (quags-append-option-args args))
-  (setq res (mapply '$quad_qags (append (cons expr args))))
+  (setq res (mapply '$quad_qags (append (cons expr args)) '$quad_qags))
   (cond ( (mfuncall '$listp res)
 ;	  ($print res)
 	  (cond ( (equal (first (last res)) 0)
@@ -138,7 +138,7 @@
 
 (defun mquad_qag1 (expr args &aux res callargs)
   (setq callargs (if (eq (length args) 3) (append args '(1))  args))
-  (setq res (mapply '$quad_qag (cons expr callargs)))
+  (setq res (mapply '$quad_qag (cons expr callargs) '$quad_qag))
   (cond ( (mfuncall '$listp res)
 	  (cond ( (equal (first (last res)) 0)
 		  (second res))
@@ -146,7 +146,7 @@
 	(t  nil)))
 (defun mquad_qag2 (expr args &aux res callargs)
   (setq callargs (if (eq (length args) 3) (append args '(2))  args))
-  (setq res (mapply '$quad_qag (cons expr callargs)))
+  (setq res (mapply '$quad_qag (cons expr callargs) '$quad_qag))
   (cond ( (mfuncall '$listp res)
 	  (cond ( (equal (first (last res)) 0)
 		  (second res))
@@ -154,7 +154,7 @@
 	(t  nil)))
 (defun mquad_qag3 (expr args &aux res callargs)
   (setq callargs (if (eq (length args) 3) (append args '(3))  args))
-  (setq res (mapply '$quad_qag (cons expr callargs)))
+  (setq res (mapply '$quad_qag (cons expr callargs) '$quad_qag))
   (cond ( (mfuncall '$listp res)
 	  (cond ( (equal (first (last res)) 0)
 		  (second res))
@@ -162,7 +162,7 @@
 	(t  nil)))
 (defun mquad_qag4 (expr args &aux res callargs)
   (setq callargs (if (eq (length args) 3) (append args '(4))  args))
-  (setq res (mapply '$quad_qag (cons expr callargs)))
+  (setq res (mapply '$quad_qag (cons expr callargs) '$quad_qag))
   (cond ( (mfuncall '$listp res)
 	  (cond ( (equal (first (last res)) 0)
 		  (second res))
@@ -170,7 +170,7 @@
 	(t  nil)))
 (defun mquad_qag5 (expr args &aux res callargs)
   (setq callargs (if (eq (length args) 3) (append args '(5))  args))
-  (setq res (mapply '$quad_qag (cons expr callargs)))
+  (setq res (mapply '$quad_qag (cons expr callargs) '$quad_qag))
   (cond ( (mfuncall '$listp res)
 	  (cond ( (equal (first (last res)) 0)
 		  (second res))
@@ -182,7 +182,7 @@
   (setq callargs (if (eq (length args) 3) (append args '(6))
 		   args))
   (setq callargs (quags-append-option-args callargs))
-  (setq res (mapply '$quad_qag (cons expr callargs)))
+  (setq res (mapply '$quad_qag (cons expr callargs) '$quad_qag))
   (cond ( (mfuncall '$listp res)
 	  (cond ( (equal (first (last res)) 0)
 		  (second res))
@@ -194,7 +194,7 @@
 
 (defun mromberg (expr args &aux res epsrel)
   (romberg-set-option-args )
-  (setq res (mapply '$romberg (append (cons expr args))))
+  (setq res (mapply '$romberg (append (cons expr args)) '$romberg))
   (cond ( (numberp res) res)
 	(t 'NIntegrateFail)))
 
@@ -230,7 +230,7 @@
   (cond ( (or (member '$inf args) (member '$minf args))
 ;	  (format t "NIntegrate: Infinite range: choosing qagi~%")
 	  (setq args (quags-append-option-args args))
-	  (setq res (second (mapply '$quad_qagi (cons expr args)))))
+	  (setq res (second (mapply '$quad_qagi (cons expr args) '$quad_qagi))))
 	( sing-flag 
 	  (format t "NIntegrate: Singularity at end of interval, choosing qags~%")
 	  (setq res (mquad_qags  expr args)))
@@ -238,7 +238,7 @@
 ;	 (format t "NIntegrate: Choosing default qag rule 1~%")
 ;	 (format t "romberg args expr ~a args ~a~%" expr args)
 ;	 (setq res (mquad_qags  expr args)) ; kinda works but is slow
-;	 (setq res (mapply '$romberg (cons expr args))) ; works fastest but fails ungracefully
+;	 (setq res (mapply '$romberg (cons expr args) '$romberg)) ; works fastest but fails ungracefully
 	 (setq res (mquad_qag1  expr args)) ;  kinda slow but maybe best
 ;	 (setq res (mquad_qag3  expr args)) ; slow
 	 (cond  ( (eq 'NIntegrateFail res)
@@ -335,5 +335,5 @@
 ;  (format t "here ~a~%" (cons '(|$NIntegrate|) (list expr (cons '(mlist) args))))
 ;  ($print (cons '(|$NIntegrate|) (list expr (cons '(mlist) args))))
 ;  (if (eq nil res) (cons '(|$NIntegrate|) (list expr (cons '(mlist) args)))
-    res))
+    res)
 

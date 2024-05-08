@@ -34,9 +34,7 @@
   ;; available at compile time.
 ;;(declaim (ftype macro ulist uconsm))
 
-(defun mmapath (mmafile) (concatenate 'string maxima::*maxima-sharedir* "/mockmma/" mmafile))
-#+(or gcl clisp sbcl) (load (mmapath "uconsalt.lisp"))
-#-(or gcl clisp sbcl) (load  "ucons1")
+(maxima::$load "uconsalt.lisp")
 (defvar built-in-syms
   ;; these are the atoms used by the parser, evaluator, display,
   ;; etc.  They must be the same in each of the separate packages,

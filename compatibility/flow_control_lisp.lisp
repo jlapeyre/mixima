@@ -23,7 +23,7 @@
   (cond
 ;;   ( (or mprogp mdop)
      ;;          (format t "In prog ~a~%" (mapcar 'meval (cdr x)))
-;;     (mapply 'mreturn (cdr x)))
+;;     (mapply 'mreturn (cdr x) 'mreturn))
    (t
     (throw *mixima-flow-break-tag* (list 'mixima-return (mapcar 'meval (cdr x)))))))
 

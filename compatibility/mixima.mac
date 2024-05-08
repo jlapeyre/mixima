@@ -1,30 +1,7 @@
-/* Try to set the search path for lisp and mac files so that
-  the other files in the mixima directory can be found
-  mixima.mac -- input file to search for , ie
-  "mixima/mixima.mac"
-  Find where this file is located and set the search path to
-  include this directory
-*/
+/* assume we are working in the Mixima top-level directory */
 
-set_file_search_paths(f) := block([r1,r2,ft:false,mp,lp],
-  for i:1 thru length(file_search_maxima) do (
-    if (ssearch("mixima",file_search_maxima[i]) # false) then ft:true),
-  if ft then ( print("Path to ", f , " already added"),return(true)),
-  r1 : file_search(f),
-  if (not r1) then (
-    print("Can't find file ", f),
-    return(false)),
-  r2 : substring(r1,1,slength(r1)-slength(f)),
-  mp : sconcat(r2,"/mixima/###.{mac,mc}"),
-  lp : sconcat(r2,"/mixima/###.lisp"),  
-  mixima_installation_dir : sconcat(r2,"/mixima/"),
-  file_search_maxima : cons(mp,file_search_maxima),
-  file_search_lisp : cons(lp,file_search_lisp),
-  file_search_tests : cons(lp,file_search_lisp),
-  true
-);
-
-set_file_search_paths("mixima/mixima.mac");
+load ("compatibility/set_file_search_paths.mac");
+set_file_search_paths (".");
 
 load("mockmma-mixima-shell.lisp"); /* some defuns needed from here. should be moved */
 load("defs.lisp");
@@ -48,13 +25,19 @@ load("newton.mac");
 load("dttodiff.mac");
 load("matrix.lisp");
 load("simplify.lisp");
+/* these next two files have disappeared;
+ * from comments elsewhere, I speculate they were defining functions
+ * with the same names as some built-in (Lisp or Maxima?) functions.
 load("shadow.mac");	
 load("shadow_math_functions.mac");
+ */
 load("predicates.lisp");
 load("predicates.mac");
 load("reformat.lisp");
 load("limit.lisp");
+/* this next file has disappeared.
 load("function_list.lisp");
+ */
 load("polynomials.mac");
 load("combinatorics.mac");
 load("matrix.mac");

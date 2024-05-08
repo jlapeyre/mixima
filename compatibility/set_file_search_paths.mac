@@ -1,0 +1,11 @@
+/* set_file_search_paths -- put Mixima top-level directory on
+ * search paths for Lisp and Maxima files.
+ * The "/**/" construct is understood to mean "any intervening directories".
+ */
+
+set_file_search_paths (mixima_top_level_directory) :=
+  (push (sconcat (mixima_top_level_directory, "/**/*.mac"), file_search_maxima),
+   push (sconcat (mixima_top_level_directory, "/**/*.lisp"), file_search_lisp),
+   push (sconcat (mixima_top_level_directory, "/**/*.mac"), file_search_tests),
+   true);
+

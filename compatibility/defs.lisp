@@ -111,7 +111,8 @@
 ;;  defmspec's must be called via (mfuncall |$Sfun| .... )
 ;;  I don't understand the difference between these two. But replacing defmfun with defmix
 ;;  causes at least this problem.
-(defmacro defmix (name args &rest body nargs-spec grouped-args param-list callargs arg-tests)
+(defmacro defmix (name args &rest body)
+  (let (args-spec grouped-args param-list callargs arg-tests)
   (setf grouped-args (mixima-group-args args))
   (setf nargs-spec (mixima-min-max-nargs grouped-args))
   (setf param-list (mixima-mk-param-list grouped-args))
@@ -129,7 +130,7 @@
              (setf mix-call-args (cdr mix-call))
              (destructuring-bind ,param-list mix-call-args
                ,@body))
-           (t mix-call))))
+           (t mix-call)))))
 
 #|
  Exapmple: Flatten. evaluate all args before doing anything
